@@ -11,7 +11,9 @@
       </b-row>
       <b-row v-if="image" >
         <b-col cols=12 sm=12 md=12 lg=8 xl=9 class="img-col">
-          <b-img fluid-grow :src="baseUrl + 'image/' + image.id + '/img?small=false'" class="img-details"/>
+          <a :href="baseUrl + 'image/' + image.id + '/img?small=false'">
+            <b-img fluid-grow :src="baseUrl + 'image/' + image.id + '/img?small=false'" class="img-details"/>
+          </a>
         </b-col>
         <b-col cols=12 sm=12 md=12 lg=4 xl=3 class="exif">
           <div v-if="image.exif" class="mt-3">
@@ -43,7 +45,7 @@
             </b-row>
             <b-row>
               <b-col cols=12 v-if="image.exif && image.exif.gpsLatitude && image.exif.gpsLongitude">
-                <Map :latitude="image.exif.gpsLatitude" :longitude="image.exif.gpsLongitude" :zoom=5 />
+                <SingleLocationMap :latitude="image.exif.gpsLatitude" :longitude="image.exif.gpsLongitude" :zoom=5 />
               </b-col>
             </b-row>
           </div>
@@ -70,7 +72,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Map from '../components/Map.vue'
+import baguetteBox from 'baguettebox.js'
+
+import SingleLocationMap from '../components/SingleLocationMap.vue'
 import AddTagModal from '../components/modals/AddTagModal.vue'
 import DeleteTagModal from '../components/modals/DeleteTagModal.vue'
 import CloseCircleOutlineIcon from 'vue-material-design-icons/CloseCircleOutline.vue'
@@ -83,7 +87,7 @@ export default {
     }
   },
   components: {
-    Map,
+    SingleLocationMap,
     CloseCircleOutlineIcon,
     AddTagModal,
     DeleteTagModal
@@ -144,6 +148,12 @@ export default {
     }
 
     this.updateTags()
+
+    baguetteBox.run('.img-col', {
+      captions: 'true',
+      filter: /.*/i,
+      fullscreen: true
+    })
   }
 }
 </script>

@@ -9,6 +9,8 @@
         <b-navbar-nav>
           <b-nav-item to="/albums">Albums</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
+          <b-nav-item to="/calendar">Calendar</b-nav-item>
+          <b-nav-item to="/stats">Statistics</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->

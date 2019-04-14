@@ -2,7 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Albums from './views/Albums.vue'
 import Home from './views/Home.vue'
+import Calendar from './views/Calendar.vue'
 import Images from './views/ImageDetails.vue'
+import Stats from './views/Stats.vue'
 import Tags from './views/Tags.vue'
 
 Vue.use(Router)
@@ -22,6 +24,12 @@ export default new Router({
       props: { baseUrl: null }
     },
     {
+      path: '/calendar',
+      name: 'calendar',
+      component: Calendar,
+      props: { baseUrl: null }
+    },
+    {
       path: '/albums/:albumId',
       name: 'sub-album',
       component: Albums,
@@ -31,6 +39,12 @@ export default new Router({
       path: '/images/:imageId',
       name: 'images',
       component: Images,
+      props: { baseUrl: null }
+    },
+    {
+      path: '/stats',
+      name: 'stats',
+      component: Stats,
       props: { baseUrl: null }
     },
     {

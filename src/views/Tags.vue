@@ -1,11 +1,12 @@
 <template>
   <div class="container tags">
-      <div v-if="tags && tags.length > 0">
-        <h1>Tags <b-badge>{{ tags.length }}</b-badge></h1>
-        <b-badge v-for="tag in tags" :key="tag.id" variant="primary" @click="onTagClicked(tag)" class="tag-badge cursor-pointer">{{ tag.name }}</b-badge>
-      </div>
+    <div v-if="tags && tags.length > 0" class="pt-3">
+      <h1>Tags <b-badge>{{ tags.length }}</b-badge></h1>
+      <p>All tags currently used in your collection are shown below. Click on a tag to show images with that tag.</p>
+      <b-badge v-for="tag in tags" :key="tag.id" variant="primary" @click="onTagClicked(tag)" class="tag-badge cursor-pointer">{{ tag.name }}</b-badge>
+    </div>
 
-    <div v-if="imageCount > 0">
+    <div v-if="imageCount > 0" class="pt-3">
       <h1>Images <b-badge>{{ imageCount }}</b-badge></h1>
       <b-card-group columns v-if="images && images.length > 0">
         <image-node :image="image" :baseUrl="baseUrl" v-for="image in images" :key="image.id"/>

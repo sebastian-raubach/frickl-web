@@ -6,6 +6,7 @@ import store from './store'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import Tooltip from 'bootstrap-vue/es/directives/tooltip'
 
 import 'vue-material-design-icons/styles.css'
 
@@ -13,13 +14,20 @@ import L from 'leaflet'
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 
+import 'baguettebox.js/dist/baguetteBox.min.css'
+
 import mixin from './mixin/mixin.js'
 import api from './mixin/api.js'
+
+import VueApexCharts from 'vue-apexcharts'
+
+Vue.component('apexchart', VueApexCharts)
 
 Vue.mixin(mixin)
 Vue.mixin(api)
 
 Vue.use(BootstrapVue)
+Vue.use(Tooltip)
 
 Vue.component('l-map', LMap)
 Vue.component('l-tile-layer', LTileLayer)
@@ -77,6 +85,7 @@ router.options.routes.forEach(function (r) {
 Vue.use({
   install: function (Vue, options) {
     Vue.prototype.$jQuery = require('jquery')
+    window.jQuery = Vue.prototype.$jQuery
   }
 })
 
