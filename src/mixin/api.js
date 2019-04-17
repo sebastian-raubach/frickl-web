@@ -5,8 +5,11 @@ export default {
     apiGetAlbum: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId, success: onSuccess })
     },
-    apiGetAlbums: function (parentAlbumId, onSuccess) {
-      this.unauthAjax({ url: this.getBaseUrl() + 'album?parentAlbumId=' + parentAlbumId, success: onSuccess })
+    apiGetAlbums: function (parentAlbumId, page, imagesPerPage, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'album?page=' + page + '&limit=' + imagesPerPage + '&parentAlbumId=' + parentAlbumId, success: onSuccess })
+    },
+    apiGetAlbumCount: function (albumId, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'album/count', success: onSuccess })
     },
     apiGetAlbumLocations: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/location', success: onSuccess })

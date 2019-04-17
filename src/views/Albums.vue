@@ -4,11 +4,11 @@
       <div v-if="(albums && albums.length > 0) || (images && images.length > 0)">
         <div v-if="albums && albums.length > 0">
           <h1>Albums</h1>
-          <b-row>
-            <b-col cols=12 sm=4 md=3 lg=3 v-for="album in albums" :key="album.id">
-              <album-node :album="album" :baseUrl="baseUrl" v-on:click.native="onAlbumClicked(album)"/>
-            </b-col>
-          </b-row>
+          <album-grid :baseUrl="baseUrl"
+                      :albumCount="albumCount"
+                      :albumsPerPage="albumsPerPage"
+                      :albums="albums"
+                      v-on:onAlbumNavigation="page => onAlbumNavigation(page)"/>
         </div>
         <div v-if="images && images.length > 0">
           <h1>Images</h1>
@@ -30,20 +30,22 @@
 <script>
 import L from 'leaflet'
 
-import AlbumNode from '../components/AlbumNode.vue'
+import AlbumGrid from '../components/AlbumGrid.vue'
 import ImageGrid from '../components/ImageGrid.vue'
 import AlbumLocationMap from '../components/AlbumLocationMap.vue'
 
 export default {
   props: [ 'baseUrl' ],
   components: {
-    'album-node': AlbumNode,
+    'album-grid': AlbumGrid,
     'image-grid': ImageGrid,
     'album-location-map': AlbumLocationMap
   },
   data: function () {
     return {
       albums: [],
+      albumCount: 0,
+      albumsPerPage: 12,
       images: [],
       imageCount: 0,
       imagesPerPage: 12,
@@ -53,8 +55,12 @@ export default {
     }
   },
   methods: {
-    onAlbumClicked: function (album) {
-      this.$store.dispatch('ON_ALBUM_CHANGED', album)
+    onAlbumNavigation: function (page) {
+      var vm = this
+
+      this.apiGetAlbums(this.parentAlbumId, page - 1, this.albumsPerPage, function (result) {
+        vm.albums = result
+      })
     },
     onImageNavigation: function (page) {
       var vm = this
@@ -73,8 +79,9 @@ export default {
 
     this.parentAlbumId = this.$route.params.albumId
 
-    this.apiGetAlbums(this.parentAlbumId, function (result) {
-      vm.albums = result
+    this.apiGetAlbumCount(this.parentAlbumId, function (result) {
+      vm.albumCount = result
+      vm.onAlbumNavigation(1)
     })
 
     if (this.parentAlbumId) {
@@ -83,17 +90,15 @@ export default {
       })
       this.apiGetImageCount(this.parentAlbumId, function (result) {
         vm.imageCount = result
-        vm.imagesCurPage = 1
         vm.onImageNavigation(1)
       })
-    }
-
-    this.apiGetAlbumLocations(this.parentAlbumId, function (result) {
-      result.forEach(function (l) {
-        l.location = L.latLng(l.latitude, l.longitude)
+      this.apiGetAlbumLocations(this.parentAlbumId, function (result) {
+        result.forEach(function (l) {
+          l.location = L.latLng(l.latitude, l.longitude)
+        })
+        vm.locations = result
       })
-      vm.locations = result
-    })
+    }
   }
 }
 </script>

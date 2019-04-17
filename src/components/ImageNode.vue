@@ -5,18 +5,38 @@
         <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img"/>
       </div>
       <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
-      </div>
+        <div>
+          <HeartIcon :width="48" :height="48" v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+          <HeartOutlineIcon :width="48" :height="48" v-else  @click.native="onToggleFavorite($event)"/>
+        </div>
+        </div>
     </b-card>
   </router-link>
 </template>
 
 <script>
+import HeartIcon from 'vue-material-design-icons/Heart.vue'
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+
 export default {
   data: function () {
     return {
     }
   },
-  props: [ 'baseUrl', 'image' ]
+  props: [ 'baseUrl', 'image' ],
+  components: {
+    HeartIcon,
+    HeartOutlineIcon
+  },
+  methods: {
+    onToggleFavorite: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
+
+      // TODO: Submit to server
+    }
+  }
 }
 </script>
 
@@ -25,24 +45,24 @@ export default {
     width: 100%;
     object-fit: cover;
     transition: transform .2s ease-in-out;
+    max-height: 300px;
   }
-  .image-card .card-img-overlay {
-    padding: 0!important;
+  .image-card .card-img-overlay .material-design-icon {
+    height: 2em;
+    width: 2em;
+    opacity: 0;
+    transition: opacity .2s ease-in-out;
   }
-  .image-card .card-img-overlay *:first-child {
-    padding: 1.25rem;
-    margin:0 !important;
-    background-color: rgba(1,1,1,.5);
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .image-card:hover .card-img-overlay .material-design-icon {
+    opacity: 1;
   }
-  .image-card .card-img-wrap {
-    overflow: hidden;
-    position: relative;
+  .image-card .card-img-overlay .material-design-icon > .material-design-icon__svg {
+      height: 2em;
+      width: 2em;
+      fill: white;
   }
-  .image-card .card:hover .card-img {
-    transform: scale(1.05);
+  .image-card .card-img-overlay .material-design-icon.heart-icon > .material-design-icon__svg,
+  .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
+      fill: #EA2027;
   }
 </style>
