@@ -5,9 +5,8 @@
     ref="map">
     <l-tile-layer
       :url="url"
-      :attribution="attribution"
-    />
-    <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location" :icon="getIcon(location)"/>
+      :attribution="attribution"/>
+    <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location" :icon="getIcon(location)" :zIndexOffset="getZOffset(location)"/>
   </l-map>
 </template>
 
@@ -51,6 +50,13 @@ export default {
         return this.selectedIcon
       } else {
         return this.defaultIcon
+      }
+    },
+    getZOffset: function (location) {
+      if (this.currentlyVisibleIds && this.currentlyVisibleIds.length > 0 && this.currentlyVisibleIds.includes(location.id)) {
+        return 1000
+      } else {
+        return null
       }
     }
   },

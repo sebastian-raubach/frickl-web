@@ -5,7 +5,7 @@
         <b-col cols=12>
           <b-breadcrumb>
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
-            <b-breadcrumb-item :text="image.path" disabled active />
+            <b-breadcrumb-item :text="image.name" disabled active />
           </b-breadcrumb>
         </b-col>
       </b-row>
@@ -51,7 +51,7 @@
           </div>
           <div class="mt-3 tags">
             <h3>Tags</h3>
-            <div>
+            <div v-if="tags && tags.length > 0">
               <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
                 {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)"/>
               </b-badge>
@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import baguetteBox from 'baguettebox.js'
 
 import SingleLocationMap from '../components/SingleLocationMap.vue'
@@ -83,7 +82,9 @@ export default {
   data: function () {
     return {
       tags: [],
-      tagToDelete: null
+      tagToDelete: null,
+      image: null,
+      album: null
     }
   },
   components: {
@@ -93,16 +94,11 @@ export default {
     DeleteTagModal
   },
   props: [ 'baseUrl' ],
-  computed: {
-    ...mapGetters([
-      'album',
-      'image'
-    ])
-  },
   methods: {
     getFlashIcon: function () {
       if (this.image.exif.flash) {
-        if (this.image.exif.flash.startsWith('Flash')) {
+        const flashValue = this.image.exif.flash.toLowerCase()
+        if (flashValue.startsWith('Flash fired')) {
           return '/img/icon-flash.svg'
         } else {
           return '/img/icon-flash-no.svg'
@@ -132,6 +128,12 @@ export default {
       this.apiGetTagsForImage(vm.image.id, function (result) {
         vm.tags = result
       })
+    },
+    updateAlbum: function () {
+      var vm = this
+      this.apiGetAlbum(this.image.albumId, function (result) {
+        vm.album = result[0]
+      })
     }
   },
   mounted: function () {
@@ -142,12 +144,12 @@ export default {
     if (!this.image || this.image.id !== parseInt(imageId)) {
       this.apiGetImage(imageId, function (result) {
         if (result && result.length > 0) {
-          vm.$store.dispatch('ON_IMAGE_CHANGED', result[0])
+          vm.image = result[0]
+          vm.updateTags()
+          vm.updateAlbum()
         }
       })
     }
-
-    this.updateTags()
 
     baguetteBox.run('.img-col', {
       captions: 'true',

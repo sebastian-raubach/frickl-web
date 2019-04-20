@@ -3,11 +3,15 @@
     <div v-if="tags && tags.length > 0" class="pt-3">
       <h1>Tags <b-badge>{{ tags.length }}</b-badge></h1>
       <p>All tags currently used in your collection are shown below. Click on a tag to show images with that tag.</p>
-      <b-badge v-for="tag in tags" :key="tag.id" variant="primary" @click="onTagClicked(tag)" class="tag-badge cursor-pointer">{{ tag.name }}</b-badge>
+      <b-form inline @submit.prevent>
+        <label class="sr-only" for="inline-form-input-name">Name</label>
+        <b-input id="inline-form-input-name" placeholder="Search tags" v-model="searchTerm" v-on:keyup="onTagsFiltered()"/>
+      </b-form>
+      <b-badge v-for="tag in filteredTags" :key="tag.id" variant="primary" @click="onTagClicked(tag)" class="tag-badge cursor-pointer">{{ tag.name }}</b-badge>
     </div>
 
     <div v-if="imageCount > 0" class="pt-3">
-      <h1>Images <b-badge>{{ imageCount }}</b-badge></h1>
+      <h1>Images tagged '{{ tag.name }}' <b-badge>{{ imageCount }}</b-badge></h1>
       <b-card-group columns v-if="images && images.length > 0">
         <image-node :image="image" :baseUrl="baseUrl" v-for="image in images" :key="image.id"/>
       </b-card-group>
@@ -31,8 +35,10 @@ export default {
       imagesPerPage: 12,
       imagesCurPage: 1,
       imageCount: 0,
+      searchTerm: null,
       tag: null,
       tags: [],
+      filteredTags: [],
       images: []
     }
   },
@@ -41,6 +47,16 @@ export default {
   },
   props: [ 'baseUrl' ],
   methods: {
+    onTagsFiltered: function () {
+      var vm = this
+      if (this.searchTerm && this.searchTerm.length > 0) {
+        this.filteredTags = this.tags.filter(function (t) {
+          return t.name.includes(vm.searchTerm)
+        })
+      } else {
+        this.filteredTags = this.tags
+      }
+    },
     onTagClicked: function (tag) {
       var vm = this
       this.tag = tag
@@ -64,6 +80,7 @@ export default {
 
     this.apiGetTags(function (result) {
       vm.tags = result
+      vm.filteredTags = result
     })
   }
 }

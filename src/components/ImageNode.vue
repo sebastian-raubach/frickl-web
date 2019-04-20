@@ -45,13 +45,16 @@ export default {
     width: 100%;
     object-fit: cover;
     transition: transform .2s ease-in-out;
-    max-height: 300px;
+    height: 300px;
   }
   .image-card .card-img-overlay .material-design-icon {
     height: 2em;
     width: 2em;
     opacity: 0;
     transition: opacity .2s ease-in-out;
+  }
+  .image-card .card-img-overlay .material-design-icon.heart-icon {
+    opacity: 1;
   }
   .image-card:hover .card-img-overlay .material-design-icon {
     opacity: 1;

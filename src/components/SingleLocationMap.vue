@@ -6,8 +6,7 @@
     ref="map">
     <l-tile-layer
       :url="url"
-      :attribution="attribution"
-    />
+      :attribution="attribution"/>
     <l-marker :lat-lng="center"></l-marker>
   </l-map>
 </template>

@@ -31,7 +31,7 @@ export default {
   .album-card .card-img {
     width: 100%;
     object-fit: cover;
-    max-height: 300px;
+    height: 300px;
     transition: transform .2s ease-in-out;
   }
   .album-card .card-img-overlay {
