@@ -42,6 +42,11 @@ export default {
       default: null
     }
   },
+  watch: {
+    imageCount: function (newValue, oldValue) {
+      this.currentPage = 1
+    }
+  },
   components: {
     'image-node': ImageNode
   },

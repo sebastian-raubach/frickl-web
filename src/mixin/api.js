@@ -9,7 +9,7 @@ export default {
       this.unauthAjax({ url: this.getBaseUrl() + 'album?page=' + page + '&limit=' + imagesPerPage + '&parentAlbumId=' + parentAlbumId, success: onSuccess })
     },
     apiGetAlbumCount: function (albumId, onSuccess) {
-      this.unauthAjax({ url: this.getBaseUrl() + 'album/count', success: onSuccess })
+      this.unauthAjax({ url: this.getBaseUrl() + 'album/count?parentAlbumId=' + albumId, success: onSuccess })
     },
     apiGetAlbumLocations: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/location', success: onSuccess })

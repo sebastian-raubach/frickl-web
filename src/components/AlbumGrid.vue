@@ -42,6 +42,11 @@ export default {
       default: null
     }
   },
+  watch: {
+    albumCount: function (newValue, oldValue) {
+      this.currentPage = 1
+    }
+  },
   components: {
     'album-node': AlbumNode
   },

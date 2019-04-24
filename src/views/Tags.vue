@@ -1,33 +1,34 @@
 <template>
-  <div class="container tags">
-    <div v-if="tags && tags.length > 0" class="pt-3">
-      <h1>Tags <b-badge>{{ tags.length }}</b-badge></h1>
-      <p>All tags currently used in your collection are shown below. Click on a tag to show images with that tag.</p>
-      <b-form inline @submit.prevent>
-        <label class="sr-only" for="inline-form-input-name">Name</label>
-        <b-input id="inline-form-input-name" placeholder="Search tags" v-model="searchTerm" v-on:keyup="onTagsFiltered()"/>
-      </b-form>
-      <b-badge v-for="tag in filteredTags" :key="tag.id" variant="primary" @click="onTagClicked(tag)" class="tag-badge cursor-pointer">{{ tag.name }}</b-badge>
-    </div>
-
-    <div v-if="imageCount > 0" class="pt-3">
+  <div>
+    <b-container class="tags">
+      <div v-if="tags && tags.length > 0" class="pt-3">
+        <h1>Tags <b-badge>{{ tags.length }}</b-badge></h1>
+        <p>All tags currently used in your collection are shown below. Click on a tag to show images with that tag.</p>
+        <b-form inline @submit.prevent>
+          <label class="sr-only" for="inline-form-input-name">Name</label>
+          <b-input id="inline-form-input-name" placeholder="Search tags" v-model="searchTerm" v-on:keyup="onTagsFiltered()"/>
+        </b-form>
+        <b-button v-for="tag in filteredTags" :key="tag.id" size="sm" variant="primary" @click="onTagClicked(tag)" class="mt-1 mr-1">
+          {{ tag.tag.name }}&nbsp;
+          <b-badge variant="light">{{ tag.count }}</b-badge>
+        </b-button>
+      </div>
+    </b-container>
+    <b-container fluid v-if="imageCount > 0" class="pt-3">
       <h1>Images tagged '{{ tag.name }}' <b-badge>{{ imageCount }}</b-badge></h1>
-      <b-card-group columns v-if="images && images.length > 0">
-        <image-node :image="image" :baseUrl="baseUrl" v-for="image in images" :key="image.id"/>
-      </b-card-group>
 
-      <b-pagination v-if="imageCount > imagesPerPage"
-        v-model="imagesCurPage"
-        :total-rows="imageCount"
-        :per-page="imagesPerPage"
-        @change="page => onImageNavigation(page)"
-      ></b-pagination>
-    </div>
+      <image-grid :baseUrl="baseUrl"
+                  :imageCount="imageCount"
+                  :imagesPerPage="imagesPerPage"
+                  :images="images"
+                  ref="imageGrid"
+                  v-on:onImageNavigation="page => onImageNavigation(page)"/>
+    </b-container>
   </div>
 </template>
 
 <script>
-import ImageNode from '../components/ImageNode.vue'
+import ImageGrid from '../components/ImageGrid.vue'
 
 export default {
   data: function () {
@@ -43,7 +44,7 @@ export default {
     }
   },
   components: {
-    'image-node': ImageNode
+    'image-grid': ImageGrid
   },
   props: [ 'baseUrl' ],
   methods: {
@@ -51,7 +52,7 @@ export default {
       var vm = this
       if (this.searchTerm && this.searchTerm.length > 0) {
         this.filteredTags = this.tags.filter(function (t) {
-          return t.name.includes(vm.searchTerm)
+          return t.tag.name.includes(vm.searchTerm)
         })
       } else {
         this.filteredTags = this.tags
@@ -59,9 +60,9 @@ export default {
     },
     onTagClicked: function (tag) {
       var vm = this
-      this.tag = tag
+      this.tag = tag.tag
 
-      this.apiGetImageCountForTag(tag.id, function (result) {
+      this.apiGetImageCountForTag(this.tag.id, function (result) {
         vm.imageCount = result
         vm.imagesCurPage = 1
         vm.onImageNavigation(1)

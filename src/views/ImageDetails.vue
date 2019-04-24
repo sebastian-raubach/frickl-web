@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container fluid class="bg-dark text-light">
+    <b-container fluid v-bind:style="{ 'background-color': backgroundColor, 'color': foregroundColor}" id="image-details">
       <b-row v-if="image && album" class="pt-3">
         <b-col cols=12>
           <b-breadcrumb>
@@ -29,6 +29,10 @@
                 <div title="Focal length"><img src="/img/icon-focal-length.svg"> <span>{{ image.exif.focalLength ? image.exif.focalLength : '' }}</span></div>
                 <div title="ISO"><img src="/img/icon-iso.svg"> <span>{{ image.exif.isoSpeedRatings ? image.exif.isoSpeedRatings : '' }}</span></div>
                 <div title="Flash"><img :src="getFlashIcon()"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
+              </b-col>
+              <b-col cols=6 v-if="image.exif.lensMake || image.exif.lensModel">
+                <img src="/img/icon-lens.svg" fluid>
+                <div>{{ image.exif.lensMake }}</div><div>{{ image.exif.lensModel }}</div>
               </b-col>
               <b-col cols=12>
                 <hr class="white" />
@@ -77,6 +81,7 @@ import SingleLocationMap from '../components/SingleLocationMap.vue'
 import AddTagModal from '../components/modals/AddTagModal.vue'
 import DeleteTagModal from '../components/modals/DeleteTagModal.vue'
 import CloseCircleOutlineIcon from 'vue-material-design-icons/CloseCircleOutline.vue'
+var Vibrant = require('node-vibrant')
 
 export default {
   data: function () {
@@ -84,7 +89,9 @@ export default {
       tags: [],
       tagToDelete: null,
       image: null,
-      album: null
+      album: null,
+      backgroundColor: '#343a40',
+      foregroundColor: '#ffffff'
     }
   },
   components: {
@@ -147,6 +154,15 @@ export default {
           vm.image = result[0]
           vm.updateTags()
           vm.updateAlbum()
+
+          Vibrant.from(vm.baseUrl + 'image/' + vm.image.id + '/img?small=true')
+            .getPalette(function (err, palette) {
+              if (!err && palette && palette.Vibrant) {
+                vm.backgroundColor = palette.Vibrant.getHex()
+                var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
+                vm.foregroundColor = avg < 128 ? 'white' : 'black'
+              }
+            })
         }
       })
     }
@@ -161,6 +177,9 @@ export default {
 </script>
 
 <style>
+  #image-details {
+    min-height: calc(100vh - 56px);
+  }
   .img-col {
     padding-left: 0!important;
     padding-right: 0!important;

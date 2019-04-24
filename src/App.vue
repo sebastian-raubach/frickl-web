@@ -23,7 +23,7 @@
       </b-collapse>
     </b-navbar>
 
-    <router-view :key="$route.path"/>
+    <router-view :key="$route.path" id="content"/>
   </div>
 </template>
 
@@ -45,6 +45,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  min-height: 100vh;
 }
 #nav {
   padding: 30px;
