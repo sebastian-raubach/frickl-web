@@ -10,6 +10,15 @@
                       :albums="albums"
                       v-on:onAlbumNavigation="page => onAlbumNavigation(page)"/>
         </div>
+        <div v-if="tags && tags.length > 0" class="tags">
+          <h1>Tags</h1>
+          <div>
+            <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
+              {{ tag.name }}
+            </b-badge>
+          </div>
+          <b-button variant="primary" size="sm" class="mt-3">Apply to all</b-button>
+        </div>
         <div v-if="images && images.length > 0">
           <h1>Images</h1>
           <image-grid :baseUrl="baseUrl"
@@ -51,7 +60,8 @@ export default {
       imagesPerPage: 12,
       parentAlbumId: null,
       locations: [],
-      currentlyVisibleIds: []
+      currentlyVisibleIds: [],
+      tags: []
     }
   },
   methods: {
@@ -97,6 +107,9 @@ export default {
           l.location = L.latLng(l.latitude, l.longitude)
         })
         vm.locations = result
+      })
+      this.apiGetAlbumTags(this.parentAlbumId, function (result) {
+        vm.tags = result
       })
     }
   }

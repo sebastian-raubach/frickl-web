@@ -19,9 +19,17 @@ import 'baguettebox.js/dist/baguetteBox.min.css'
 import mixin from './mixin/mixin.js'
 import api from './mixin/api.js'
 
+import VueInsProgressBar from 'vue-ins-progress-bar'
+
 import VueApexCharts from 'vue-apexcharts'
 
 Vue.component('apexchart', VueApexCharts)
+
+Vue.use(VueInsProgressBar, {
+  show: true,
+  position: 'initial',
+  height: '5px'
+})
 
 Vue.mixin(mixin)
 Vue.mixin(api)
@@ -59,6 +67,9 @@ Vue.filter('toDate', function (value) {
     return null
   }
 })
+
+// Global event bus
+Vue.prototype.$eventHub = new Vue()
 
 // Set base URL based on environment
 var baseUrl = 'http://localhost:8080/frickl-web/v1/'

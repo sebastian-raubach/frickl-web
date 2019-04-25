@@ -38,6 +38,15 @@
                 <hr class="white" />
               </b-col>
               <b-col cols=12>
+                <div class="image-favorite">
+                  <HeartIcon :width="48" :height="48" v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+                  <HeartOutlineIcon :width="48" :height="48" v-else  @click.native="onToggleFavorite($event)"/>
+                </div>
+              </b-col>
+              <b-col cols=12>
+                <hr class="white"/>
+              </b-col>
+              <b-col cols=12>
                 <b-button v-b-toggle.collapse-exif variant="link">Show full EXIF</b-button>
                 <b-collapse id="collapse-exif" class="mt-2">
                   {{ image.exif }}
@@ -57,6 +66,7 @@
             <h3>Tags</h3>
             <div v-if="tags && tags.length > 0">
               <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
+                <!-- TODO: Change tag redirect -->
                 {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)"/>
               </b-badge>
             </div>
@@ -81,7 +91,9 @@ import SingleLocationMap from '../components/SingleLocationMap.vue'
 import AddTagModal from '../components/modals/AddTagModal.vue'
 import DeleteTagModal from '../components/modals/DeleteTagModal.vue'
 import CloseCircleOutlineIcon from 'vue-material-design-icons/CloseCircleOutline.vue'
-var Vibrant = require('node-vibrant')
+import HeartIcon from 'vue-material-design-icons/Heart.vue'
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+// var Vibrant = require('node-vibrant')
 
 export default {
   data: function () {
@@ -98,7 +110,9 @@ export default {
     SingleLocationMap,
     CloseCircleOutlineIcon,
     AddTagModal,
-    DeleteTagModal
+    DeleteTagModal,
+    HeartIcon,
+    HeartOutlineIcon
   },
   props: [ 'baseUrl' ],
   methods: {
@@ -141,6 +155,14 @@ export default {
       this.apiGetAlbum(this.image.albumId, function (result) {
         vm.album = result[0]
       })
+    },
+    onToggleFavorite: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
+
+      this.apiPatchImageFav(this.image.id, this.image.isFavorite > 0, function (result) {
+      })
     }
   },
   mounted: function () {
@@ -154,24 +176,25 @@ export default {
           vm.image = result[0]
           vm.updateTags()
           vm.updateAlbum()
+          // Vibrant.from(vm.baseUrl + 'image/' + vm.image.id + '/img?small=true')
+          //   .getPalette(function (err, palette) {
+          //     if (!err && palette && palette.Vibrant) {
+          //       vm.backgroundColor = palette.Vibrant.getHex()
+          //       var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
+          //       vm.foregroundColor = avg < 128 ? 'white' : 'black'
+          //     }
+          //   })
 
-          Vibrant.from(vm.baseUrl + 'image/' + vm.image.id + '/img?small=true')
-            .getPalette(function (err, palette) {
-              if (!err && palette && palette.Vibrant) {
-                vm.backgroundColor = palette.Vibrant.getHex()
-                var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
-                vm.foregroundColor = avg < 128 ? 'white' : 'black'
-              }
+          vm.$nextTick(function () {
+            baguetteBox.run('.img-col', {
+              captions: 'true',
+              filter: /.*/i,
+              fullscreen: true
             })
+          })
         }
       })
     }
-
-    baguetteBox.run('.img-col', {
-      captions: 'true',
-      filter: /.*/i,
-      fullscreen: true
-    })
   }
 }
 </script>
@@ -199,5 +222,21 @@ export default {
 
   hr.white {
     border-top: 1px solid rgba(255, 255, 255, 0.9);
+  }
+
+  .image-favorite .material-design-icon {
+    height: 2em;
+    width: 2em;
+    transition: opacity .2s ease-in-out;
+    cursor: pointer;
+  }
+  .image-favorite .material-design-icon > .material-design-icon__svg {
+      height: 2em;
+      width: 2em;
+      fill: white;
+  }
+  .image-favorite .material-design-icon.heart-icon > .material-design-icon__svg,
+  .image-favorite .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
+      fill: #EA2027;
   }
 </style>

@@ -14,6 +14,9 @@ export default {
     apiGetAlbumLocations: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/location', success: onSuccess })
     },
+    apiGetAlbumTags: function (albumId, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/tag', success: onSuccess })
+    },
     apiGetCalendarYears: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'calendar/year', success: onSuccess })
     },
@@ -52,6 +55,15 @@ export default {
     },
     apiGetStatsCamera: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'stats/camera', success: onSuccess })
+    },
+    apiGetImportStatus: function (onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'status', success: onSuccess })
+    },
+    apiPatchImageFav: function (imageId, fav, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageId + '/fav', method: 'PATCH', data: fav, success: onSuccess })
+    },
+    apiGetRandomFavorite: function (onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'image/fav/random', success: onSuccess })
     },
     getBaseUrl () {
       return store.getters.baseUrl

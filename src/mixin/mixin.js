@@ -4,7 +4,7 @@ export default {
       var requestData = null
 
       // Stringify the data object for non-GET requests
-      if (data) {
+      if (data !== null || data !== undefined) {
         requestData = method === 'GET' ? data : JSON.stringify(data)
       }
 

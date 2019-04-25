@@ -8,6 +8,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item to="/albums">Albums</b-nav-item>
+          <b-nav-item to="/favorites">Favorites</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
           <b-nav-item to="/calendar">Calendar</b-nav-item>
           <b-nav-item to="/stats">Statistics</b-nav-item>
@@ -22,7 +23,9 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-
+    <vue-ins-progress-bar id="importStatus" />
+    <b-tooltip placement="bottom" target="importStatus" title="Images are importing..." />
+    <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
     <router-view :key="$route.path" id="content"/>
   </div>
 </template>
@@ -31,8 +34,54 @@
 import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
 
 export default {
+  data: function () {
+    return {
+      timer: null,
+      showAlert: false,
+      variant: 'warning',
+      message: ''
+    }
+  },
   components: {
     MagnifyIcon
+  },
+  methods: {
+    checkImportStatus: function () {
+      var vm = this
+      this.apiGetImportStatus(function (result) {
+        if (result === 'IMPORTING') {
+          vm.$insProgress.start()
+          vm.timer = setInterval(vm.checkImportStatus, 10000)
+        } else {
+          vm.$insProgress.finish()
+
+          if (vm.timer) {
+            vm.$eventHub.$emit('alert', 'success', 'Image import successfully completed.')
+          }
+
+          clearInterval(vm.timer)
+          vm.timer = null
+        }
+      })
+    },
+    handleAlert: function (variant, message) {
+      this.variant = variant
+      this.message = message
+      this.showAlert = true
+    }
+  },
+  beforeDestroy: function () {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+
+    this.$eventHub.$off('alert')
+  },
+  mounted: function () {
+    this.checkImportStatus()
+
+    this.$eventHub.$on('alert', this.handleAlert)
   }
 }
 </script>
@@ -58,5 +107,9 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+#app .global-alert {
+  border-radius: 0;
 }
 </style>

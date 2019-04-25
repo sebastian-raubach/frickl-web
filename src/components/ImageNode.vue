@@ -34,7 +34,8 @@ export default {
       event.preventDefault()
       this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
 
-      // TODO: Submit to server
+      this.apiPatchImageFav(this.image.id, this.image.isFavorite > 0, function (result) {
+      })
     }
   }
 }
