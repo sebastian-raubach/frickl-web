@@ -1,24 +1,24 @@
 <template>
   <div>
+    <!-- The background image -->
     <div class="bg-img" :style="{'background-image': 'url(' + baseUrl + 'image/fav/random)'}">
+      <!-- The semi-transparent overlay -->
       <div class="overlay"></div>
+      <!-- The scroll indicator -->
       <div class="mouse-icon">
         <div class="wheel"></div>
       </div>
     </div>
+    <!-- The text -->
     <div class="home-wrapper">
       <div class="container">
         <div class="row">
-
-          <!-- home content -->
           <div class="col-md-10 offset-md-1">
             <div class="home-content">
               <h1 class="white-text">Welcome to Frickl</h1>
               <p class="white-text">Something totally important goes here...</p>
             </div>
           </div>
-          <!-- /home content -->
-
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid v-if="images && images.length > 0">
+  <b-container fluid v-if="images && images.length > 0" class="pt-3">
     <h1>Favorites</h1>
     <image-grid :baseUrl="baseUrl"
                 :imageCount="imageCount"

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Albums from './views/Albums.vue'
 import Home from './views/Home.vue'
+import About from './views/About.vue'
 import Calendar from './views/Calendar.vue'
 import Favorites from './views/Favorites.vue'
 import Images from './views/ImageDetails.vue'
@@ -16,6 +17,12 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+      props: { baseUrl: null }
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About,
       props: { baseUrl: null }
     },
     {

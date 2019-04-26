@@ -38,9 +38,10 @@
                 <hr class="white" />
               </b-col>
               <b-col cols=12>
-                <div class="image-favorite">
-                  <HeartIcon :width="48" :height="48" v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-                  <HeartOutlineIcon :width="48" :height="48" v-else  @click.native="onToggleFavorite($event)"/>
+                <div class="image-actions">
+                  <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)" title="Unmark as favorite"/>
+                  <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)" title="Mark as favorite"/>
+                  <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" />
                 </div>
               </b-col>
               <b-col cols=12>
@@ -81,6 +82,8 @@
                     :image="image"
                     ref="tagDeleteModal"
                     v-on:onTagDeleted="updateTags" />
+    <SelectAlbumModal :image="image"
+                      ref="selectAlbumModal" />
   </div>
 </template>
 
@@ -90,9 +93,11 @@ import baguetteBox from 'baguettebox.js'
 import SingleLocationMap from '../components/SingleLocationMap.vue'
 import AddTagModal from '../components/modals/AddTagModal.vue'
 import DeleteTagModal from '../components/modals/DeleteTagModal.vue'
+import SelectAlbumModal from '../components/modals/SelectAlbumModal.vue'
 import CloseCircleOutlineIcon from 'vue-material-design-icons/CloseCircleOutline.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
 // var Vibrant = require('node-vibrant')
 
 export default {
@@ -111,8 +116,10 @@ export default {
     CloseCircleOutlineIcon,
     AddTagModal,
     DeleteTagModal,
+    SelectAlbumModal,
     HeartIcon,
-    HeartOutlineIcon
+    HeartOutlineIcon,
+    FolderImageIcon
   },
   props: [ 'baseUrl' ],
   methods: {
@@ -155,6 +162,11 @@ export default {
       this.apiGetAlbum(this.image.albumId, function (result) {
         vm.album = result[0]
       })
+    },
+    onSetImageAsAlbumCover: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.$refs.selectAlbumModal.show()
     },
     onToggleFavorite: function (event) {
       event.stopPropagation()
@@ -224,19 +236,22 @@ export default {
     border-top: 1px solid rgba(255, 255, 255, 0.9);
   }
 
-  .image-favorite .material-design-icon {
+  .image-actions .material-design-icon {
     height: 2em;
     width: 2em;
     transition: opacity .2s ease-in-out;
     cursor: pointer;
   }
-  .image-favorite .material-design-icon > .material-design-icon__svg {
+  .image-actions .material-design-icon > .material-design-icon__svg {
       height: 2em;
       width: 2em;
       fill: white;
   }
-  .image-favorite .material-design-icon.heart-icon > .material-design-icon__svg,
-  .image-favorite .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
+  .image-actions .material-design-icon.heart-icon > .material-design-icon__svg,
+  .image-actions .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
       fill: #EA2027;
+  }
+  .image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
+      fill: #FFC312;
   }
 </style>

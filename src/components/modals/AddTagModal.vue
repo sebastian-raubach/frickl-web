@@ -5,7 +5,7 @@
            ok-title="Add"
            cancel-title="Cancel"
            @ok="handleOk"
-           @shown="focusMyElement">
+           @shown="$refs.focusThis.focus()">
     <b-form-input v-model="tagName"
                   placeholder="Enter tag name"
                   ref="focusThis"></b-form-input>
@@ -26,16 +26,13 @@ export default {
     }
   },
   methods: {
-    focusMyElement (e) {
-      this.$refs.focusThis.focus()
-    },
     handleOk (event) {
       // TODO: create tag (if necessary), then add
     },
     show () {
       var vm = this
       this.$nextTick(function () {
-        vm.$refs['addTagModal'].show()
+        vm.$refs.addTagModal.show()
       })
     }
   }

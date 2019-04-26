@@ -35,7 +35,7 @@ export default {
     show () {
       var vm = this
       this.$nextTick(function () {
-        vm.$refs['deleteTagModal'].show()
+        vm.$refs.deleteTagModal.show()
       })
     }
   }

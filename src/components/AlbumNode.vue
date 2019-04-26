@@ -34,6 +34,9 @@ export default {
     height: 300px;
     transition: transform .2s ease-in-out;
   }
+  .album-card h5 {
+    margin: 0
+  }
   .album-card .card-img-overlay {
     padding: 0!important;
   }
