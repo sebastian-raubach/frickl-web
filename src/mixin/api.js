@@ -59,8 +59,11 @@ export default {
     apiGetImportStatus: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'status', success: onSuccess })
     },
-    apiPatchImageFav: function (imageId, fav, onSuccess) {
-      this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageId + '/fav', method: 'PATCH', data: fav, success: onSuccess })
+    apiPatchImage: function (image, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'image/' + image.id, method: 'PATCH', data: image, success: onSuccess })
+    },
+    apiPatchAlbum: function (album, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'album/' + album.id, method: 'PATCH', data: album, success: onSuccess })
     },
     apiGetRandomFavorite: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'image/fav/random', success: onSuccess })

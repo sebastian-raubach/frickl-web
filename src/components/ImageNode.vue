@@ -5,9 +5,10 @@
         <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img"/>
       </div>
       <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
-        <div>
+        <div class="image-actions">
           <HeartIcon :width="48" :height="48" v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
           <HeartOutlineIcon :width="48" :height="48" v-else  @click.native="onToggleFavorite($event)"/>
+          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
         </div>
         </div>
     </b-card>
@@ -17,24 +18,37 @@
 <script>
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
+import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
 
 export default {
   data: function () {
     return {
     }
   },
-  props: [ 'baseUrl', 'image' ],
+  props: [ 'baseUrl', 'image', 'albumId' ],
   components: {
     HeartIcon,
-    HeartOutlineIcon
+    HeartOutlineIcon,
+    FolderImageIcon
   },
   methods: {
+    onSetImageAsAlbumCover: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+
+      const album = {
+        id: this.albumId,
+        bannerImageId: this.image.id
+      }
+      this.apiPatchAlbum(album, function (result) {
+      })
+    },
     onToggleFavorite: function (event) {
       event.stopPropagation()
       event.preventDefault()
       this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
 
-      this.apiPatchImageFav(this.image.id, this.image.isFavorite > 0, function (result) {
+      this.apiPatchImage(this.image, function (result) {
       })
     }
   }
@@ -47,6 +61,9 @@ export default {
     object-fit: cover;
     transition: transform .2s ease-in-out;
     height: 300px;
+  }
+  .image-card .image-actions .material-design-icon {
+    margin: 0 5px;
   }
   .image-card .card-img-overlay .material-design-icon {
     height: 2em;
@@ -68,5 +85,8 @@ export default {
   .image-card .card-img-overlay .material-design-icon.heart-icon > .material-design-icon__svg,
   .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
       fill: #EA2027;
+  }
+  .image-card z.image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
+      fill: #FFC312;
   }
 </style>

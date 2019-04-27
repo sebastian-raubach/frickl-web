@@ -1,6 +1,13 @@
 {
-  "name": "frickl-web",
+  "name": "frickl",
   "version": "0.1.0",
+  "author": "sebastian-raubach <sebastian@raubach.co.uk>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sebastian-raubach/frickl-web"
+  },
+  "description": "Frickl is a self-hosted image library. This is the web interface of Frickl written in Vue.js.",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

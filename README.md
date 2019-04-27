@@ -1,4 +1,6 @@
-# frickl-web
+# Frickl
+
+Frickl is a self-hosted image library. This repository contains the web interface of Frickl written in Vue.js.
 
 ## Project setup
 ```
@@ -13,11 +15,6 @@ npm run serve
 ### Compiles and minifies for production
 ```
 npm run build
-```
-
-### Run your tests
-```
-npm run test
 ```
 
 ### Lints and fixes files

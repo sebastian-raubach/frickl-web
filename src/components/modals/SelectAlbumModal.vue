@@ -1,11 +1,12 @@
 <template>
   <b-modal title="Select album"
            ref="selectAlbumModal"
-           ok-title="Select"
-           cancel-title="Cancel"
+           ok-only
+           ok-variant="secondary"
+           ok-title="Cancel"
            @ok="handleOk">
     <b-list-group>
-      <b-list-group-item href="#" @click="onAlbumClicked(album)" v-for="album in albums" :key="album.id">{{ album.name }}</b-list-group-item>
+      <b-list-group-item href="#" @click="$emit('onAlbumClicked', album)" v-for="album in albums" :key="album.id">{{ album.name }}</b-list-group-item>
     </b-list-group>
 
     <b-pagination v-if="albumCount > albumsPerPage"
@@ -42,10 +43,6 @@ export default {
       this.$nextTick(function () {
         vm.$refs.selectAlbumModal.show()
       })
-    },
-    onAlbumClicked: function (album) {
-      console.log(album)
-      // TODO: Submit result
     },
     onAlbumNavigation: function (page) {
       var vm = this

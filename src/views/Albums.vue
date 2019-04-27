@@ -25,6 +25,7 @@
                       :imageCount="imageCount"
                       :imagesPerPage="imagesPerPage"
                       :images="images"
+                      :albumId="parentAlbumId"
                       v-on:onImageNavigation="page => onImageNavigation(page)"/>
         </div>
       </div>

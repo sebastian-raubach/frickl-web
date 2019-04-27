@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-col cols=12 sm=4 md=3 lg=3 v-for="image in images" :key="image.id" class="mb-3">
-        <image-node :image="image" :baseUrl="baseUrl" v-on:click.native="onImageClicked(image)" />
+        <image-node :image="image" :baseUrl="baseUrl" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
       </b-col>
     </b-row>
 
@@ -39,6 +39,10 @@ export default {
     },
     images: {
       type: Array,
+      default: null
+    },
+    albumId: {
+      type: String,
       default: null
     }
   },

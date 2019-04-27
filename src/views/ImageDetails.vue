@@ -83,7 +83,8 @@
                     ref="tagDeleteModal"
                     v-on:onTagDeleted="updateTags" />
     <SelectAlbumModal :image="image"
-                      ref="selectAlbumModal" />
+                      ref="selectAlbumModal"
+                      v-on:onAlbumClicked="album => onAlbumClicked(album)" />
   </div>
 </template>
 
@@ -123,6 +124,12 @@ export default {
   },
   props: [ 'baseUrl' ],
   methods: {
+    onAlbumClicked: function (album) {
+      album.bannerImageId = this.image.id
+
+      this.apiPatchAlbum(album, function (result) {
+      })
+    },
     getFlashIcon: function () {
       if (this.image.exif.flash) {
         const flashValue = this.image.exif.flash.toLowerCase()
@@ -173,7 +180,7 @@ export default {
       event.preventDefault()
       this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
 
-      this.apiPatchImageFav(this.image.id, this.image.isFavorite > 0, function (result) {
+      this.apiPatchImage(this.image, function (result) {
       })
     }
   },
