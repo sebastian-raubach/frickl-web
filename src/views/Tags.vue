@@ -83,6 +83,17 @@ export default {
       vm.tags = result
       vm.filteredTags = result
     })
+
+    const tagId = this.$route.params.tagId
+
+    if (tagId) {
+      this.apiGetTag(tagId, function (result) {
+        if (result && result.length > 0) {
+          vm.tag = result[0]
+          vm.onTagClicked(vm.tag)
+        }
+      })
+    }
   }
 }
 </script>

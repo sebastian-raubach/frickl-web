@@ -35,16 +35,6 @@
                 <div>{{ image.exif.lensMake }}</div><div>{{ image.exif.lensModel }}</div>
               </b-col>
               <b-col cols=12>
-                <hr class="white" />
-              </b-col>
-              <b-col cols=12>
-                <div class="image-actions">
-                  <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)" title="Unmark as favorite"/>
-                  <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)" title="Mark as favorite"/>
-                  <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" />
-                </div>
-              </b-col>
-              <b-col cols=12>
                 <hr class="white"/>
               </b-col>
               <b-col cols=12>
@@ -63,6 +53,18 @@
               </b-col>
             </b-row>
           </div>
+          <b-row>
+            <b-col cols=12>
+              <div class="image-actions">
+                <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)" title="Unmark as favorite"/>
+                <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)" title="Mark as favorite"/>
+                <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" />
+              </div>
+            </b-col>
+            <b-col cols=12>
+              <hr class="white" />
+            </b-col>
+          </b-row>
           <div class="mt-3 tags">
             <h3>Tags</h3>
             <div v-if="tags && tags.length > 0">

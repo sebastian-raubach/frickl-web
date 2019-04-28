@@ -44,6 +44,9 @@ export default {
     apiDeleteTagFromImage: function (imageTag, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageTag.imageId + '/tag', method: 'DELETE', data: imageTag, success: onSuccess })
     },
+    apiGetTag: function (tagId, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'tag/' + tagId, success: onSuccess })
+    },
     apiGetTags: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'tag', success: onSuccess })
     },

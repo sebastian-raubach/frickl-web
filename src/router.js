@@ -1,13 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Albums from './views/Albums.vue'
-import Home from './views/Home.vue'
-import About from './views/About.vue'
-import Calendar from './views/Calendar.vue'
-import Favorites from './views/Favorites.vue'
-import Images from './views/ImageDetails.vue'
-import Stats from './views/Stats.vue'
-import Tags from './views/Tags.vue'
 
 Vue.use(Router)
 
@@ -16,55 +8,55 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home,
-      props: { baseUrl: null }
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: About,
+      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/albums',
       name: 'albums',
-      component: Albums,
+      component: () => import(/* webpackChunkName: "about" */ './views/Albums.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/calendar',
       name: 'calendar',
-      component: Calendar,
+      component: () => import(/* webpackChunkName: "about" */ './views/Calendar.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/albums/:albumId',
       name: 'sub-album',
-      component: Albums,
+      component: () => import(/* webpackChunkName: "about" */ './views/Albums.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/images/:imageId',
       name: 'images',
-      component: Images,
+      component: () => import(/* webpackChunkName: "about" */ './views/ImageDetails.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/favorites',
       name: 'favorites',
-      component: Favorites,
+      component: () => import(/* webpackChunkName: "about" */ './views/Favorites.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/stats',
       name: 'stats',
-      component: Stats,
+      component: () => import(/* webpackChunkName: "about" */ './views/Stats.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/tags',
       name: 'tags',
-      component: Tags,
+      component: () => import(/* webpackChunkName: "about" */ './views/Tags.vue'),
+      props: { baseUrl: null }
+    },
+    {
+      path: '/tags/:tagId',
+      name: 'tags',
+      component: () => import(/* webpackChunkName: "about" */ './views/Tags.vue'),
       props: { baseUrl: null }
     },
     {

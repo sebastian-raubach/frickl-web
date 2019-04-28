@@ -20,7 +20,7 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.16",
     "core-js": "^2.6.5",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "leaflet": "^1.4.0",
     "node-vibrant": "^3.2.0-alpha",
     "vue": "^2.6.6",

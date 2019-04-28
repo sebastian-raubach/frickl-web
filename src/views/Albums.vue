@@ -1,9 +1,10 @@
 <template>
   <div>
     <b-container class="home mt-3" fluid>
+      <h1 v-if="album">{{ album.name }}</h1>
       <div v-if="(albums && albums.length > 0) || (images && images.length > 0)">
         <div v-if="albums && albums.length > 0">
-          <h1>Albums</h1>
+          <h2>Albums</h2>
           <album-grid :baseUrl="baseUrl"
                       :albumCount="albumCount"
                       :albumsPerPage="albumsPerPage"
@@ -11,7 +12,7 @@
                       v-on:onAlbumNavigation="page => onAlbumNavigation(page)"/>
         </div>
         <div v-if="tags && tags.length > 0" class="tags">
-          <h1>Tags</h1>
+          <h2>Tags</h2>
           <div>
             <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
               {{ tag.name }}
@@ -20,7 +21,7 @@
           <b-button variant="primary" size="sm" class="mt-3">Apply to all</b-button>
         </div>
         <div v-if="images && images.length > 0">
-          <h1>Images</h1>
+          <h2>Images</h2>
           <image-grid :baseUrl="baseUrl"
                       :imageCount="imageCount"
                       :imagesPerPage="imagesPerPage"
@@ -53,6 +54,7 @@ export default {
   },
   data: function () {
     return {
+      album: null,
       albums: [],
       albumCount: 0,
       albumsPerPage: 12,
@@ -97,7 +99,7 @@ export default {
 
     if (this.parentAlbumId) {
       this.apiGetAlbum(this.parentAlbumId, function (result) {
-        vm.$store.dispatch('ON_ALBUM_CHANGED', result[0])
+        vm.album = result[0]
       })
       this.apiGetImageCount(this.parentAlbumId, function (result) {
         vm.imageCount = result
