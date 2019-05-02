@@ -29,6 +29,8 @@
 import ImageGrid from '../components/ImageGrid.vue'
 import CalendarChart from '../components/chart/CalendarChart.vue'
 
+var moment = require('moment')
+
 export default {
   data: function () {
     return {
@@ -52,7 +54,7 @@ export default {
     onDateSelected: function (date) {
       this.dateSelection.date = date
 
-      this.dateSelection.formattedDate = window.moment(date).format('YYYY-MM-DD')
+      this.dateSelection.formattedDate = moment(date).format('YYYY-MM-DD')
 
       var vm = this
       this.apiGetAllImageCount({

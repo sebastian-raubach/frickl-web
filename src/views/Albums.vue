@@ -1,7 +1,9 @@
 <template>
   <div>
+    <b-container v-if="album" fluid class="bg-dark text-white pt-3 pb-3">
+      <h1 class="mb-0 mt-0">{{ album.name }}</h1>
+    </b-container>
     <b-container class="home mt-3" fluid>
-      <h1 v-if="album">{{ album.name }}</h1>
       <div v-if="(albums && albums.length > 0) || (images && images.length > 0)">
         <div v-if="albums && albums.length > 0">
           <h2>Albums</h2>
@@ -13,11 +15,10 @@
         </div>
         <div v-if="tags && tags.length > 0" class="tags">
           <h2>Tags</h2>
-          <div>
-            <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
-              {{ tag.name }}
-            </b-badge>
-          </div>
+          <TagWidget :tags="tags"
+                     :id="album.id"
+                     :type="'album'"
+                     v-on:onTagDeleted="apiGetAlbumTags(parentAlbumId)" />
           <b-button variant="primary" size="sm" class="mt-3">Apply to all</b-button>
         </div>
         <div v-if="images && images.length > 0">
@@ -44,13 +45,15 @@ import L from 'leaflet'
 import AlbumGrid from '../components/AlbumGrid.vue'
 import ImageGrid from '../components/ImageGrid.vue'
 import AlbumLocationMap from '../components/AlbumLocationMap.vue'
+import TagWidget from '../components/TagWidget.vue'
 
 export default {
   props: [ 'baseUrl' ],
   components: {
     'album-grid': AlbumGrid,
     'image-grid': ImageGrid,
-    'album-location-map': AlbumLocationMap
+    'album-location-map': AlbumLocationMap,
+    TagWidget
   },
   data: function () {
     return {

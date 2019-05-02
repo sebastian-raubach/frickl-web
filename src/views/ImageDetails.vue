@@ -67,23 +67,14 @@
           </b-row>
           <div class="mt-3 tags">
             <h3>Tags</h3>
-            <div v-if="tags && tags.length > 0">
-              <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
-                <!-- TODO: Change tag redirect -->
-                {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)"/>
-              </b-badge>
-            </div>
-            <b-button variant="primary" size="sm" @click="onAddClicked()" class="mt-3">Add tag</b-button>
+            <TagWidget :tags="tags"
+                       :id="image.id"
+                       :type="'image'"
+                       v-on:onTagDeleted="updateTags" />
           </div>
         </b-col>
       </b-row>
     </b-container>
-    <AddTagModal :image="image"
-                 ref="tagAddModal" />
-    <DeleteTagModal :tag="tagToDelete"
-                    :image="image"
-                    ref="tagDeleteModal"
-                    v-on:onTagDeleted="updateTags" />
     <SelectAlbumModal :image="image"
                       ref="selectAlbumModal"
                       v-on:onAlbumClicked="album => onAlbumClicked(album)" />
@@ -94,20 +85,17 @@
 import baguetteBox from 'baguettebox.js'
 
 import SingleLocationMap from '../components/SingleLocationMap.vue'
-import AddTagModal from '../components/modals/AddTagModal.vue'
-import DeleteTagModal from '../components/modals/DeleteTagModal.vue'
 import SelectAlbumModal from '../components/modals/SelectAlbumModal.vue'
-import CloseCircleOutlineIcon from 'vue-material-design-icons/CloseCircleOutline.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
+import TagWidget from '../components/TagWidget.vue'
 // var Vibrant = require('node-vibrant')
 
 export default {
   data: function () {
     return {
       tags: [],
-      tagToDelete: null,
       image: null,
       album: null,
       backgroundColor: '#343a40',
@@ -116,19 +104,18 @@ export default {
   },
   components: {
     SingleLocationMap,
-    CloseCircleOutlineIcon,
-    AddTagModal,
-    DeleteTagModal,
     SelectAlbumModal,
     HeartIcon,
     HeartOutlineIcon,
-    FolderImageIcon
+    FolderImageIcon,
+    TagWidget
   },
   props: [ 'baseUrl' ],
   methods: {
     onAlbumClicked: function (album) {
       album.bannerImageId = this.image.id
 
+      this.$refs.selectAlbumModal.hide()
       this.apiPatchAlbum(album, function (result) {
       })
     },
@@ -150,15 +137,6 @@ export default {
       } else {
         return ''
       }
-    },
-    onDeleteClicked: function (tag, event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.tagToDelete = tag
-      this.$refs.tagDeleteModal.show()
-    },
-    onAddClicked: function () {
-      this.$refs.tagAddModal.show()
     },
     updateTags: function () {
       var vm = this

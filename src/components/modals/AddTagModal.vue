@@ -1,5 +1,9 @@
+<!--
+  Shows a modal dialog that can be used to add tags to images and albums.
+-->
+
 <template>
-  <b-modal v-if="image"
+  <b-modal v-if="id"
            title="Add tag"
            ref="addTagModal"
            ok-title="Add"
@@ -20,14 +24,23 @@ export default {
     }
   },
   props: {
-    image: {
-      type: Object,
+    id: {
+      type: Number,
+      default: null
+    },
+    type: {
+      type: String,
       default: null
     }
   },
   methods: {
     handleOk (event) {
       // TODO: create tag (if necessary), then add
+      if (this.type === 'image') {
+        console.log('add tag to image')
+      } else if (this.type === 'album') {
+        console.log('add tag to album')
+      }
     },
     show () {
       var vm = this

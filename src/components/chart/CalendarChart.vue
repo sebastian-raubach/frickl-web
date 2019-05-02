@@ -1,8 +1,16 @@
+<!--
+  Shows a dropdown for all the years there are images for. Depending on the selected year, a heatmap with number of images per day in that year will be shown.
+  Emits:
+   - onDateSelected: User selected a date in the heatmap.
+-->
+
 <template>
   <apexchart type=heatmap height=350 :options="chartOptions" :series="chartSeries" ref="heatmapChart"/>
 </template>
 
 <script>
+var moment = require('moment')
+
 export default {
   data: function () {
     return {
@@ -145,7 +153,7 @@ export default {
         series.data[day - 1] = r.count
         max = Math.max(max, r.count)
 
-        var momentDate = window.moment(date)
+        var momentDate = moment(date)
         r.date = momentDate.format('YYYY-MM-DD')
       })
 
