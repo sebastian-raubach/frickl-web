@@ -4,34 +4,35 @@
       <h1 class="mb-0 mt-0">{{ album.name }}</h1>
     </b-container>
     <b-container class="home mt-3" fluid>
-      <div v-if="(albums && albums.length > 0) || (images && images.length > 0)">
+      <div v-if="albums || images">
         <div v-if="albums && albums.length > 0">
           <h2>Albums</h2>
           <album-grid :baseUrl="baseUrl"
                       :albumCount="albumCount"
                       :albumsPerPage="albumsPerPage"
                       :albums="albums"
+                      ref="albumGrid"
                       v-on:onAlbumNavigation="page => onAlbumNavigation(page)"/>
         </div>
-        <div v-if="tags && tags.length > 0" class="tags">
+        <div class="tags" v-if="images && images.length > 0">
           <h2>Tags</h2>
           <TagWidget :tags="tags"
                      :id="album.id"
                      :type="'album'"
                      v-on:onTagDeleted="apiGetAlbumTags(parentAlbumId)" />
-          <b-button variant="primary" size="sm" class="mt-3">Apply to all</b-button>
+          <b-button variant="secondary" size="sm" class="mt-3">Apply to all</b-button>
         </div>
         <div v-if="images && images.length > 0">
           <h2>Images</h2>
           <image-grid :baseUrl="baseUrl"
                       :imageCount="imageCount"
-                      :imagesPerPage="imagesPerPage"
                       :images="images"
                       :albumId="parentAlbumId"
+                      ref="imageGrid"
                       v-on:onImageNavigation="page => onImageNavigation(page)"/>
         </div>
       </div>
-      <h3 v-else>No albums or images found.</h3>
+      <h3 v-else>Loading...</h3>
     </b-container>
     <div class="map" v-if="locations && locations.length > 0">
       <album-location-map :locations="locations" :currentlyVisibleIds="currentlyVisibleIds" />
@@ -46,6 +47,7 @@ import AlbumGrid from '../components/AlbumGrid.vue'
 import ImageGrid from '../components/ImageGrid.vue'
 import AlbumLocationMap from '../components/AlbumLocationMap.vue'
 import TagWidget from '../components/TagWidget.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   props: [ 'baseUrl' ],
@@ -58,16 +60,25 @@ export default {
   data: function () {
     return {
       album: null,
-      albums: [],
+      albums: null,
       albumCount: 0,
       albumsPerPage: 12,
-      images: [],
+      images: null,
       imageCount: 0,
-      imagesPerPage: 12,
       parentAlbumId: null,
       locations: [],
       currentlyVisibleIds: [],
       tags: []
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'imagesPerPage'
+    ])
+  },
+  watch: {
+    imagesPerPage: function (newValue, oldValue) {
+      this.onImageNavigation(1)
     }
   },
   methods: {
@@ -76,6 +87,25 @@ export default {
 
       this.apiGetAlbums(this.parentAlbumId, page - 1, this.albumsPerPage, function (result) {
         vm.albums = result
+
+        if (result && result.length > 0) {
+          var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
+
+          if (!query) {
+            query = {}
+          }
+
+          query.albumPage = page
+
+          vm.$router.replace({
+            path: vm.$router.currentRoute.path,
+            query: query
+          })
+
+          // vm.$nextTick(function () {
+          //   vm.$refs.albumGrid.onPageChanged(page)
+          // })
+        }
       })
     },
     onImageNavigation: function (page) {
@@ -84,9 +114,28 @@ export default {
       this.apiGetImages(this.parentAlbumId, page - 1, this.imagesPerPage, function (result) {
         vm.images = result
 
-        vm.currentlyVisibleIds = result.map(function (i) {
-          return i.id
-        })
+        if (result && result.length > 0) {
+          vm.currentlyVisibleIds = result.map(function (i) {
+            return i.id
+          })
+
+          var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
+
+          if (!query) {
+            query = {}
+          }
+
+          query.imagePage = page
+
+          vm.$router.replace({
+            path: vm.$router.currentRoute.path,
+            query: query
+          })
+
+          vm.$nextTick(function () {
+            vm.$refs.imageGrid.onPageChanged(page)
+          })
+        }
       })
     }
   },
@@ -94,19 +143,30 @@ export default {
     var vm = this
 
     this.parentAlbumId = this.$route.params.albumId
+    var imagePage = 1
+    var albumPage = 1
+    var query = this.$route.query
+
+    if (query && query.imagePage) {
+      imagePage = query.imagePage
+    }
+    if (query && query.albumPage) {
+      albumPage = query.albumPage
+    }
 
     this.apiGetAlbumCount(this.parentAlbumId, function (result) {
       vm.albumCount = result
-      vm.onAlbumNavigation(1)
+      vm.onAlbumNavigation(albumPage)
     })
 
     if (this.parentAlbumId) {
       this.apiGetAlbum(this.parentAlbumId, function (result) {
+        console.log('albums', result)
         vm.album = result[0]
       })
       this.apiGetImageCount(this.parentAlbumId, function (result) {
         vm.imageCount = result
-        vm.onImageNavigation(1)
+        vm.onImageNavigation(imagePage)
       })
       this.apiGetAlbumLocations(this.parentAlbumId, function (result) {
         result.forEach(function (l) {

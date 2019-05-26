@@ -13,6 +13,7 @@ import 'vue-material-design-icons/styles.css'
 import L from 'leaflet'
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
+import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import 'baguettebox.js/dist/baguetteBox.min.css'
 
@@ -40,6 +41,7 @@ Vue.use(Tooltip)
 Vue.component('l-map', LMap)
 Vue.component('l-tile-layer', LTileLayer)
 Vue.component('l-marker', LMarker)
+Vue.component('v-marker-cluster', Vue2LeafletMarkerCluster)
 
 delete L.Icon.Default.prototype._getIconUrl
 
@@ -72,7 +74,7 @@ Vue.filter('toDate', function (value) {
 Vue.prototype.$eventHub = new Vue()
 
 // Set base URL based on environment
-var baseUrl = 'http://localhost:8080/frickl-web/v1/'
+var baseUrl = 'http://localhost:8080/frickl/v1/'
 
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 

@@ -10,6 +10,7 @@
           <b-nav-item to="/albums">Albums</b-nav-item>
           <b-nav-item to="/favorites">Favorites</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
+          <b-nav-item to="/maps">Maps</b-nav-item>
           <b-nav-item to="/calendar">Calendar</b-nav-item>
           <b-nav-item to="/stats">Statistics</b-nav-item>
         </b-navbar-nav>
@@ -89,6 +90,8 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Roboto');
+@import "~leaflet.markercluster/dist/MarkerCluster.css";
+@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 #app {
   font-family: 'Roboto', Helvetica, Arial, sans-serif;

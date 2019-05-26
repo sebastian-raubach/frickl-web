@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- The background image -->
-    <div class="bg-img" :style="{'background-image': 'url(' + baseUrl + 'image/fav/random)'}">
+    <div class="bg-img" :style="{'background-image': 'url(' + getUrl + ')'}" v-if="backgroundImageId">
       <!-- The semi-transparent overlay -->
       <div class="overlay"></div>
       <!-- The scroll indicator -->
@@ -28,7 +28,26 @@
 <script>
 export default {
   name: 'home',
-  props: [ 'baseUrl' ]
+  data: function () {
+    return {
+      backgroundImageId: null
+    }
+  },
+  props: [ 'baseUrl' ],
+  computed: {
+    getUrl: function () {
+      return this.baseUrl + 'image/' + this.backgroundImageId + '/img'
+    }
+  },
+  mounted: function () {
+    var vm = this
+
+    this.apiGetRandomFavorite(function (result) {
+      if (result) {
+        vm.backgroundImageId = result.id
+      }
+    })
+  }
 }
 </script>
 

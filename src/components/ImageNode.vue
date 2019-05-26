@@ -2,13 +2,14 @@
   <router-link :to="'/images/' + image.id">
     <b-card no-body class="image-card">
       <div class="card-img-wrap">
-        <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img"/>
+        <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
       </div>
       <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
         <div class="image-actions">
           <HeartIcon :width="48" :height="48" v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
           <HeartOutlineIcon :width="48" :height="48" v-else  @click.native="onToggleFavorite($event)"/>
-          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+          <FolderImageIcon :width="48" :height="48" title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+          <OpenInNewIcon :width="48" :height="48" />
         </div>
         </div>
     </b-card>
@@ -19,17 +20,36 @@
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
+import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 
 export default {
   data: function () {
     return {
     }
   },
-  props: [ 'baseUrl', 'image', 'albumId' ],
+  props: {
+    baseUrl: {
+      type: String,
+      default: null
+    },
+    image: {
+      type: Object,
+      default: null
+    },
+    albumId: {
+      type: String,
+      default: null
+    },
+    imageHeight: {
+      type: Number,
+      default: 300
+    }
+  },
   components: {
     HeartIcon,
     HeartOutlineIcon,
-    FolderImageIcon
+    FolderImageIcon,
+    OpenInNewIcon
   },
   methods: {
     onSetImageAsAlbumCover: function (event) {
@@ -60,7 +80,6 @@ export default {
     width: 100%;
     object-fit: cover;
     transition: transform .2s ease-in-out;
-    height: 300px;
   }
   .image-card .image-actions .material-design-icon {
     margin: 0 5px;

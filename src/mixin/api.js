@@ -14,6 +14,9 @@ export default {
     apiGetAlbumLocations: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/location', success: onSuccess })
     },
+    apiGetLocations: function (onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'location', success: onSuccess })
+    },
     apiGetAlbumTags: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/tag', success: onSuccess })
     },

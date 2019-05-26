@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-row>
-      <b-col cols=12 sm=4 md=3 lg=3 v-for="album in albums" :key="album.id" class="mb-3">
+      <b-col cols=12 sm=12 md=6 lg=4 xl=3 v-for="album in albums" :key="album.id" class="mb-3">
         <album-node :album="album" :baseUrl="baseUrl" v-on:click.native="onAlbumClicked(album)"/>
       </b-col>
     </b-row>
@@ -53,6 +53,9 @@ export default {
   methods: {
     onAlbumClicked: function (album) {
       this.$store.dispatch('ON_ALBUM_CHANGED', album)
+    },
+    onPageChanged: function (page) {
+      this.currentPage = page
     }
   }
 }

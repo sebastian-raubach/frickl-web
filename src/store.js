@@ -8,12 +8,16 @@ export default new Vuex.Store({
   state: {
     baseUrl: null,
     album: null,
-    image: null
+    image: null,
+    imageWidth: 'large',
+    imagesPerPage: '12'
   },
   getters: {
     baseUrl: state => state.baseUrl,
     album: state => state.album,
-    image: state => state.image
+    image: state => state.image,
+    imageWidth: state => state.imageWidth,
+    imagesPerPage: state => state.imagesPerPage
   },
   mutations: {
     ON_BASE_URL_CHANGED_MUTATION: function (state, newBaseUrl) {
@@ -24,6 +28,12 @@ export default new Vuex.Store({
     },
     ON_IMAGE_CHANGED_MUTATION: function (state, newImage) {
       state.image = newImage
+    },
+    ON_IMAGE_WIDTH_CHANGED_MUTATION: function (state, newImageWidth) {
+      state.imageWidth = newImageWidth
+    },
+    ON_IMAGES_PER_PAGE_CHANGED_MUTATION: function (state, newImagesPerPage) {
+      state.imagesPerPage = newImagesPerPage
     }
   },
   actions: {
@@ -35,6 +45,12 @@ export default new Vuex.Store({
     },
     ON_IMAGE_CHANGED: function ({ commit }, image) {
       commit('ON_IMAGE_CHANGED_MUTATION', image)
+    },
+    ON_IMAGE_WIDTH_CHANGED: function ({ commit }, imageWidth) {
+      commit('ON_IMAGE_WIDTH_CHANGED_MUTATION', imageWidth)
+    },
+    ON_IMAGES_PER_PAGE_CHANGED: function ({ commit }, imagesPerPage) {
+      commit('ON_IMAGES_PER_PAGE_CHANGED_MUTATION', imagesPerPage)
     }
   },
   plugins: [

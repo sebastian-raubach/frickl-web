@@ -1,28 +1,82 @@
 <template>
   <div>
     <b-row>
-      <b-col cols=12 sm=4 md=3 lg=3 v-for="image in images" :key="image.id" class="mb-3">
-        <image-node :image="image" :baseUrl="baseUrl" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
+      <b-col cols=12>
+        <b-button-group class="pb-3 float-right">
+          <b-button :pressed="imageWidth === 'large'" @click="setColWidth('large')" class="grid-icon" style="background-image: url(/img/grid-large.svg)"></b-button>
+          <b-button :pressed="imageWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon" style="background-image: url(/img/grid-medium.svg)"></b-button>
+          <b-button :pressed="imageWidth === 'small'" @click="setColWidth('small')" class="grid-icon" style="background-image: url(/img/grid-small.svg)"></b-button>
+          <b-dropdown right :text="imagesPerPage" title="Images per page">
+            <b-dropdown-item v-for="option in imagesPerPageOptions"
+                            :key="option"
+                            @click="setImagesPerPage(option)"
+                            :active="option === imagesPerPage">
+              {{ option }}
+            </b-dropdown-item>
+          </b-dropdown>
+        </b-button-group>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" class="mb-3">
+        <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :baseUrl="baseUrl" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
       </b-col>
     </b-row>
 
     <b-pagination v-if="imageCount > imagesPerPage"
       v-model="currentPage"
+      limit=10
       :total-rows="imageCount"
       :per-page="imagesPerPage"
-      @change="page => $emit('onImageNavigation', page)"
-    ></b-pagination>
+      @change="page => $emit('onImageNavigation', page)">
+    </b-pagination>
   </div>
 </template>
 
 <script>
 import ImageNode from '../components/ImageNode.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   data: function () {
     return {
-      currentPage: 1
+      imagesPerPageOptions: ['12', '24', '48', '96'],
+      currentPage: 1,
+      imageHeights: {
+        large: 300,
+        medium: 200,
+        small: 100
+      },
+      widths: {
+        large: {
+          xl: 3,
+          lg: 4,
+          md: 6,
+          sm: 12,
+          cols: 12
+        },
+        medium: {
+          xl: 2,
+          lg: 3,
+          md: 4,
+          sm: 6,
+          cols: 12
+        },
+        small: {
+          xl: 1,
+          lg: 2,
+          md: 3,
+          sm: 4,
+          cols: 6
+        }
+      }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'imageWidth',
+      'imagesPerPage'
+    ])
   },
   props: {
     baseUrl: {
@@ -32,10 +86,6 @@ export default {
     imageCount: {
       type: Number,
       default: 0
-    },
-    imagesPerPage: {
-      type: Number,
-      default: 12
     },
     images: {
       type: Array,
@@ -55,13 +105,30 @@ export default {
     'image-node': ImageNode
   },
   methods: {
+    setColWidth: function (size) {
+      this.$store.dispatch('ON_IMAGE_WIDTH_CHANGED', size)
+    },
+    setImagesPerPage: function (option) {
+      this.$store.dispatch('ON_IMAGES_PER_PAGE_CHANGED', option)
+    },
+    getColumns: function (size) {
+      return this.widths[this.imageWidth][size]
+    },
     onImageClicked: function (image) {
       this.$store.dispatch('ON_IMAGE_CHANGED', image)
+    },
+    onPageChanged: function (page) {
+      this.currentPage = page
     }
   }
 }
 </script>
 
 <style>
-
+  .grid-icon {
+    background-position: 6px 6px;
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
+    padding-left: 24px;
+  }
 </style>

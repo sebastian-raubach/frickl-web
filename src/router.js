@@ -8,55 +8,61 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/albums',
       name: 'albums',
-      component: () => import(/* webpackChunkName: "about" */ './views/Albums.vue'),
+      component: () => import(/* webpackChunkName: "albums" */ './views/Albums.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/calendar',
       name: 'calendar',
-      component: () => import(/* webpackChunkName: "about" */ './views/Calendar.vue'),
+      component: () => import(/* webpackChunkName: "calendar" */ './views/Calendar.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/albums/:albumId',
       name: 'sub-album',
-      component: () => import(/* webpackChunkName: "about" */ './views/Albums.vue'),
+      component: () => import(/* webpackChunkName: "albums" */ './views/Albums.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/images/:imageId',
       name: 'images',
-      component: () => import(/* webpackChunkName: "about" */ './views/ImageDetails.vue'),
+      component: () => import(/* webpackChunkName: "imageDetails" */ './views/ImageDetails.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/favorites',
       name: 'favorites',
-      component: () => import(/* webpackChunkName: "about" */ './views/Favorites.vue'),
+      component: () => import(/* webpackChunkName: "favorite" */ './views/Favorites.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/stats',
       name: 'stats',
-      component: () => import(/* webpackChunkName: "about" */ './views/Stats.vue'),
+      component: () => import(/* webpackChunkName: "stats" */ './views/Stats.vue'),
+      props: { baseUrl: null }
+    },
+    {
+      path: '/maps',
+      name: 'maps',
+      component: () => import(/* webpackChunkName: "maps" */ './views/Maps.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/tags',
       name: 'tags',
-      component: () => import(/* webpackChunkName: "about" */ './views/Tags.vue'),
+      component: () => import(/* webpackChunkName: "tags" */ './views/Tags.vue'),
       props: { baseUrl: null }
     },
     {
       path: '/tags/:tagId',
-      name: 'tags',
-      component: () => import(/* webpackChunkName: "about" */ './views/Tags.vue'),
+      name: 'tag-details',
+      component: () => import(/* webpackChunkName: "tagDetails" */ './views/Tags.vue'),
       props: { baseUrl: null }
     },
     {
