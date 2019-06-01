@@ -18,7 +18,7 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" class="mb-3">
+      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" :class="'mb-3 ' + getColumns('xxl')">
         <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :baseUrl="baseUrl" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
       </b-col>
     </b-row>
@@ -49,6 +49,7 @@ export default {
       },
       widths: {
         large: {
+          xxl: 3,
           xl: 3,
           lg: 4,
           md: 6,
@@ -56,6 +57,7 @@ export default {
           cols: 12
         },
         medium: {
+          xxl: 2,
           xl: 2,
           lg: 3,
           md: 4,
@@ -63,7 +65,8 @@ export default {
           cols: 12
         },
         small: {
-          xl: 1,
+          xxl: 1,
+          xl: 2,
           lg: 2,
           md: 3,
           sm: 4,
@@ -112,7 +115,11 @@ export default {
       this.$store.dispatch('ON_IMAGES_PER_PAGE_CHANGED', option)
     },
     getColumns: function (size) {
-      return this.widths[this.imageWidth][size]
+      if (size === 'xxl') {
+        return 'col-xxl-' + this.widths[this.imageWidth][size]
+      } else {
+        return this.widths[this.imageWidth][size]
+      }
     },
     onImageClicked: function (image) {
       this.$store.dispatch('ON_IMAGE_CHANGED', image)

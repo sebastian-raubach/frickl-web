@@ -10,6 +10,7 @@
         <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
           <div>
             <h5>{{ album.name }}</h5>
+            <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
           </div>
         </div>
       </b-card>
@@ -18,10 +19,15 @@
 </template>
 
 <script>
+import ImageMultipleIcon from 'vue-material-design-icons/ImageMultiple.vue'
+
 export default {
   data: function () {
     return {
     }
+  },
+  components: {
+    ImageMultipleIcon
   },
   props: [ 'baseUrl', 'album' ]
 }

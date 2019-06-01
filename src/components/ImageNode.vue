@@ -6,12 +6,13 @@
       </div>
       <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
         <div class="image-actions">
-          <HeartIcon :width="48" :height="48" v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-          <HeartOutlineIcon :width="48" :height="48" v-else  @click.native="onToggleFavorite($event)"/>
-          <FolderImageIcon :width="48" :height="48" title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          <OpenInNewIcon :width="48" :height="48" />
+          <div class="mb-2">{{ image.name }}</div>
+          <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+          <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
+          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+          <OpenInNewIcon @click.native="onImagePreview($event)"/>
         </div>
-        </div>
+      </div>
     </b-card>
   </router-link>
 </template>
@@ -52,6 +53,11 @@ export default {
     OpenInNewIcon
   },
   methods: {
+    onImagePreview: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      // TODO: open lightbox
+    },
     onSetImageAsAlbumCover: function (event) {
       event.stopPropagation()
       event.preventDefault()
@@ -82,13 +88,36 @@ export default {
     transition: transform .2s ease-in-out;
   }
   .image-card .image-actions .material-design-icon {
-    margin: 0 5px;
+    margin-right: 10px;
+  }
+  .image-card .card-img-overlay {
+    padding: 0;
   }
   .image-card .card-img-overlay .material-design-icon {
-    height: 2em;
-    width: 2em;
+    height: 1.25rem;
+    width: 1.25rem;
     opacity: 0;
     transition: opacity .2s ease-in-out;
+  }
+  .image-card .card-img-overlay > .image-actions {
+    opacity: 0;
+    padding: 1rem;
+    background-color: rgba(1,1,1,.5);
+    margin:0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+    transition: opacity .2s ease-in-out;
+  }
+  .image-card .card-img-overlay > .image-actions > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11pt;
+  }
+  .image-card:hover .card-img-overlay > .image-actions {
+    opacity: 1;
   }
   .image-card .card-img-overlay .material-design-icon.heart-icon {
     opacity: 1;
@@ -97,15 +126,18 @@ export default {
     opacity: 1;
   }
   .image-card .card-img-overlay .material-design-icon > .material-design-icon__svg {
-      height: 2em;
-      width: 2em;
+      height: 1.25rem;
+      width: 1.25rem;
       fill: white;
   }
   .image-card .card-img-overlay .material-design-icon.heart-icon > .material-design-icon__svg,
   .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
       fill: #EA2027;
   }
-  .image-card z.image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
+  .image-card .image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
       fill: #FFC312;
+  }
+  .image-card .image-actions .material-design-icon.open-in-new-icon:hover > .material-design-icon__svg {
+      fill: #A3CB38;
   }
 </style>

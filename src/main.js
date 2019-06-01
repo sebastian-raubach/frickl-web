@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 
 import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-xxl/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Tooltip from 'bootstrap-vue/es/directives/tooltip'
 

@@ -1,18 +1,15 @@
 <template>
-  <b-container class="pt-3" fluid>
-    <h1>Maps</h1>
-    <l-map
-      :zoom="zoom"
-      class="location-map"
-      ref="map">
-      <l-tile-layer
-        :url="url"
-        :attribution="attribution"/>
-      <v-marker-cluster>
-        <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location" />
-      </v-marker-cluster>
-    </l-map>
-  </b-container>
+  <l-map
+    :zoom="zoom"
+    class="location-map"
+    ref="map">
+    <l-tile-layer
+      :url="url"
+      :attribution="attribution"/>
+    <v-marker-cluster>
+      <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location" />
+    </v-marker-cluster>
+  </l-map>
 </template>
 
 <script>
@@ -31,11 +28,20 @@ export default {
     var vm = this
 
     this.apiGetLocations(function (result) {
+      var latLngBounds = L.latLngBounds()
       result.forEach(function (l) {
         l.location = L.latLng(l.latitude, l.longitude)
+        latLngBounds.extend(l.location)
       })
 
       vm.locations = result
+
+      if (result.length === 1) {
+        vm.$refs.map.setCenter(vm.locations[0].latLng)
+        vm.zoom = 10
+      } else {
+        vm.$refs.map.fitBounds(latLngBounds.pad(0.1))
+      }
     })
   }
 }
@@ -43,6 +49,6 @@ export default {
 
 <style>
   .location-map {
-    height: 100vh !important;
+    height: calc(100vh - 60px) !important;
   }
 </style>
