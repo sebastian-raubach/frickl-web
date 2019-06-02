@@ -1,20 +1,29 @@
 <template>
-  <router-link :to="'/images/' + image.id">
-    <b-card no-body class="image-card">
+  <b-card no-body class="image-card">
+    <router-link :to="'/images/' + image.id">
       <div class="card-img-wrap">
         <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
       </div>
-      <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
-        <div class="image-actions">
-          <div class="mb-2">{{ image.name }}</div>
-          <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-          <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
-          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          <OpenInNewIcon @click.native="onImagePreview($event)"/>
-        </div>
+    </router-link>
+    <div class="card-img-overlay h-100 d-flex flex-column justify-content-end" v-if="imageDetailsMode === 'hover'">
+      <div class="image-actions">
+        <div class="mb-2">{{ image.name }}</div>
+        <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+        <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
+        <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+        <OpenInNewIcon @click.native="onImagePreview($event)"/>
       </div>
-    </b-card>
-  </router-link>
+    </div>
+    <b-card-body v-else class="card-image-details">
+      <div class="image-actions">
+        <div class="mb-2">{{ image.name }}</div>
+        <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+        <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
+        <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+        <OpenInNewIcon @click.native="onImagePreview($event)"/>
+      </div>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
@@ -23,9 +32,21 @@ import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   data: function () {
     return {
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'imageDetailsMode'
+    ])
+  },
+  watch: {
+    imageDetailsMode: function (newValue, oldValue) {
+      this.currentPage = 1
     }
   },
   props: {
@@ -88,16 +109,23 @@ export default {
     transition: transform .2s ease-in-out;
   }
   .image-card .image-actions .material-design-icon {
-    margin-right: 10px;
+    margin-right: 0.5rem;
   }
   .image-card .card-img-overlay {
     padding: 0;
   }
   .image-card .card-img-overlay .material-design-icon {
-    height: 1.25rem;
-    width: 1.25rem;
+    height: 1.5rem;
+    width: 1.5rem;
     opacity: 0;
     transition: opacity .2s ease-in-out;
+  }
+  .image-card .card-image-details .material-design-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+  .image-actions svg:hover {
+    cursor: pointer;
   }
   .image-card .card-img-overlay > .image-actions {
     opacity: 0;
@@ -109,6 +137,11 @@ export default {
     text-overflow: ellipsis;
     color: white;
     transition: opacity .2s ease-in-out;
+  }
+  .image-card .card-image-details > .image-actions {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .image-card .card-img-overlay > .image-actions > div {
     white-space: nowrap;
@@ -126,18 +159,31 @@ export default {
     opacity: 1;
   }
   .image-card .card-img-overlay .material-design-icon > .material-design-icon__svg {
-      height: 1.25rem;
-      width: 1.25rem;
-      fill: white;
+    height: 1.5rem;
+    width: 1.5rem;
+    fill: white;
+  }
+  .image-card .card-image-details .material-design-icon > .material-design-icon__svg {
+    height: 1.5rem;
+    width: 1.5rem;
+    fill: #636e72;
   }
   .image-card .card-img-overlay .material-design-icon.heart-icon > .material-design-icon__svg,
-  .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
+  .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.heart-icon > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
       fill: #EA2027;
   }
-  .image-card .image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
+  .image-card .image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
       fill: #FFC312;
   }
-  .image-card .image-actions .material-design-icon.open-in-new-icon:hover > .material-design-icon__svg {
+  .image-card .image-actions .material-design-icon.open-in-new-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.open-in-new-icon:hover > .material-design-icon__svg {
       fill: #A3CB38;
+  }
+
+  .col-xxl-1 .card-body {
+    padding: 1rem;
   }
 </style>

@@ -15,6 +15,10 @@
             </b-dropdown-item>
           </b-dropdown>
         </b-button-group>
+        <b-button-group class="pb-3 pr-2 float-right">
+          <b-button :pressed="imageDetailsMode === 'hover'" @click="setImageDetailsMode('hover')" ><CardTextOutlineIcon /></b-button>
+          <b-button :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
+        </b-button-group>
       </b-col>
     </b-row>
     <b-row>
@@ -35,6 +39,8 @@
 
 <script>
 import ImageNode from '../components/ImageNode.vue'
+import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
+import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -78,7 +84,8 @@ export default {
   computed: {
     ...mapGetters([
       'imageWidth',
-      'imagesPerPage'
+      'imagesPerPage',
+      'imageDetailsMode'
     ])
   },
   props: {
@@ -105,11 +112,16 @@ export default {
     }
   },
   components: {
-    'image-node': ImageNode
+    'image-node': ImageNode,
+    CardsVariantIcon,
+    CardTextOutlineIcon
   },
   methods: {
     setColWidth: function (size) {
       this.$store.dispatch('ON_IMAGE_WIDTH_CHANGED', size)
+    },
+    setImageDetailsMode: function (mode) {
+      this.$store.dispatch('ON_IMAGE_DETAILS_MODE_CHANGED', mode)
     },
     setImagesPerPage: function (option) {
       this.$store.dispatch('ON_IMAGES_PER_PAGE_CHANGED', option)
