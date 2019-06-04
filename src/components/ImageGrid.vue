@@ -16,7 +16,7 @@
           </b-dropdown>
         </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
-          <b-button :pressed="imageDetailsMode === 'hover'" @click="setImageDetailsMode('hover')" ><CardTextOutlineIcon /></b-button>
+          <b-button :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
           <b-button :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
         </b-button-group>
       </b-col>

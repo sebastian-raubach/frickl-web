@@ -11,7 +11,7 @@ export default new Vuex.Store({
     image: null,
     imageWidth: 'large',
     imagesPerPage: '12',
-    imageDetailsMode: 'hover'
+    imageDetailsMode: 'overlay'
   },
   getters: {
     baseUrl: state => state.baseUrl,

@@ -1,7 +1,12 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="dark" variant="dark">
-      <b-navbar-brand to="/">Frickl</b-navbar-brand>
+      <b-navbar-brand>
+        <router-link to="/">
+          <img src="./assets/frickl.svg" height="40px" alt="Frickl">
+        </router-link>
+      </b-navbar-brand>
+      <!-- <b-navbar-brand to="/">Frickl</b-navbar-brand> -->
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
