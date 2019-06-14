@@ -21,7 +21,7 @@
         </b-button-group>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="image-grid">
       <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" :class="'mb-3 ' + getColumns('xxl')">
         <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :baseUrl="baseUrl" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
       </b-col>
@@ -42,6 +42,8 @@ import ImageNode from '../components/ImageNode.vue'
 import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
 import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
 import { mapGetters } from 'vuex'
+
+import baguetteBox from 'baguettebox.js'
 
 export default {
   data: function () {
@@ -139,6 +141,15 @@ export default {
     onPageChanged: function (page) {
       this.currentPage = page
     }
+  },
+  mounted: function () {
+    this.$nextTick(function () {
+      baguetteBox.run('.image-grid', {
+        captions: 'true',
+        filter: /.*image\/[0-9]+\/img.*/i,
+        fullscreen: true
+      })
+    })
   }
 }
 </script>

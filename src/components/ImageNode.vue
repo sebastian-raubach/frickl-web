@@ -20,7 +20,7 @@
         <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
         <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
         <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-        <OpenInNewIcon @click.native="onImagePreview($event)"/>
+        <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=true'" :title="image.name"><OpenInNewIcon /></a>
       </div>
     </b-card-body>
   </b-card>
@@ -74,11 +74,6 @@ export default {
     OpenInNewIcon
   },
   methods: {
-    onImagePreview: function (event) {
-      event.stopPropagation()
-      event.preventDefault()
-      // TODO: open lightbox
-    },
     onSetImageAsAlbumCover: function (event) {
       event.stopPropagation()
       event.preventDefault()
@@ -87,7 +82,14 @@ export default {
         id: this.albumId,
         bannerImageId: this.image.id
       }
+
+      var vm = this
       this.apiPatchAlbum(album, function (result) {
+        vm.$bvToast.toast('Image set as album cover.', {
+          title: 'Success',
+          autoHideDelay: 5000,
+          appendToast: true
+        })
       })
     },
     onToggleFavorite: function (event) {
