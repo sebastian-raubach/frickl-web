@@ -23,9 +23,13 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-item to="/about">About</b-nav-item>
-          <b-nav-form>
-            <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-            <b-button size="sm" class="my-2 my-sm-0" type="submit"><MagnifyIcon /></b-button>
+          <b-nav-form @submit.prevent="onSearch()">
+            <b-input-group>
+              <b-form-input size="sm" placeholder="Search" v-model="searchTerm"></b-form-input>
+              <b-input-group-append>
+                <b-button size="sm" type="submit"><MagnifyIcon /></b-button>
+              </b-input-group-append>
+            </b-input-group>
           </b-nav-form>
         </b-navbar-nav>
       </b-collapse>
@@ -44,6 +48,7 @@ export default {
   data: function () {
     return {
       timer: null,
+      searchTerm: '',
       showAlert: false,
       variant: 'warning',
       message: ''
@@ -53,6 +58,10 @@ export default {
     MagnifyIcon
   },
   methods: {
+    onSearch: function () {
+      this.$router.push('/search/' + this.searchTerm)
+      this.searchTerm = ''
+    },
     checkImportStatus: function () {
       var vm = this
       this.apiGetImportStatus(function (result) {

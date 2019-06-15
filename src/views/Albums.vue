@@ -161,7 +161,6 @@ export default {
 
     if (this.parentAlbumId) {
       this.apiGetAlbum(this.parentAlbumId, function (result) {
-        console.log('albums', result)
         vm.album = result[0]
       })
       this.apiGetImageCount(this.parentAlbumId, function (result) {

@@ -81,8 +81,8 @@ export default {
       var vm = this
       this.$bvModal.msgBoxConfirm('Set image as album cover?', {
         title: 'Album cover',
-        okVariant: 'success',
         okTitle: 'Yes',
+        okVariant: 'success',
         cancelTitle: 'No',
         cancelVariant: 'secondary'
       })

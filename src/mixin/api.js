@@ -59,6 +59,12 @@ export default {
     apiGetImagesForTag: function (tagId, page, imagesPerPage, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'tag/' + tagId + '/image?page=' + page + '&limit=' + imagesPerPage, success: onSuccess })
     },
+    apiGetImageCountForSearch: function (searchTerm, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'search/' + searchTerm + '/image/count', success: onSuccess })
+    },
+    apiGetImagesForSearch: function (searchTerm, page, imagesPerPage, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'search/' + searchTerm + '/image?page=' + page + '&limit=' + imagesPerPage, success: onSuccess })
+    },
     apiGetStatsCamera: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'stats/camera', success: onSuccess })
     },
