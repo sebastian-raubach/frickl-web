@@ -78,19 +78,33 @@ export default {
       event.stopPropagation()
       event.preventDefault()
 
-      const album = {
-        id: this.albumId,
-        bannerImageId: this.image.id
-      }
-
       var vm = this
-      this.apiPatchAlbum(album, function (result) {
-        vm.$bvToast.toast('Image set as album cover.', {
-          title: 'Success',
-          autoHideDelay: 5000,
-          appendToast: true
-        })
+      this.$bvModal.msgBoxConfirm('Set image as album cover?', {
+        title: 'Album cover',
+        okVariant: 'success',
+        okTitle: 'Yes',
+        cancelTitle: 'No',
+        cancelVariant: 'secondary'
       })
+        .then(value => {
+          if (value) {
+            const album = {
+              id: vm.albumId,
+              bannerImageId: vm.image.id
+            }
+
+            vm.apiPatchAlbum(album, function (result) {
+              vm.$bvToast.toast('Image set as album cover.', {
+                title: 'Success',
+                autoHideDelay: 5000,
+                appendToast: true
+              })
+            })
+          }
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     onToggleFavorite: function (event) {
       event.stopPropagation()
