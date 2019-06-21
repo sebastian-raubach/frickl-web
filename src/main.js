@@ -77,6 +77,12 @@ Vue.prototype.$eventHub = new Vue()
 // Set base URL based on environment
 var baseUrl = 'http://localhost:8080/frickl/v1/'
 
+if (process.env.VUE_APP_BASE_URL) {
+  baseUrl = process.env.VUE_APP_BASE_URL
+}
+
+console.log(baseUrl)
+
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 
 router.options.routes.forEach(function (r) {

@@ -21,6 +21,7 @@
     "bootstrap-vue": "^2.0.0-rc.23",
     "bootstrap-xxl": "^4.1.0",
     "core-js": "^2.6.5",
+    "dotenv": "^8.0.0",
     "jquery": "^3.4.0",
     "leaflet": "^1.4.0",
     "moment": "^2.24.0",
