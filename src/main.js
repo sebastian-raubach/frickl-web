@@ -12,7 +12,7 @@ import Tooltip from 'bootstrap-vue/es/directives/tooltip'
 import 'vue-material-design-icons/styles.css'
 
 import L from 'leaflet'
-import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
@@ -40,6 +40,7 @@ Vue.use(BootstrapVue)
 Vue.use(Tooltip)
 
 Vue.component('l-map', LMap)
+Vue.component('l-popup', LPopup)
 Vue.component('l-tile-layer', LTileLayer)
 Vue.component('l-marker', LMarker)
 Vue.component('v-marker-cluster', Vue2LeafletMarkerCluster)

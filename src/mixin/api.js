@@ -74,6 +74,9 @@ export default {
     apiGetStatsCamera: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'stats/camera', success: onSuccess })
     },
+    apiGetStatsTimeline: function (onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'stats/timeline', success: onSuccess })
+    },
     apiGetImportStatus: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'status', success: onSuccess })
     },
