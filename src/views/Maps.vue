@@ -1,20 +1,11 @@
 <template>
-  <l-map
-    :zoom="zoom"
-    class="location-map"
-    ref="map">
-    <l-tile-layer
-      :url="url"
-      :attribution="attribution"/>
-    <v-marker-cluster>
-      <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location">
-        <l-popup>
-          <img :src="baseUrl + 'image/' + location.id + '/img?small=true'" width=300/>
-          <b-button variant="primary" class="btn-block marker-button" @click="onMarkerClicked(location)">Select</b-button>
-        </l-popup>
-      </l-marker>
-    </v-marker-cluster>
-  </l-map>
+  <div>
+    <div class="map-spinner d-flex justify-content-center h-100 align-items-center" v-if="!locations">
+      <b-spinner label="Loading..." type="grow" variant="primary"></b-spinner>
+    </div>
+    <div class="location-map" id="location-map">
+    </div>
+  </div>
 </template>
 
 <script>
@@ -23,7 +14,7 @@ import L from 'leaflet'
 export default {
   data: function () {
     return {
-      locations: [],
+      locations: null,
       zoom: 3,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -38,27 +29,50 @@ export default {
   mounted: function () {
     var vm = this
 
+    // Note: We create the map and markers and popups manually, because using the Vue way of doing things, it would
+    // create reactive vue elements for each marker which is a big overhead (sloooow). Popups are dynamically
+    // populated on demand as well, to further reduce the load.
+    var map = L.map('location-map').setView([22.5937, 2.1094], 3)
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map)
+
+    var markers = L.markerClusterGroup()
+
     this.apiGetLocations(function (result) {
       var latLngBounds = L.latLngBounds()
       result.forEach(function (l) {
+        var marker = L.marker([l.latitude, l.longitude]).bindPopup('')
+        marker.on('click', function (e) {
+          var outer = vm.$jQuery('<div></div>')
+          outer.append(vm.$jQuery('<img src="' + vm.baseUrl + 'image/' + l.id + '/img?small=true" width="300"/>'))
+          outer.append(vm.$jQuery('<button class="btn btn-primary btn-block marker-button">Select</button>')).on('click', function () {
+            vm.onMarkerClicked(l)
+          })
+          var popup = e.target.getPopup()
+          popup.setContent(outer[0])
+        })
+        markers.addLayer(marker)
         l.location = L.latLng(l.latitude, l.longitude)
         latLngBounds.extend(l.location)
       })
 
+      map.addLayer(markers)
+
       vm.locations = result
 
       if (result.length === 1) {
-        vm.$refs.map.setCenter(vm.locations[0].latLng)
+        map.setCenter(vm.locations[0].latLng)
         vm.zoom = 10
       } else {
-        vm.$refs.map.fitBounds(latLngBounds.pad(0.1))
+        map.fitBounds(latLngBounds.pad(0.1))
       }
 
-      var mapObject = vm.$refs.map.mapObject
-      mapObject.on('popupopen', function (e) {
-        var px = mapObject.project(e.popup._latlng)
+      map.on('popupopen', function (e) {
+        var px = map.project(e.popup._latlng)
         px.y -= e.popup._container.clientHeight / 2
-        mapObject.panTo(mapObject.unproject(px), { animate: true })
+        map.panTo(map.unproject(px), { animate: true })
       })
     })
   }
@@ -82,5 +96,14 @@ export default {
   .leaflet-popup-content {
     margin: 0;
     width: 300px !important;
+  }
+  .map-spinner {
+    position: absolute;
+    z-index: 9999;
+    width: 100%;
+  }
+  .map-spinner > span {
+    width: 6rem;
+    height: 6rem;
   }
 </style>
