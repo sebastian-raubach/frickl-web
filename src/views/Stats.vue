@@ -70,13 +70,6 @@ export default {
         vm.$refs.cameraChart.chart.updateOptions(vm.stats.cameraOptions, true, true)
       }
     })
-    this.apiGetStatsTimeline(function (result) {
-      result.forEach(function (t) {
-        t.ids = JSON.parse(t.ids)
-      })
-
-      console.log(result)
-    })
   }
 }
 </script>

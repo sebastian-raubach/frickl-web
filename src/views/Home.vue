@@ -3,12 +3,13 @@
     <!-- The background image -->
     <div class="bg-img" :style="{'background-image': 'url(' + getUrl + ')'}" v-if="backgroundImageId">
       <!-- The semi-transparent overlay -->
-      <div class="overlay"></div>
+      <div class="overlay bg-secondary"></div>
       <!-- The scroll indicator -->
       <div class="mouse-icon">
         <div class="wheel"></div>
       </div>
     </div>
+    <div v-else class="bg-img bg-secondary"></div>
     <!-- The text -->
     <div class="home-wrapper">
       <div class="container">
@@ -71,7 +72,6 @@ export default {
     right: 0;
     bottom: 0;
     opacity: .6;
-    background: #1C1D21;
   }
 
   .home-wrapper {
