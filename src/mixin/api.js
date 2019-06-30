@@ -20,6 +20,12 @@ export default {
     apiGetAlbumTags: function (albumId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/tag', success: onSuccess })
     },
+    apiDeleteTagFromAlbum: function (albumId, tag, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/tag', method: 'DELETE', data: tag, success: onSuccess })
+    },
+    apiPostAlbumTags: function (albumId, tags, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'album/' + albumId + '/tag', method: 'POST', data: tags, success: onSuccess })
+    },
     apiGetCalendarYears: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'calendar/year', success: onSuccess })
     },
@@ -44,8 +50,11 @@ export default {
     apiGetTagsForImage: function (imageId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageId + '/tag', success: onSuccess })
     },
-    apiDeleteTagFromImage: function (imageTag, onSuccess) {
-      this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageTag.imageId + '/tag', method: 'DELETE', data: imageTag, success: onSuccess })
+    apiDeleteTagFromImage: function (imageId, tag, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageId + '/tag', method: 'DELETE', data: tag, success: onSuccess })
+    },
+    apiAddTagToImage: function (imageId, tag, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'image/' + imageId + '/tag', method: 'POST', data: tag, success: onSuccess })
     },
     apiGetTag: function (tagId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'tag/' + tagId, success: onSuccess })

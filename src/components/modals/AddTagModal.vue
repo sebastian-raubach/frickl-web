@@ -34,12 +34,17 @@ export default {
     }
   },
   methods: {
-    handleOk (event) {
-      // TODO: create tag (if necessary), then add
+    handleOk: function (event) {
+      var vm = this
+      event.preventDefault()
       if (this.type === 'image') {
-        console.log('add tag to image')
+        this.apiAddTagToImage(this.id, { id: null, name: this.tagName }, function (result) {
+          vm.$refs.addTagModal.hide()
+        })
       } else if (this.type === 'album') {
-        console.log('add tag to album')
+        this.apiPostAlbumTags(this.id, [{ id: null, name: this.tagName }], function (result) {
+          vm.$refs.addTagModal.hide()
+        })
       }
     },
     show () {

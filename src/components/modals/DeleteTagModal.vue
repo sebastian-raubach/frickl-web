@@ -36,15 +36,13 @@ export default {
       var vm = this
 
       if (this.type === 'image') {
-        this.apiDeleteTagFromImage({
-          imageId: this.id,
-          tagId: this.tag.id
-        }, function () {
+        this.apiDeleteTagFromImage(this.id, { id: this.tag.id }, function () {
           vm.$emit('onTagDeleted')
         })
       } else if (this.type === 'album') {
-        // TODO: implement
-        console.log('delete tag from album')
+        this.apiDeleteTagFromAlbum(this.id, [{ id: this.tag.id }], function () {
+          vm.$emit('onTagDeleted')
+        })
       }
     },
     show () {
