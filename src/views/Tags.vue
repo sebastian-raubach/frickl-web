@@ -19,7 +19,6 @@
 
       <image-grid :baseUrl="baseUrl"
                   :imageCount="imageCount"
-                  :imagesPerPage="imagesPerPage"
                   :images="images"
                   ref="imageGrid"
                   v-on:onImageNavigation="page => onImageNavigation(page)"/>
@@ -29,12 +28,11 @@
 
 <script>
 import ImageGrid from '../components/ImageGrid.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   data: function () {
     return {
-      imagesPerPage: 12,
-      imagesCurPage: 1,
       imageCount: 0,
       searchTerm: null,
       tag: null,
@@ -45,6 +43,16 @@ export default {
   },
   components: {
     'image-grid': ImageGrid
+  },
+  computed: {
+    ...mapGetters([
+      'imagesPerPage'
+    ])
+  },
+  watch: {
+    imagesPerPage: function (newValue, oldValue) {
+      this.onImageNavigation(1)
+    }
   },
   props: [ 'baseUrl' ],
   methods: {
@@ -64,7 +72,6 @@ export default {
 
       this.apiGetImageCountForTag(this.tag.id, function (result) {
         vm.imageCount = result
-        vm.imagesCurPage = 1
         vm.onImageNavigation(1)
       })
     },

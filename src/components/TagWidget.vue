@@ -2,7 +2,7 @@
   The tag widget shows all tags available for either the image or all images within an album, depending on the type.
   Tags can be removed from the individual image or all images in the album. New tags can be added similarly.
   Emits:
-   - onTagDeleted: User decides to delete a tag.
+   - on-tag-deleted: User decides to delete a tag.
 -->
 
 <template>
@@ -18,12 +18,13 @@
     <div class="bg-white text-body">
       <AddTagModal :id="id"
                    :type="type"
-                   ref="tagAddModal" />
+                   ref="tagAddModal"
+                   v-on:on-tag-added="$emit('on-tag-added')" />
       <DeleteTagModal :tag="tagToDelete"
                       :id="id"
                       :type="type"
                       ref="tagDeleteModal"
-                      v-on:onTagDeleted="$emit('onTagDeleted')" />
+                      v-on:on-tag-deleted="$emit('on-tag-deleted')" />
     </div>
   </div>
 </template>

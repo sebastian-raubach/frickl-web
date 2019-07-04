@@ -19,8 +19,9 @@
           <TagWidget :tags="tags"
                      :id="album.id"
                      :type="'album'"
-                     v-on:onTagDeleted="apiGetAlbumTags(parentAlbumId)" />
-          <b-button variant="secondary" size="sm" class="mt-3">Apply to all</b-button>
+                     v-on:on-tag-deleted="updateTags"
+                     v-on:on-tag-added="updateTags" />
+          <b-button variant="secondary" size="sm" class="mt-3" @click="onApplyTagsToAlbum">Apply to all</b-button>
         </div>
         <div v-if="images && images.length > 0">
           <h2>Images</h2>
@@ -82,6 +83,32 @@ export default {
     }
   },
   methods: {
+    onApplyTagsToAlbum: function () {
+      var vm = this
+      this.$bvModal.msgBoxConfirm('Do you want to apply these tags to all images in this album?', {
+        title: 'Confirm',
+        okTitle: 'Yes',
+        okVariant: 'success',
+        cancelTitle: 'No'
+      })
+        .then(value => {
+          if (value) {
+            vm.apiPostAlbumTags(vm.album.id, vm.tags, function (result) {
+              vm.$bvToast.toast('Tags applied to all images in album.', {
+                title: 'Success',
+                autoHideDelay: 5000,
+                appendToast: true
+              })
+            })
+          }
+        })
+    },
+    updateTags: function () {
+      var vm = this
+      this.apiGetAlbumTags(this.parentAlbumId, function (result) {
+        vm.tags = result
+      })
+    },
     onAlbumNavigation: function (page) {
       var vm = this
 
@@ -173,9 +200,7 @@ export default {
         })
         vm.locations = result
       })
-      this.apiGetAlbumTags(this.parentAlbumId, function (result) {
-        vm.tags = result
-      })
+      this.updateTags()
     }
   }
 }

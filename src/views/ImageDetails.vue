@@ -70,7 +70,8 @@
             <TagWidget :tags="tags"
                        :id="image.id"
                        :type="'image'"
-                       v-on:onTagDeleted="updateTags" />
+                       v-on:on-tag-deleted="updateTags"
+                       v-on:on-tag-added="updateTags" />
           </div>
         </b-col>
       </b-row>

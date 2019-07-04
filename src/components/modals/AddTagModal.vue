@@ -40,10 +40,12 @@ export default {
       if (this.type === 'image') {
         this.apiAddTagToImage(this.id, { id: null, name: this.tagName }, function (result) {
           vm.$refs.addTagModal.hide()
+          vm.$emit('on-tag-added')
         })
       } else if (this.type === 'album') {
         this.apiPostAlbumTags(this.id, [{ id: null, name: this.tagName }], function (result) {
           vm.$refs.addTagModal.hide()
+          vm.$emit('on-tag-added')
         })
       }
     },

@@ -1,7 +1,7 @@
 <!--
   Shows a modal dialog that asks the user for confirmation of their decision to remove the tag from an image or an album.
   Emits:
-   - onTagDeleted: The user decided to delete the tag and it has been removed from the image or album.
+   - on-tag-deleted: The user decided to delete the tag and it has been removed from the image or album.
 -->
 
 <template>
@@ -11,7 +11,7 @@
            ok-title="Yes"
            cancel-title="No"
            @ok="handleOk">
-    <p class="my-4">Are you sure you want to remove the tag '{{ tag.name }}' from this image?</p>
+    <p class="my-4">Are you sure you want to remove the tag '{{ tag.name }}' from this {{ type }}?</p>
   </b-modal>
 </template>
 
@@ -37,11 +37,11 @@ export default {
 
       if (this.type === 'image') {
         this.apiDeleteTagFromImage(this.id, { id: this.tag.id }, function () {
-          vm.$emit('onTagDeleted')
+          vm.$emit('on-tag-deleted')
         })
       } else if (this.type === 'album') {
         this.apiDeleteTagFromAlbum(this.id, [{ id: this.tag.id }], function () {
-          vm.$emit('onTagDeleted')
+          vm.$emit('on-tag-deleted')
         })
       }
     },
