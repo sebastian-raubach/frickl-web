@@ -129,5 +129,6 @@ export default {
 
 #app .global-alert {
   border-radius: 0;
+  margin-bottom: 0;
 }
 </style>

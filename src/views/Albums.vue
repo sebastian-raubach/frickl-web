@@ -102,9 +102,9 @@ export default {
             query: query
           })
 
-          // vm.$nextTick(function () {
-          //   vm.$refs.albumGrid.onPageChanged(page)
-          // })
+          vm.$nextTick(function () {
+            vm.$refs.albumGrid.onPageChanged(page)
+          })
         }
       })
     },
