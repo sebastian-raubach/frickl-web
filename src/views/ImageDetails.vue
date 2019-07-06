@@ -20,38 +20,53 @@
             <h3 v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)">Taken on: {{ getTime() | toDate }}</h3>
             <b-row>
               <b-col cols=6>
-                <img src="/img/icon-camera.svg" fluid>
+                <img src="../assets/icon-camera.svg" fluid>
                 <div>{{ image.exif.cameraMake }}</div><div>{{ image.exif.cameraModel }}</div>
               </b-col>
               <b-col cols=6>
-                <div title="Aperture"><img src="/img/icon-aperture.svg"> <span>{{ image.exif.fNumber ? image.exif.fNumber : '' }}</span></div>
-                <div title="Exposure time"><img src="/img/icon-exposure.svg"> <span>{{ image.exif.exposureTime ? image.exif.exposureTime : '' }}</span></div>
-                <div title="Focal length"><img src="/img/icon-focal-length.svg"> <span>{{ image.exif.focalLength ? image.exif.focalLength : '' }}</span></div>
-                <div title="ISO"><img src="/img/icon-iso.svg"> <span>{{ image.exif.isoSpeedRatings ? image.exif.isoSpeedRatings : '' }}</span></div>
-                <div title="Flash"><img :src="getFlashIcon()"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
+                <div title="Aperture"><img src="../assets/icon-aperture.svg"> <span>{{ image.exif.fNumber ? image.exif.fNumber : '' }}</span></div>
+                <div title="Exposure time"><img src="../assets/icon-exposure.svg"> <span>{{ image.exif.exposureTime ? image.exif.exposureTime : '' }}</span></div>
+                <div title="Focal length"><img src="../assets/icon-focal-length.svg"> <span>{{ image.exif.focalLength ? image.exif.focalLength : '' }}</span></div>
+                <div title="ISO"><img src="../assets/icon-iso.svg"> <span>{{ image.exif.isoSpeedRatings ? image.exif.isoSpeedRatings : '' }}</span></div>
+                <div title="Flash" v-if="hasFlash()"><img src="../assets/icon-flash.svg"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
+                <div title="Flash" v-else><img src="../assets/icon-flash-no.svg"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
               </b-col>
               <b-col cols=6 v-if="image.exif.lensMake || image.exif.lensModel">
-                <img src="/img/icon-lens.svg" fluid>
+                <img src="../assets/icon-lens.svg" fluid>
                 <div>{{ image.exif.lensMake }}</div><div>{{ image.exif.lensModel }}</div>
               </b-col>
               <b-col cols=12>
                 <hr class="white"/>
               </b-col>
-              <b-col cols=12>
-                <b-button v-b-toggle.collapse-exif variant="link">Show full EXIF</b-button>
-                <b-collapse id="collapse-exif" class="mt-2">
-                  {{ image.exif }}
-                </b-collapse>
-              </b-col>
-              <b-col cols=12>
-                <hr class="white"/>
-              </b-col>
+              <template v-if="image.exif">
+                <b-col cols=12>
+                  <a v-b-toggle.collapse-exif href="#" @click="$event.preventDefault()">Show full EXIF</a>
+                  <b-collapse id="collapse-exif" class="mt-2">
+                    <dl>
+                      <template v-for="(value, name) in image.exif">
+                        <dt :key="'dt-' + name">{{ name }}</dt>
+                        <dd :key="'dd-' + name">{{ value }}</dd>
+                      </template>
+                    </dl>
+                  </b-collapse>
+                </b-col>
+                <b-col cols=12>
+                  <hr class="white"/>
+                </b-col>
+              </template>
             </b-row>
-            <b-row>
-              <b-col cols=12 v-if="image.exif && image.exif.gpsLatitude && image.exif.gpsLongitude">
-                <SingleLocationMap :latitude="image.exif.gpsLatitude" :longitude="image.exif.gpsLongitude" :zoom=5 />
-              </b-col>
-            </b-row>
+            <template v-if="image.exif && image.exif.gpsLatitude && image.exif.gpsLongitude">
+              <b-row>
+                <b-col cols=12>
+                  <SingleLocationMap :latitude="image.exif.gpsLatitude" :longitude="image.exif.gpsLongitude" :zoom=5 />
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col cols=12>
+                  <hr class="white"/>
+                </b-col>
+              </b-row>
+            </template>
           </div>
           <b-row>
             <b-col cols=12>
@@ -91,7 +106,7 @@ import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
 import TagWidget from '../components/TagWidget.vue'
-// var Vibrant = require('node-vibrant')
+var Vibrant = require('node-vibrant')
 
 export default {
   data: function () {
@@ -120,14 +135,12 @@ export default {
       this.apiPatchAlbum(album, function (result) {
       })
     },
-    getFlashIcon: function () {
+    hasFlash: function () {
       if (this.image.exif.flash) {
         const flashValue = this.image.exif.flash.toLowerCase()
-        if (flashValue.startsWith('Flash fired')) {
-          return '/img/icon-flash.svg'
-        } else {
-          return '/img/icon-flash-no.svg'
-        }
+        return flashValue.startsWith('Flash fired')
+      } else {
+        return false
       }
     },
     getTime: function () {
@@ -176,14 +189,14 @@ export default {
           vm.image = result[0]
           vm.updateTags()
           vm.updateAlbum()
-          // Vibrant.from(vm.baseUrl + 'image/' + vm.image.id + '/img?small=true')
-          //   .getPalette(function (err, palette) {
-          //     if (!err && palette && palette.Vibrant) {
-          //       vm.backgroundColor = palette.Vibrant.getHex()
-          //       var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
-          //       vm.foregroundColor = avg < 128 ? 'white' : 'black'
-          //     }
-          //   })
+          Vibrant.from(vm.baseUrl + 'image/' + vm.image.id + '/img?small=true')
+            .getPalette(function (err, palette) {
+              if (!err && palette && palette.Vibrant) {
+                vm.backgroundColor = palette.Vibrant.getHex()
+                var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
+                vm.foregroundColor = avg < 128 ? 'white' : 'black'
+              }
+            })
 
           vm.$nextTick(function () {
             baguetteBox.run('.img-col', {
@@ -218,6 +231,11 @@ export default {
   }
   .exif img + span {
     line-height: 24px;
+  }
+
+  #collapse-exif dl {
+    max-height: 300px;
+    overflow-y: auto;
   }
 
   hr.white {
