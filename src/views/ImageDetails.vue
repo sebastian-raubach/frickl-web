@@ -1,6 +1,6 @@
 <template>
   <div>
-    <transition>
+    <transition name="fade" mode="out-in">
       <b-container fluid v-bind:style="{ 'background-color': backgroundColor, 'color': foregroundColor}" id="image-details">
         <b-row v-if="image && album" class="pt-3">
           <b-col cols=12>
@@ -263,7 +263,7 @@ export default {
       fill: #FFC312;
   }
 
-  transition #image-details {
+  transition > #image-details {
     transition: background-color 4s;
   }
 </style>

@@ -11,7 +11,7 @@
         <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
         <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
         <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-        <OpenInNewIcon @click.native="onImagePreview($event)"/>
+        <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name"><OpenInNewIcon /></a>
       </div>
     </div>
     <b-card-body v-else class="card-image-details">
@@ -20,7 +20,7 @@
         <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
         <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
         <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-        <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=true'" :title="image.name"><OpenInNewIcon /></a>
+        <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name"><OpenInNewIcon /></a>
       </div>
     </b-card-body>
   </b-card>
