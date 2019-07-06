@@ -5,7 +5,7 @@
         <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
       </div>
     </router-link>
-    <div class="card-img-overlay h-100 d-flex flex-column justify-content-end" v-if="imageDetailsMode === 'overlay'">
+    <div class="card-img-overlay flex-column justify-content-end" v-if="imageDetailsMode === 'overlay'">
       <div class="image-actions">
         <div class="mb-2">{{ image.name }}</div>
         <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
@@ -129,6 +129,7 @@ export default {
   }
   .image-card .card-img-overlay {
     padding: 0;
+    top: inherit;
   }
   .image-card .card-img-overlay .material-design-icon {
     height: 1.5rem;
