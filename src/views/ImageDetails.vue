@@ -17,7 +17,7 @@
             </a>
           </b-col>
           <b-col cols=12 sm=12 md=12 lg=4 xl=3 class="exif">
-            <div v-if="image.exif" class="mt-3">
+            <div v-if="image.exif && !$jQuery.isEmptyObject(image.exif)" class="mt-3">
               <h3 v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)">Taken on: {{ getTime() | toDate }}</h3>
               <b-row>
                 <b-col cols=6>
@@ -41,7 +41,7 @@
                 </b-col>
                 <template v-if="image.exif">
                   <b-col cols=12>
-                    <a v-b-toggle.collapse-exif href="#" @click="$event.preventDefault()">Show full EXIF</a>
+                    <a v-b-toggle.collapse-exif href="#" @click="$event.preventDefault()" class="exif-anchor">Show full EXIF</a>
                     <b-collapse id="collapse-exif" class="mt-2">
                       <dl>
                         <template v-for="(value, name) in image.exif">
@@ -215,6 +215,9 @@ export default {
 </script>
 
 <style>
+  .exif-anchor {
+    color: inherit;
+  }
   #image-details {
     min-height: calc(100vh - 56px);
   }
