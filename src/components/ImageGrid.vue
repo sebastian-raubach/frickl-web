@@ -3,9 +3,9 @@
     <b-row>
       <b-col cols=12>
         <b-button-group class="pb-3 float-right">
-          <b-button :pressed="imageWidth === 'large'" @click="setColWidth('large')" class="grid-icon" style="background-image: url(img/grid-large.svg)"></b-button>
-          <b-button :pressed="imageWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon" style="background-image: url(img/grid-medium.svg)"></b-button>
-          <b-button :pressed="imageWidth === 'small'" @click="setColWidth('small')" class="grid-icon" style="background-image: url(img/grid-small.svg)"></b-button>
+          <b-button :pressed="imageWidth === 'large'" @click="setColWidth('large')" class="grid-icon grid-large"></b-button>
+          <b-button :pressed="imageWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon grid-medium"></b-button>
+          <b-button :pressed="imageWidth === 'small'" @click="setColWidth('small')" class="grid-icon grid-small"></b-button>
           <b-dropdown right :text="imagesPerPage" title="Images per page">
             <b-dropdown-item v-for="option in imagesPerPageOptions"
                             :key="option"
@@ -160,5 +160,14 @@ export default {
     background-repeat: no-repeat;
     background-size: 24px 24px;
     padding-left: 24px;
+  }
+  .grid-icon.grid-large {
+    background-image: url('../assets/grid-large.svg') !important;
+  }
+  .grid-icon.grid-medium {
+    background-image: url('../assets/grid-medium.svg') !important;
+  }
+  .grid-icon.grid-small {
+    background-image: url('../assets/grid-small.svg') !important;
   }
 </style>

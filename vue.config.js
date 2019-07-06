@@ -7,5 +7,15 @@ module.exports = {
 		watchOptions: {
 			poll: true
 	  	}
+	},
+	configureWebpack: {
+		module: {
+		  rules: [
+			{
+				test: /\.worker\.js$/,
+				use: { loader: "worker-loader" }
+			}
+		  ]
+		}
 	}
 };
