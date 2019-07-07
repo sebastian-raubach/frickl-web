@@ -23,7 +23,7 @@
     </b-row>
     <b-row class="image-grid">
       <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" :class="'mb-3 ' + getColumns('xxl')">
-        <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :baseUrl="baseUrl" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
+        <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
       </b-col>
     </b-row>
 
@@ -91,10 +91,6 @@ export default {
     ])
   },
   props: {
-    baseUrl: {
-      type: String,
-      default: null
-    },
     imageCount: {
       type: Number,
       default: 0

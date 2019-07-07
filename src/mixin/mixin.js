@@ -1,29 +1,40 @@
+import axios from 'axios'
+
 export default {
   methods: {
-    unauthAjax ({ url = null, method = 'GET', data = null, dataType = 'json', success = null, error = null }) {
+    unauthAjax ({ url = null, method = 'GET', data = null, params = null, dataType = 'json', success = null, error = null }) {
       var requestData = null
+      var requestParams = null
 
       // Stringify the data object for non-GET requests
       if (data !== null || data !== undefined) {
-        requestData = method === 'GET' ? data : JSON.stringify(data)
+        if (method === 'GET') {
+          requestData = data
+          requestParams = data
+        } else {
+          requestData = JSON.stringify(data)
+          requestParams = data
+        }
       }
 
-      return this.$jQuery.ajax({
+      return axios({
         url: url,
         method: method,
-        dataType: dataType,
-        contentType: 'application/json; charset=utf-8',
-        crossDomain: true,
-        data: requestData
+        data: requestData,
+        params: requestParams,
+        responseType: dataType,
+        headers: {
+          'content-type': 'application/json; charset=utf-8'
+        }
       })
-        .fail(function (jqXHR, textStatus) {
-          if (error) {
-            error(jqXHR)
+        .then(function (data) {
+          if (success) {
+            success(data.data)
           }
         })
-        .done(function (data) {
-          if (success) {
-            success(data)
+        .catch(function (err) {
+          if (error) {
+            error(err)
           }
         })
     }

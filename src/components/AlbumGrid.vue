@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-col cols=12 sm=12 md=6 lg=4 xl=3 v-for="album in albums" :key="album.id" class="mb-3">
-        <album-node :album="album" :baseUrl="baseUrl" v-on:click.native="onAlbumClicked(album)"/>
+        <album-node :album="album" v-on:click.native="onAlbumClicked(album)"/>
       </b-col>
     </b-row>
 
@@ -25,10 +25,6 @@ export default {
     }
   },
   props: {
-    baseUrl: {
-      type: String,
-      default: null
-    },
     albumCount: {
       type: Number,
       default: 0

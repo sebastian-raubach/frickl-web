@@ -17,8 +17,7 @@
     <b-container fluid v-if="imageCount > 0" class="pt-3">
       <h1>Images tagged '{{ tag.name }}' <b-badge>{{ imageCount }}</b-badge></h1>
 
-      <image-grid :baseUrl="baseUrl"
-                  :imageCount="imageCount"
+      <image-grid :imageCount="imageCount"
                   :images="images"
                   ref="imageGrid"
                   v-on:onImageNavigation="page => onImageNavigation(page)"/>
@@ -54,7 +53,6 @@ export default {
       this.onImageNavigation(1)
     }
   },
-  props: [ 'baseUrl' ],
   methods: {
     onTagsFiltered: function () {
       var vm = this

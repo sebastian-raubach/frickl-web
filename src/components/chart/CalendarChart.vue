@@ -108,12 +108,6 @@ export default {
       }]
     }
   },
-  props: {
-    baseUrl: {
-      type: String,
-      default: null
-    }
-  },
   methods: {
     handleClick: function (config) {
       const year = this.selectedYear

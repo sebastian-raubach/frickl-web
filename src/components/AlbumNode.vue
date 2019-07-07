@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import ImageMultipleIcon from 'vue-material-design-icons/ImageMultiple.vue'
 
 export default {
@@ -29,7 +30,12 @@ export default {
   components: {
     ImageMultipleIcon
   },
-  props: [ 'baseUrl', 'album' ]
+  props: [ 'album' ],
+  computed: {
+    ...mapGetters([
+      'baseUrl'
+    ])
+  }
 }
 </script>
 

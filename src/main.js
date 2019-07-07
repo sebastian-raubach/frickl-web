@@ -82,25 +82,10 @@ if (process.env.VUE_APP_BASE_URL) {
   baseUrl = process.env.VUE_APP_BASE_URL
 }
 
-console.log(baseUrl)
-
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 
-router.options.routes.forEach(function (r) {
-  if (!r.props) {
-    r.props = {}
-  }
-  r.props.baseUrl = baseUrl
-
-  if (r.children) {
-    r.children.forEach(function (c) {
-      if (!c.props) {
-        c.props = {}
-      }
-      c.props.baseUrl = baseUrl
-    })
-  }
-})
+let axiosDefaults = require('axios/lib/defaults')
+axiosDefaults.baseURL = baseUrl
 
 // Make sure jQuery is available
 Vue.use({

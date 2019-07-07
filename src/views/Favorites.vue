@@ -1,8 +1,7 @@
 <template>
   <b-container fluid v-if="images && images.length > 0" class="pt-3">
     <h1>Favorites</h1>
-    <image-grid :baseUrl="baseUrl"
-                :imageCount="imageCount"
+    <image-grid :imageCount="imageCount"
                 :imagesPerPage="imagesPerPage"
                 :images="images"
                 v-on:onImageNavigation="page => onImageNavigation(page)"/>
@@ -20,7 +19,6 @@ export default {
       imagesPerPage: 12
     }
   },
-  props: [ 'baseUrl' ],
   components: {
     'image-grid': ImageGrid
   },

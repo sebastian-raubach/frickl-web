@@ -41,7 +41,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'imageDetailsMode'
+      'imageDetailsMode',
+      'baseUrl'
     ])
   },
   watch: {
@@ -50,10 +51,6 @@ export default {
     }
   },
   props: {
-    baseUrl: {
-      type: String,
-      default: null
-    },
     image: {
       type: Object,
       default: null

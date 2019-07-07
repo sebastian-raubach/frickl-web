@@ -8,14 +8,13 @@
         <b-form-group label="Select year:" label-for="selectYear">
           <b-form-select id="selectYear" v-model="selectedYear" :options="years" @change="getForYear()"></b-form-select>
         </b-form-group>
-        <calendar-chart :baseUrl="baseUrl" ref="calendarChart" v-on:onDateSelected="date => onDateSelected(date)"/>
+        <calendar-chart ref="calendarChart" v-on:onDateSelected="date => onDateSelected(date)"/>
       </div>
     </b-container>
     <b-container fluid v-if="dateSelection.date">
       <template v-if="dateSelection.images && dateSelection.images.length > 0">
         <h3>Images taken on: {{ dateSelection.date | toDate }}</h3>
-        <image-grid :baseUrl="baseUrl"
-                    :imageCount="dateSelection.imageCount"
+        <image-grid :imageCount="dateSelection.imageCount"
                     :imagesPerPage="dateSelection.imagesPerPage"
                     :images="dateSelection.images"
                     v-on:onImageNavigation="page => onImageNavigation(page)" />
@@ -45,7 +44,6 @@ export default {
       error: null
     }
   },
-  props: [ 'baseUrl' ],
   components: {
     'image-grid': ImageGrid,
     'calendar-chart': CalendarChart

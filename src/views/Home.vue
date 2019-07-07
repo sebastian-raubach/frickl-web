@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'home',
   data: function () {
@@ -34,8 +36,10 @@ export default {
       backgroundImageId: null
     }
   },
-  props: [ 'baseUrl' ],
   computed: {
+    ...mapGetters([
+      'baseUrl'
+    ]),
     getUrl: function () {
       return this.baseUrl + 'image/' + this.backgroundImageId + '/img'
     }

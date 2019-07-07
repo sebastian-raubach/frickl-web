@@ -7,8 +7,7 @@
       <div v-if="albums || images">
         <div v-if="albums && albums.length > 0">
           <h2>Albums</h2>
-          <album-grid :baseUrl="baseUrl"
-                      :albumCount="albumCount"
+          <album-grid :albumCount="albumCount"
                       :albumsPerPage="albumsPerPage"
                       :albums="albums"
                       ref="albumGrid"
@@ -25,8 +24,7 @@
         </div>
         <div v-if="images && images.length > 0">
           <h2>Images</h2>
-          <image-grid :baseUrl="baseUrl"
-                      :imageCount="imageCount"
+          <image-grid :imageCount="imageCount"
                       :images="images"
                       :albumId="parentAlbumId"
                       ref="imageGrid"
@@ -51,7 +49,6 @@ import TagWidget from '../components/TagWidget.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: [ 'baseUrl' ],
   components: {
     'album-grid': AlbumGrid,
     'image-grid': ImageGrid,

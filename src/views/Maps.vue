@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import L from 'leaflet'
 
 export default {
@@ -20,7 +21,11 @@ export default {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }
   },
-  props: [ 'baseUrl' ],
+  computed: {
+    ...mapGetters([
+      'baseUrl'
+    ])
+  },
   methods: {
     onMarkerClicked: function (location) {
       this.$router.push('images/' + location.id)

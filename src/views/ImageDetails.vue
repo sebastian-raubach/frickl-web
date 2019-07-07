@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import baguetteBox from 'baguettebox.js'
 
 import SingleLocationMap from '../components/SingleLocationMap.vue'
@@ -126,7 +127,11 @@ export default {
     FolderImageIcon,
     TagWidget
   },
-  props: [ 'baseUrl' ],
+  computed: {
+    ...mapGetters([
+      'baseUrl'
+    ])
+  },
   methods: {
     onAlbumClicked: function (album) {
       album.bannerImageId = this.image.id
