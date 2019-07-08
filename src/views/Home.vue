@@ -17,7 +17,7 @@
           <div class="col-md-10 offset-md-1">
             <div class="home-content">
               <h1 class="white-text">Welcome to Frickl</h1>
-              <p class="white-text">Something totally important goes here...</p>
+              <p class="white-text">The new home for all your photos.</p>
             </div>
           </div>
         </div>
@@ -88,6 +88,7 @@ export default {
     transform: translateY(-50%);
     text-align: center;
     color: white;
+    z-index: -1;
   }
 
   .mouse-icon {

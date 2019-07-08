@@ -35,7 +35,7 @@
       </b-collapse>
     </b-navbar>
     <vue-ins-progress-bar id="importStatus" />
-    <b-tooltip placement="bottom" target="importStatus" title="Images are importing..." />
+    <b-tooltip placement="bottom" target="importStatus" title="Checking photos for updates..." />
     <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
     <router-view :key="$route.path" id="content"/>
   </div>
@@ -72,7 +72,7 @@ export default {
           vm.$insProgress.finish()
 
           if (vm.timer) {
-            vm.$eventHub.$emit('alert', 'success', 'Image import successfully completed.')
+            vm.$eventHub.$emit('alert', 'success', 'Photo update successfully completed.')
           }
 
           clearInterval(vm.timer)

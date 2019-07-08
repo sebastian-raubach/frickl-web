@@ -2,19 +2,25 @@
   <div class="album">
     <hr/>
     <hr/>
-    <router-link :to="'/albums/' + album.id" :title="album.name">
-      <b-card class="album-card" no-body>
+    <b-card class="album-card" no-body>
+      <router-link :to="'/albums/' + album.id" :title="album.name">
         <div class="card-img-wrap">
-          <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?small=true'" class="card-img"/>
+          <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?small=true'" class="card-img" :style="'height:' + albumHeight + 'px'"/>
         </div>
-        <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
-          <div>
-            <h5>{{ album.name }}</h5>
-            <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
-          </div>
+      </router-link>
+      <div class="card-img-overlay h-100 d-flex flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
+        <div>
+          <h5>{{ album.name }}</h5>
+          <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
         </div>
-      </b-card>
-    </router-link>
+      </div>
+      <b-card-body v-else>
+        <div>
+          <h5>{{ album.name }}</h5>
+          <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
+        </div>
+      </b-card-body>
+    </b-card>
   </div>
 </template>
 
@@ -30,10 +36,20 @@ export default {
   components: {
     ImageMultipleIcon
   },
-  props: [ 'album' ],
+  props: {
+    album: {
+      type: Object,
+      default: null
+    },
+    albumHeight: {
+      type: Number,
+      default: 300
+    }
+  },
   computed: {
     ...mapGetters([
-      'baseUrl'
+      'baseUrl',
+      'albumDetailsMode'
     ])
   }
 }
@@ -47,7 +63,10 @@ export default {
     transition: transform .2s ease-in-out;
   }
   .album-card h5 {
-    margin: 0
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .album-card .card-img-overlay {
     padding: 0!important;

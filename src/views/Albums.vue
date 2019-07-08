@@ -60,7 +60,6 @@ export default {
       album: null,
       albums: null,
       albumCount: 0,
-      albumsPerPage: 12,
       images: null,
       imageCount: 0,
       parentAlbumId: null,
@@ -71,10 +70,14 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'albumsPerPage',
       'imagesPerPage'
     ])
   },
   watch: {
+    albumsPerPage: function (newValue, oldValue) {
+      this.onAlbumNavigation(1)
+    },
     imagesPerPage: function (newValue, oldValue) {
       this.onImageNavigation(1)
     }

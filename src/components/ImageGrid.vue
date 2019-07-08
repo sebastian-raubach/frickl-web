@@ -48,12 +48,12 @@ import baguetteBox from 'baguettebox.js'
 export default {
   data: function () {
     return {
-      imagesPerPageOptions: ['12', '24', '48', '96'],
       currentPage: 1,
+      imagesPerPageOptions: ['12', '24', '48', '96'],
       imageHeights: {
         large: 300,
         medium: 200,
-        small: 100
+        small: 150
       },
       widths: {
         large: {
