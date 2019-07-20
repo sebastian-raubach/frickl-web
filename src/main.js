@@ -76,7 +76,7 @@ Vue.filter('toDate', function (value) {
 Vue.prototype.$eventHub = new Vue()
 
 // Set base URL based on environment
-var baseUrl = 'http://localhost:8080/frickl/v1/'
+var baseUrl = 'http://localhost:8080/frickl/v1/api/'
 
 if (process.env.VUE_APP_BASE_URL) {
   baseUrl = process.env.VUE_APP_BASE_URL

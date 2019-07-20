@@ -9,7 +9,7 @@
         <div class="wheel"></div>
       </div>
     </div>
-    <div v-else class="bg-img bg-secondary"></div>
+    <div v-else class="bg-img bg-dark"></div>
     <!-- The text -->
     <div class="home-wrapper">
       <div class="container">

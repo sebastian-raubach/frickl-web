@@ -23,6 +23,7 @@ export default {
         data: requestData,
         params: requestParams,
         responseType: dataType,
+        crossDomain: true,
         headers: {
           'content-type': 'application/json; charset=utf-8'
         }
