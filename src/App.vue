@@ -68,16 +68,16 @@ export default {
       this.apiGetImportStatus(function (result) {
         if (result === 'IMPORTING') {
           vm.importing = true
-          vm.timer = setInterval(vm.checkImportStatus, 10000)
+          vm.timer = setTimeout(vm.checkImportStatus, 10000)
         } else {
           vm.importing = false
 
           if (vm.timer) {
+            clearInterval(vm.timer)
             vm.$eventHub.$emit('alert', 'success', 'Photo update successfully completed.')
+            clearInterval(vm.timer)
+            vm.timer = null
           }
-
-          clearInterval(vm.timer)
-          vm.timer = null
         }
       })
     },
