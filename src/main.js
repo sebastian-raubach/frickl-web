@@ -23,6 +23,14 @@ import api from './mixin/api.js'
 
 import VueApexCharts from 'vue-apexcharts'
 
+import VueInsProgressBar from 'vue-ins-progress-bar'
+
+Vue.use(VueInsProgressBar, {
+  show: true,
+  position: 'initial',
+  height: '5px'
+})
+
 Vue.component('apexchart', VueApexCharts)
 
 Vue.mixin(mixin)

@@ -5,9 +5,9 @@
       <!-- The semi-transparent overlay -->
       <div class="overlay bg-secondary"></div>
       <!-- The scroll indicator -->
-      <div class="mouse-icon">
+      <!-- <div class="mouse-icon">
         <div class="wheel"></div>
-      </div>
+      </div> -->
     </div>
     <div v-else class="bg-img bg-dark"></div>
     <!-- The text -->
