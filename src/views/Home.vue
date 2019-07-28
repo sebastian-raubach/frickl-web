@@ -3,7 +3,7 @@
     <!-- The background image -->
     <div class="bg-img" :style="{'background-image': 'url(' + getUrl + ')'}" v-if="backgroundImageId">
       <!-- The semi-transparent overlay -->
-      <div class="overlay bg-secondary"></div>
+      <div class="overlay bg-dark"></div>
       <!-- The scroll indicator -->
       <!-- <div class="mouse-icon">
         <div class="wheel"></div>
