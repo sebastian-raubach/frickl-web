@@ -40,7 +40,7 @@
               </b-col>
               <template v-if="image.exif">
                 <b-col cols=12>
-                  <a v-b-toggle.collapse-exif href="#" @click="$event.preventDefault()" class="exif-anchor">Show full EXIF</a>
+                  <a v-b-toggle.collapse-exif href="#" @click="$event.preventDefault()" class="exif-anchor">Toggle full EXIF</a>
                   <b-collapse id="collapse-exif" class="mt-2">
                     <dl>
                       <template v-for="(value, name) in image.exif">

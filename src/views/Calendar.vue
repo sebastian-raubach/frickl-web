@@ -15,7 +15,6 @@
       <template v-if="dateSelection.images && dateSelection.images.length > 0">
         <h3>Images taken on: {{ dateSelection.date | toDate }}</h3>
         <image-grid :imageCount="dateSelection.imageCount"
-                    :imagesPerPage="dateSelection.imagesPerPage"
                     :images="dateSelection.images"
                     v-on:onImageNavigation="page => onImageNavigation(page)" />
       </template>
@@ -27,6 +26,7 @@
 <script>
 import ImageGrid from '../components/ImageGrid.vue'
 import CalendarChart from '../components/chart/CalendarChart.vue'
+import { mapGetters } from 'vuex'
 
 var moment = require('moment')
 
@@ -38,10 +38,19 @@ export default {
       dateSelection: {
         date: null,
         imageCount: 0,
-        imagesPerPage: 12,
         images: []
       },
       error: null
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'imagesPerPage'
+    ])
+  },
+  watch: {
+    imagesPerPage: function (newValue, oldValue) {
+      this.onImageNavigation(1)
     }
   },
   components: {
@@ -68,7 +77,7 @@ export default {
 
       this.apiGetAllImages({
         date: this.dateSelection.formattedDate
-      }, page - 1, this.dateSelection.imagesPerPage, function (result) {
+      }, page - 1, this.imagesPerPage, function (result) {
         vm.dateSelection.images = result
       })
     },

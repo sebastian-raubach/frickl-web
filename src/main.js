@@ -25,6 +25,8 @@ import VueApexCharts from 'vue-apexcharts'
 
 import VueInsProgressBar from 'vue-ins-progress-bar'
 
+import '@/assets/base.scss'
+
 Vue.use(VueInsProgressBar, {
   show: true,
   position: 'initial',

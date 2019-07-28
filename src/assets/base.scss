@@ -1,0 +1,16 @@
+$theme-colors: (
+  "primary": #f97c34,
+);
+
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import "../../node_modules/bootstrap-vue/dist/bootstrap-vue.css";
+
+.tags .tag-badge {
+  margin: 0 2px;
+  padding: 5px;
+  font-weight: normal;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

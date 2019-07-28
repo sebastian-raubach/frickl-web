@@ -8,7 +8,7 @@
           <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?small=true'" class="card-img" :style="'height:' + albumHeight + 'px'"/>
         </div>
       </router-link>
-      <div class="card-img-overlay h-100 d-flex flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
+      <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
         <div>
           <h5>{{ album.name }}</h5>
           <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
@@ -70,6 +70,7 @@ export default {
   }
   .album-card .card-img-overlay {
     padding: 0!important;
+    top: inherit;
   }
   .album-card .card-img-overlay > *:first-child {
     padding: 1.25rem;

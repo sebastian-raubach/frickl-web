@@ -25,6 +25,7 @@ export default {
               columnWidth: '55%'
             }
           },
+          colors: ['#f97c34'],
           dataLabels: {
             enabled: false
           },

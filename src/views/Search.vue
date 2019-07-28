@@ -1,5 +1,5 @@
 <template>
-  <b-container class="mt-3">
+  <b-container fluid class="mt-3">
     <h1>Search: {{ searchTerm }}</h1>
 
     <template v-if="images || albums">

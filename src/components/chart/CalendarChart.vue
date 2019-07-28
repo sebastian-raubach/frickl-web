@@ -62,7 +62,7 @@ export default {
               {
                 from: 1,
                 to: 100,
-                color: '#00acef',
+                color: '#f97c34',
                 name: 'data'
               }]
             }
