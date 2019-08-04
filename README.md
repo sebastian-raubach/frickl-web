@@ -1,4 +1,4 @@
-<p style="text-align: center;">
+<p align="center">
   <img src="src/assets/frickl.svg" alt="Logo">
 </p>
 
