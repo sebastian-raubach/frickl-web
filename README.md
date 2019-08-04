@@ -1,26 +1,11 @@
+<p style="text-align: center;">
+  <img src="src/assets/frickl.svg" alt="Logo">
+</p>
+
 # Frickl
 
 Frickl is a self-hosted image library. This repository contains the web interface of Frickl written in Vue.js.
 
-## Project setup
-```
-npm install
-```
+## How to use
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Read the [Wiki](../../wiki/) for a variety of options to download and run Frickl yourself.
