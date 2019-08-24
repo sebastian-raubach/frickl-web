@@ -136,15 +136,19 @@ export default {
     },
     onPageChanged: function (page) {
       this.currentPage = page
-    }
-  },
-  mounted: function () {
-    this.$nextTick(function () {
+      this.baguetteBox()
+    },
+    baguetteBox: function () {
       baguetteBox.run('.image-grid', {
         captions: 'true',
         filter: /.*image\/[0-9]+\/img.*/i,
         fullscreen: true
       })
+    }
+  },
+  mounted: function () {
+    this.$nextTick(function () {
+      this.baguetteBox()
     })
   }
 }
