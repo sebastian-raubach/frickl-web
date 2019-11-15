@@ -93,7 +93,7 @@
     </b-container>
     <SelectAlbumModal :image="image"
                       ref="selectAlbumModal"
-                      v-on:onAlbumClicked="album => onAlbumClicked(album)" />
+                      v-on:on-album-clicked="album => onAlbumClicked(album)" />
   </div>
 </template>
 

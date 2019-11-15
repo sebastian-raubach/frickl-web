@@ -51,8 +51,8 @@ export default {
     apiDeleteTagFromImage: function (imageId, tag, onSuccess) {
       this.unauthAjax({ url: 'image/' + imageId + '/tag', method: 'DELETE', data: tag, success: onSuccess })
     },
-    apiAddTagToImage: function (imageId, tag, onSuccess) {
-      this.unauthAjax({ url: 'image/' + imageId + '/tag', method: 'POST', data: tag, success: onSuccess })
+    apiAddTagsToImage: function (imageId, tags, onSuccess) {
+      this.unauthAjax({ url: 'image/' + imageId + '/tag', method: 'POST', data: tags, success: onSuccess })
     },
     apiGetTag: function (tagId, onSuccess) {
       this.unauthAjax({ url: 'tag/' + tagId, success: onSuccess })

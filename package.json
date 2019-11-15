@@ -15,6 +15,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@johmun/vue-tags-input": "^2.1.0",
     "apexcharts": "^3.6.8",
     "axios": "^0.19.0",
     "baguettebox.js": "^1.11.0",

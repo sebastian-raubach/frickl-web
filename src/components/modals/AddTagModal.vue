@@ -10,17 +10,25 @@
            cancel-title="Cancel"
            @ok="handleOk"
            @shown="$refs.focusThis.focus()">
-    <b-form-input v-model="tagName"
-                  placeholder="Enter tag name"
-                  ref="focusThis"></b-form-input>
+    <VueTagsInput
+      v-model="tempInput"
+      :tags="newTags"
+      :autocomplete-items="allTags"
+      placeholder="Enter tag names"
+      @tags-changed="addedTags => addTags(addedTags)"
+      ref="focusThis" />
   </b-modal>
 </template>
 
 <script>
+import VueTagsInput from '@johmun/vue-tags-input'
+
 export default {
   data: function () {
     return {
-      tagName: null
+      tempInput: '',
+      newTags: [],
+      allTags: []
     }
   },
   props: {
@@ -31,30 +39,67 @@ export default {
     type: {
       type: String,
       default: null
+    },
+    prefilledTags: {
+      type: Array,
+      default: function () {
+        return []
+      }
     }
   },
+  components: {
+    VueTagsInput
+  },
   methods: {
+    addTags: function (addedTags) {
+      this.newTags = addedTags.map(t => {
+        return {
+          text: t.text,
+          classes: 'bg-primary'
+        }
+      })
+    },
     handleOk: function (event) {
-      var vm = this
       event.preventDefault()
+
+      var mappedTags = this.newTags.map(t => {
+        return {
+          id: null,
+          name: t.text
+        }
+      })
+
       if (this.type === 'image') {
-        this.apiAddTagToImage(this.id, { id: null, name: this.tagName }, function (result) {
-          vm.$refs.addTagModal.hide()
-          vm.$emit('on-tag-added')
+        this.apiAddTagsToImage(this.id, mappedTags, result => {
+          this.$refs.addTagModal.hide()
+          this.$emit('on-tag-added')
         })
       } else if (this.type === 'album') {
-        this.apiPostAlbumTags(this.id, [{ id: null, name: this.tagName }], function (result) {
-          vm.$refs.addTagModal.hide()
-          vm.$emit('on-tag-added')
+        this.apiPostAlbumTags(this.id, mappedTags, result => {
+          this.$refs.addTagModal.hide()
+          this.$emit('on-tag-added')
         })
       }
     },
     show () {
-      var vm = this
-      this.$nextTick(function () {
-        vm.$refs.addTagModal.show()
-      })
+      this.$nextTick(() => this.$refs.addTagModal.show())
     }
+  },
+  mounted: function () {
+    this.apiGetTags(result => {
+      this.allTags = result.map(t => {
+        return {
+          text: t.tag.name
+        }
+      })
+    })
+
+    this.newTags = this.prefilledTags.map(t => {
+      return {
+        text: t,
+        classes: 'bg-primary'
+      }
+    })
   }
 }
 </script>

@@ -107,6 +107,9 @@ export default {
   watch: {
     imageCount: function (newValue, oldValue) {
       this.currentPage = 1
+    },
+    images: function (newValue, oldValue) {
+      this.baguetteBox()
     }
   },
   components: {
@@ -136,20 +139,19 @@ export default {
     },
     onPageChanged: function (page) {
       this.currentPage = page
-      this.baguetteBox()
     },
     baguetteBox: function () {
-      baguetteBox.run('.image-grid', {
-        captions: 'true',
-        filter: /.*image\/[0-9]+\/img.*/i,
-        fullscreen: true
+      this.$nextTick(function () {
+        baguetteBox.run('.image-grid', {
+          captions: 'true',
+          filter: /.*image\/[0-9]+\/img.*/i,
+          fullscreen: true
+        })
       })
     }
   },
   mounted: function () {
-    this.$nextTick(function () {
-      this.baguetteBox()
-    })
+    this.baguetteBox()
   }
 }
 </script>

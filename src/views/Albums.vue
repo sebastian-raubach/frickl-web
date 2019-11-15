@@ -84,6 +84,7 @@ export default {
   },
   methods: {
     onApplyTagsToAlbum: function () {
+      // TODO: Show the AddTagModal prefilled with the existing tags, then the user can remove some.
       var vm = this
       this.$bvModal.msgBoxConfirm('Do you want to apply these tags to all images in this album?', {
         title: 'Confirm',
