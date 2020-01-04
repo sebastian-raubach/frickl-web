@@ -3,9 +3,10 @@
     <b-container fluid :style="{ backgroundColor: backgroundColor, color: foregroundColor}" id="image-details">
       <b-row v-if="image && album" class="pt-3">
         <b-col cols=12>
-          <b-breadcrumb>
+          <b-breadcrumb class="align-items-center">
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
             <b-breadcrumb-item :text="image.name" disabled active />
+            <a class="ml-auto btn btn-sm btn-primary" :href="baseUrl + 'image/' + image.id + '/img?small=true'" :download="`${album.name}-${image.name}`">Download</a>
           </b-breadcrumb>
         </b-col>
       </b-row>
@@ -44,7 +45,7 @@
                   <b-collapse id="collapse-exif" class="mt-2">
                     <dl>
                       <template v-for="(value, name) in image.exif">
-                        <dt :key="'dt-' + name">{{ name }}</dt>
+                        <dt :key="'dt-' + name" class="text-capitalize">{{ name | decamelize }}</dt>
                         <dd :key="'dd-' + name">{{ value }}</dd>
                       </template>
                     </dl>
@@ -70,11 +71,17 @@
           </div>
           <b-row>
             <b-col cols=12>
-              <div class="image-actions">
-                <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)" title="Unmark as favorite"/>
-                <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)" title="Mark as favorite"/>
-                <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" />
-              </div>
+              <b-button-group class="image-actions">
+                <b-button v-b-tooltip.hover title="Unmark as favorite" v-if="image.isFavorite" @click="onToggleFavorite($event)">
+                  <HeartIcon />
+                </b-button>
+                <b-button v-b-tooltip.hover title="Mark as favorite" v-else @click="onToggleFavorite($event)">
+                  <HeartOutlineIcon/>
+                </b-button>
+                <b-button v-b-tooltip.hover title="Set image as album cover" @click="onSetImageAsAlbumCover($event)">
+                  <FolderImageIcon />
+                </b-button>
+              </b-button-group>
             </b-col>
             <b-col cols=12>
               <hr class="white" />
@@ -261,11 +268,11 @@ export default {
       width: 2em;
       fill: white;
   }
-  .image-actions .material-design-icon.heart-icon > .material-design-icon__svg,
-  .image-actions .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
+  .image-actions .btn:hover .material-design-icon.heart-icon > .material-design-icon__svg,
+  .image-actions .btn:hover .material-design-icon.heart-outline-icon > .material-design-icon__svg {
       fill: #EA2027;
   }
-  .image-actions .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
+  .image-actions .btn:hover .material-design-icon.folder-image-icon > .material-design-icon__svg {
       fill: #FFC312;
   }
 

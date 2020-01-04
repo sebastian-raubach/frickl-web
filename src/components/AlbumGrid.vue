@@ -3,10 +3,10 @@
     <b-row>
       <b-col cols=12>
         <b-button-group class="pb-3 float-right">
-          <b-button :pressed="albumWidth === 'large'" @click="setColWidth('large')" class="grid-icon grid-large"></b-button>
-          <b-button :pressed="albumWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon grid-medium"></b-button>
-          <b-button :pressed="albumWidth === 'small'" @click="setColWidth('small')" class="grid-icon grid-small"></b-button>
-          <b-dropdown right :text="albumsPerPage" title="Albums per page">
+          <b-button v-b-tooltip.hover title="Large images" :pressed="albumWidth === 'large'" @click="setColWidth('large')" class="grid-icon grid-large"></b-button>
+          <b-button v-b-tooltip.hover title="Medium images" :pressed="albumWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon grid-medium"></b-button>
+          <b-button v-b-tooltip.hover title="Small images" :pressed="albumWidth === 'small'" @click="setColWidth('small')" class="grid-icon grid-small"></b-button>
+          <b-dropdown right :text="albumsPerPage" v-b-tooltip.hover title="Albums per page">
             <b-dropdown-item v-for="option in albumsPerPageOptions"
                             :key="option"
                             @click="setAlbumsPerPage(option)"
@@ -16,8 +16,8 @@
           </b-dropdown>
         </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
-          <b-button :pressed="albumDetailsMode === 'overlay'" @click="setAlbumDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
-          <b-button :pressed="albumDetailsMode === 'below'" @click="setAlbumDetailsMode('below')" ><CardsVariantIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="albumDetailsMode === 'overlay'" @click="setAlbumDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Show information below image" :pressed="albumDetailsMode === 'below'" @click="setAlbumDetailsMode('below')" ><CardsVariantIcon /></b-button>
         </b-button-group>
       </b-col>
     </b-row>

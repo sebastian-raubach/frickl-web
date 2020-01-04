@@ -3,10 +3,10 @@
     <b-row>
       <b-col cols=12>
         <b-button-group class="pb-3 float-right">
-          <b-button :pressed="imageWidth === 'large'" @click="setColWidth('large')" class="grid-icon grid-large"></b-button>
-          <b-button :pressed="imageWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon grid-medium"></b-button>
-          <b-button :pressed="imageWidth === 'small'" @click="setColWidth('small')" class="grid-icon grid-small"></b-button>
-          <b-dropdown right :text="imagesPerPage" title="Images per page">
+          <b-button v-b-tooltip.hover title="Large images" :pressed="imageWidth === 'large'" @click="setColWidth('large')" class="grid-icon grid-large"></b-button>
+          <b-button v-b-tooltip.hover title="Medium images" :pressed="imageWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon grid-medium"></b-button>
+          <b-button v-b-tooltip.hover title="Small images" :pressed="imageWidth === 'small'" @click="setColWidth('small')" class="grid-icon grid-small"></b-button>
+          <b-dropdown right :text="imagesPerPage" v-b-tooltip.hover title="Images per page">
             <b-dropdown-item v-for="option in imagesPerPageOptions"
                             :key="option"
                             @click="setImagesPerPage(option)"
@@ -16,8 +16,9 @@
           </b-dropdown>
         </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
-          <b-button :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
-          <b-button :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Show information below image" :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
+          <b-button :href="baseUrl + 'album/' + albumId + '/download'" v-b-tooltip.hover title="Download album" @click="downloadAlbum()"><DownloadIcon /></b-button>
         </b-button-group>
       </b-col>
     </b-row>
@@ -41,6 +42,7 @@
 import ImageNode from '../components/ImageNode.vue'
 import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
 import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
+import DownloadIcon from 'vue-material-design-icons/Download.vue'
 import { mapGetters } from 'vuex'
 
 import baguetteBox from 'baguettebox.js'
@@ -85,6 +87,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'baseUrl',
       'imageWidth',
       'imagesPerPage',
       'imageDetailsMode'
@@ -115,9 +118,13 @@ export default {
   components: {
     'image-node': ImageNode,
     CardsVariantIcon,
-    CardTextOutlineIcon
+    CardTextOutlineIcon,
+    DownloadIcon
   },
   methods: {
+    downloadAlbum: function () {
+      // TODO
+    },
     setColWidth: function (size) {
       this.$store.dispatch('ON_IMAGE_WIDTH_CHANGED', size)
     },

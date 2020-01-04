@@ -73,6 +73,12 @@ Vue.filter('toDate', function (value) {
     return null
   }
 })
+Vue.filter('decamelize', function (value) {
+  return value
+    .replace(/([a-z\d])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1 $2')
+    .toLowerCase()
+})
 
 // Global event bus
 Vue.prototype.$eventHub = new Vue()
