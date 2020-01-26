@@ -16,6 +16,7 @@
         <div class="row">
           <div class="col-md-10 offset-md-1">
             <div class="home-content">
+              <img src="../assets/frickl.svg" class="img-fluid" alt="Frickl logo" />
               <h1 class="white-text">Welcome to Frickl</h1>
               <p class="white-text">The new home for all your photos.</p>
             </div>

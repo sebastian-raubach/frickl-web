@@ -1,5 +1,5 @@
 <template>
-  <b-card no-body class="image-card">
+  <b-card no-body :class="`image-card ${imageDetailsMode}`">
     <router-link :to="'/images/' + image.id">
       <div class="card-img-wrap">
         <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
@@ -8,25 +8,35 @@
     <div class="card-img-overlay flex-column justify-content-end" v-if="imageDetailsMode === 'overlay'">
       <div class="image-actions">
         <div class="mb-2">{{ image.name }}</div>
-        <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-        <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
-        <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-        <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+        <div><small class="text-light" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
+        <div><small class="text-light" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
+        <div class="mt-2">
+          <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+          <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
+          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+        </div>
       </div>
     </div>
     <b-card-body v-else class="card-image-details">
-      <div class="image-actions">
+      <div>
         <div class="mb-2">{{ image.name }}</div>
-        <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-        <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
-        <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-        <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+        <div><small class="text-muted" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
+        <div><small class="text-muted" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
+        <div class="image-actions mt-2">
+          <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
+          <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
+          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+        </div>
       </div>
     </b-card-body>
   </b-card>
 </template>
 
 <script>
+import CalendarClockIcon from 'vue-material-design-icons/CalendarClock.vue'
+import CameraIcon from 'vue-material-design-icons/Camera.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
@@ -60,12 +70,23 @@ export default {
     }
   },
   components: {
+    CalendarClockIcon,
+    CameraIcon,
     HeartIcon,
     HeartOutlineIcon,
     FolderImageIcon,
     OpenInNewIcon
   },
   methods: {
+    getTime: function () {
+      if (this.image.exif.dateTime) {
+        return this.image.exif.dateTime
+      } else if (this.image.exif.dateTimeOriginal) {
+        return this.image.exif.dateTimeOriginal
+      } else {
+        return ''
+      }
+    },
     onSetImageAsAlbumCover: function (event) {
       event.stopPropagation()
       event.preventDefault()
@@ -116,6 +137,11 @@ export default {
     object-fit: cover;
     transition: transform .2s ease-in-out;
   }
+  .image-card.below .card-img {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .image-card .mdi-sm,
   .image-card .image-actions .material-design-icon {
     margin-right: 0.5rem;
   }
@@ -194,5 +220,10 @@ export default {
 
   .col-xxl-1 .card-body {
     padding: 1rem;
+  }
+  .image-card .mdi-sm.material-design-icon,
+  .image-card .mdi-sm.material-design-icon .material-design-icon__svg {
+    height: 1rem;
+    width: 1rem;
   }
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <div class="album">
+  <div class="album h-100">
     <hr/>
     <hr/>
-    <b-card class="album-card" no-body>
+    <b-card :class="`album-card ${albumDetailsMode} ${albumDetailsMode === 'below' ? 'h-100': ''}`" no-body>
       <router-link :to="'/albums/' + album.id" :title="album.name">
         <div class="card-img-wrap">
           <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?small=true'" class="card-img" :style="'height:' + albumHeight + 'px'"/>
@@ -10,13 +10,13 @@
       </router-link>
       <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
         <div>
-          <h5>{{ album.name }}</h5>
+          <h5 class="mb-2">{{ album.name }}</h5>
           <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
         </div>
       </div>
       <b-card-body v-else>
         <div>
-          <h5>{{ album.name }}</h5>
+          <h5 class="mb-2">{{ album.name }}</h5>
           <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
         </div>
       </b-card-body>
@@ -61,6 +61,10 @@ export default {
     object-fit: cover;
     height: 300px;
     transition: transform .2s ease-in-out;
+  }
+  .album-card.below .card-img {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
   .album-card h5 {
     margin: 0;

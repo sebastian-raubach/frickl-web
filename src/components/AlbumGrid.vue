@@ -22,7 +22,7 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="album in albums" :key="album.id" :class="'mb-3 ' + getColumns('xxl')">
+      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="album in albums" :key="album.id" :class="'mb-4 ' + getColumns('xxl')">
         <album-node :albumHeight="albumHeights[albumWidth]" :album="album" v-on:click.native="onAlbumClicked(album)"/>
       </b-col>
     </b-row>

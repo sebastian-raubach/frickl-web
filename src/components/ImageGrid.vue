@@ -18,7 +18,7 @@
         <b-button-group class="pb-3 pr-2 float-right">
           <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
           <b-button v-b-tooltip.hover title="Show information below image" :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
-          <b-button :href="baseUrl + 'album/' + albumId + '/download'" v-b-tooltip.hover title="Download album" @click="downloadAlbum()"><DownloadIcon /></b-button>
+          <b-button v-if="albumId" :href="baseUrl + 'album/' + albumId + '/download'" v-b-tooltip.hover title="Download album" @click="downloadAlbum()"><DownloadIcon /></b-button>
         </b-button-group>
       </b-col>
     </b-row>

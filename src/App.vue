@@ -12,8 +12,9 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item to="/albums">Albums</b-nav-item>
+          <b-nav-item to="/images">Image stream</b-nav-item>
           <b-nav-item to="/favorites">Favorites</b-nav-item>
+          <b-nav-item to="/albums">Albums</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
           <b-nav-item to="/maps">Maps</b-nav-item>
           <b-nav-item to="/calendar">Calendar</b-nav-item>
