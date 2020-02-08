@@ -21,7 +21,6 @@ import 'baguettebox.js/dist/baguetteBox.min.css'
 import mixin from './mixin/mixin.js'
 import api from './mixin/api.js'
 
-import VueApexCharts from 'vue-apexcharts'
 
 import VueInsProgressBar from 'vue-ins-progress-bar'
 
@@ -32,8 +31,6 @@ Vue.use(VueInsProgressBar, {
   position: 'initial',
   height: '5px'
 })
-
-Vue.component('apexchart', VueApexCharts)
 
 Vue.mixin(mixin)
 Vue.mixin(api)
@@ -95,11 +92,10 @@ store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 let axiosDefaults = require('axios/lib/defaults')
 axiosDefaults.baseURL = baseUrl
 
-// Make sure jQuery is available
 Vue.use({
   install: function (Vue, options) {
-    Vue.prototype.$jQuery = require('jquery')
-    window.jQuery = Vue.prototype.$jQuery
+    Vue.prototype.$plotly = require('@/plugins/charts/plotly-custom')
+    window.Plotly = Vue.prototype.$plotly
   }
 })
 

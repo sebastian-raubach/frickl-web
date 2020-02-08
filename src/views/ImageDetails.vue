@@ -6,7 +6,7 @@
           <b-breadcrumb class="align-items-center">
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
             <b-breadcrumb-item :text="image.name" disabled active />
-            <a class="ml-auto btn btn-sm btn-primary" :href="baseUrl + 'image/' + image.id + '/img?small=true'" :download="`${album.name}-${image.name}`">Download</a>
+            <a class="ml-auto btn btn-sm btn-primary" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :download="`${album.name}-${image.name}`">Download</a>
           </b-breadcrumb>
         </b-col>
       </b-row>
@@ -17,20 +17,21 @@
           </a>
         </b-col>
         <b-col cols=12 sm=12 md=12 lg=4 xl=3 class="exif">
-          <div v-if="image.exif && !$jQuery.isEmptyObject(image.exif)" class="mt-3">
+          <div v-if="image.exif && !(Object.keys(image.exif).length === 0 && img.exif.constructor === Object)" class="mt-3">
             <h3 v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)">Taken on: {{ getTime() | toDate }}</h3>
             <b-row>
               <b-col cols=6>
                 <img src="../assets/icon-camera.svg" fluid>
-                <div>{{ image.exif.cameraMake }}</div><div>{{ image.exif.cameraModel }}</div>
+                <div>{{ image.exif.cameraMake }}</div>
+                <div>{{ image.exif.cameraModel }}</div>
               </b-col>
               <b-col cols=6>
-                <div title="Aperture"><img src="../assets/icon-aperture.svg"> <span>{{ image.exif.fNumber ? image.exif.fNumber : '' }}</span></div>
-                <div title="Exposure time"><img src="../assets/icon-exposure.svg"> <span>{{ image.exif.exposureTime ? image.exif.exposureTime : '' }}</span></div>
-                <div title="Focal length"><img src="../assets/icon-focal-length.svg"> <span>{{ image.exif.focalLength ? image.exif.focalLength : '' }}</span></div>
-                <div title="ISO"><img src="../assets/icon-iso.svg"> <span>{{ image.exif.isoSpeedRatings ? image.exif.isoSpeedRatings : '' }}</span></div>
-                <div title="Flash" v-if="hasFlash()"><img src="../assets/icon-flash.svg"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
-                <div title="Flash" v-else><img src="../assets/icon-flash-no.svg"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
+                <div v-b-tooltip.left.hover title="Aperture"><img src="../assets/icon-aperture.svg"> <span>{{ image.exif.fNumber ? image.exif.fNumber : '' }}</span></div>
+                <div v-b-tooltip.left.hover title="Exposure time"><img src="../assets/icon-exposure.svg"> <span>{{ image.exif.exposureTime ? image.exif.exposureTime : '' }}</span></div>
+                <div v-b-tooltip.left.hover title="Focal length"><img src="../assets/icon-focal-length.svg"> <span>{{ image.exif.focalLength ? image.exif.focalLength : '' }}</span></div>
+                <div v-b-tooltip.left.hover title="ISO"><img src="../assets/icon-iso.svg"> <span>{{ image.exif.isoSpeedRatings ? image.exif.isoSpeedRatings : '' }}</span></div>
+                <div v-b-tooltip.left.hover title="Flash" v-if="hasFlash()"><img src="../assets/icon-flash.svg"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
+                <div v-b-tooltip.left.hover title="Flash" v-else><img src="../assets/icon-flash-no.svg"> <span>{{ image.exif.flash ? image.exif.flash : '' }}</span></div>
               </b-col>
               <b-col cols=6 v-if="image.exif.lensMake || image.exif.lensModel">
                 <img src="../assets/icon-lens.svg" fluid>
@@ -212,9 +213,9 @@ export default {
 
           vm.$nextTick(function () {
             baguetteBox.run('.img-col', {
+              fullScreen: true,
               captions: 'true',
-              filter: /.*/i,
-              fullscreen: true
+              filter: /.*/i
             })
           })
         }

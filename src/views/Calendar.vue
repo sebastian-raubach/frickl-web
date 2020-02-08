@@ -8,7 +8,7 @@
         <b-form-group label="Select year:" label-for="selectYear">
           <b-form-select id="selectYear" v-model="selectedYear" :options="years" @change="getForYear(false)"></b-form-select>
         </b-form-group>
-        <calendar-chart ref="calendarChart" v-on:onDateSelected="date => onDateSelected(date)"/>
+        <CalendarChart ref="chart" v-on:date-selected="onDateSelected" />
       </div>
     </b-container>
     <b-container fluid v-if="dateSelection.date">
@@ -54,8 +54,8 @@ export default {
     }
   },
   components: {
-    'image-grid': ImageGrid,
-    'calendar-chart': CalendarChart
+    CalendarChart,
+    'image-grid': ImageGrid
   },
   methods: {
     onDateSelected: function (date) {
@@ -99,7 +99,7 @@ export default {
 
       this.apiGetCalendar(this.selectedYear, function (result) {
         if (result && result.length > 0) {
-          vm.$refs.calendarChart.onUpdate(vm.selectedYear, result)
+          vm.$refs.chart.update(result)
 
           var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
 

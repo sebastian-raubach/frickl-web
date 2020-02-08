@@ -5,6 +5,10 @@
     </div>
     <div class="location-map" id="location-map">
     </div>
+    <div v-if="location" ref="popupContent">
+      <img :src="`${baseUrl}image/${location.id}/img?small=true`" width="300"/>
+      <button class="btn btn-primary btn-block marker-button" @click="onMarkerClicked(location)">Select</button>
+    </div>
   </div>
 </template>
 
@@ -16,6 +20,7 @@ export default {
   data: function () {
     return {
       locations: null,
+      location: null,
       zoom: 3,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -50,13 +55,12 @@ export default {
       result.forEach(function (l) {
         var marker = L.marker([l.latitude, l.longitude]).bindPopup('')
         marker.on('click', function (e) {
-          var outer = vm.$jQuery('<div></div>')
-          outer.append(vm.$jQuery('<img src="' + vm.baseUrl + 'image/' + l.id + '/img?small=true" width="300"/>'))
-          outer.append(vm.$jQuery('<button class="btn btn-primary btn-block marker-button">Select</button>')).on('click', function () {
-            vm.onMarkerClicked(l)
+          vm.location = l
+
+          vm.$nextTick(() => {
+            var popup = e.target.getPopup()
+            popup.setContent(vm.$refs.popupContent)
           })
-          var popup = e.target.getPopup()
-          popup.setContent(outer[0])
         })
         markers.addLayer(marker)
         l.location = L.latLng(l.latitude, l.longitude)

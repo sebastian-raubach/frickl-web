@@ -1,74 +1,43 @@
 <template>
   <b-container class="mt-3">
-    <h3>Cameras used the most</h3>
-    <apexchart type=bar
-               height=350
-               :options="stats.cameraOptions"
-               :series="stats.cameraSeries"
-               ref="cameraChart" />
+    <h3>Photos per camera</h3>
+    <div ref="chart" />
   </b-container>
 </template>
 
 <script>
 export default {
-  data: function () {
-    return {
-      stats: {
-        cameraSeries: [{
-          name: 'Camera',
-          data: []
-        }],
-        cameraOptions: {
-          plotOptions: {
-            bar: {
-              horizontal: false,
-              columnWidth: '55%'
-            }
-          },
-          colors: ['#f97c34'],
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
-          },
-          xaxis: {
-            categories: []
-          },
-          yaxis: {
-            title: {
-              text: '# photos'
-            }
-          },
-          fill: {
-            opacity: 1
-          },
-          tooltip: {
-            y: {
-              formatter: function (val) {
-                return val + ' photos'
-              }
-            }
-          }
-        }
-      }
-    }
-  },
   mounted: function () {
     var vm = this
 
     this.apiGetStatsCamera(function (result) {
       if (result) {
-        vm.stats.cameraSeries[0].data = result.map(function (d) {
-          return d.count
-        })
-        vm.stats.cameraOptions.xaxis.categories = result.map(function (d) {
-          return d.camera
-        })
+        const data = [{
+          x: result.map(d => d.camera),
+          y: result.map(d => d.count),
+          type: 'bar',
+          marker: {
+            color: '#f97c34'
+          }
+        }]
 
-        vm.$refs.cameraChart.chart.updateOptions(vm.stats.cameraOptions, true, true)
+        const layout = {
+          height: 500,
+          xaxis: {
+            title: 'Camera',
+            automargin: true
+          },
+          yaxis: {
+            title: '# photos'
+          }
+        }
+
+        const config = {
+          responsive: true,
+          displaylogo: false
+        }
+
+        vm.$plotly.newPlot(vm.$refs.chart, data, layout, config)
       }
     })
   }
