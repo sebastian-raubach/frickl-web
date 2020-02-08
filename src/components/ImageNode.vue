@@ -2,7 +2,7 @@
   <b-card no-body :class="`image-card ${imageDetailsMode}`">
     <router-link :to="'/images/' + image.id">
       <div class="card-img-wrap">
-        <img :src="baseUrl + 'image/' + image.id + '/img?small=true'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
+        <img :src="baseUrl + 'image/' + image.id + '/img?size=SMALL'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
       </div>
     </router-link>
     <div class="card-img-overlay flex-column justify-content-end" v-if="imageDetailsMode === 'overlay'">
@@ -14,7 +14,7 @@
           <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
           <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
           <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?size=ORIGINAL'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
           <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
           <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
           <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?small=false'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?size=ORIGINAL'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
         </div>
       </div>
     </b-card-body>

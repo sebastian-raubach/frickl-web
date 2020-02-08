@@ -6,7 +6,7 @@
     <div class="location-map" id="location-map">
     </div>
     <div v-if="location" ref="popupContent">
-      <img :src="`${baseUrl}image/${location.id}/img?small=true`" width="300"/>
+      <img :src="`${baseUrl}image/${location.id}/img?size=SMALL`" width="300"/>
       <button class="btn btn-primary btn-block marker-button" @click="onMarkerClicked(location)">Select</button>
     </div>
   </div>

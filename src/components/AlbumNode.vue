@@ -5,7 +5,7 @@
     <b-card :class="`album-card ${albumDetailsMode} ${albumDetailsMode === 'below' ? 'h-100': ''}`" no-body>
       <router-link :to="'/albums/' + album.id" :title="album.name">
         <div class="card-img-wrap">
-          <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?small=true'" class="card-img" :style="'height:' + albumHeight + 'px'"/>
+          <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?size=SMALL'" class="card-img" :style="'height:' + albumHeight + 'px'"/>
         </div>
       </router-link>
       <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">

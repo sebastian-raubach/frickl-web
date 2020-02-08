@@ -42,7 +42,7 @@ export default {
       'baseUrl'
     ]),
     getUrl: function () {
-      return this.baseUrl + 'image/' + this.backgroundImageId + '/img'
+      return this.baseUrl + 'image/' + this.backgroundImageId + '/img?size=MEDIUM'
     }
   },
   mounted: function () {
