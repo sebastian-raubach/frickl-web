@@ -21,7 +21,6 @@ import 'baguettebox.js/dist/baguetteBox.min.css'
 import mixin from './mixin/mixin.js'
 import api from './mixin/api.js'
 
-
 import VueInsProgressBar from 'vue-ins-progress-bar'
 
 import '@/assets/base.scss'
