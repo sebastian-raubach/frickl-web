@@ -8,7 +8,7 @@ title: Frickl
   <img src="https://raw.githubusercontent.com/sebastian-raubach/frickl-web/master/public/img/frickl.svg?sanitize=true" width="200" a
   alt="Logo">
   <br />
-  <b>The new home for all your photos.<b>
+  <b>The new home for all your photos.</b>
 </p>
 
 ## Home screen
