@@ -7,9 +7,9 @@ title: Frickl
 <p align="center">
   <img src="https://raw.githubusercontent.com/sebastian-raubach/frickl-web/master/public/img/frickl.svg?sanitize=true" width="200" a
   alt="Logo">
+  <br />
+  <b>The new home for all your photos.</b>
 </p>
-
-# The new home for all your photos
 
 ## Home screen
 The home screen shows a random favourite or just any random photo of no images have been marked as favourites.
