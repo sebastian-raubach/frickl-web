@@ -12,10 +12,10 @@ title: Frickl
 </p>
 
 ## Home screen
-The home screen shows a random favourite or just any random photo of no images have been marked as favourites.
+The home screen shows a random favourite or just any random photo if no images have been marked as favourites.
 <img src="./img/01-home.png" alt="Home">
 ## Image stream
-All images, irrespective of album, are shown based on their date in descending order
+To quickly see your latest snaps, use the image stream. All images, irrespective of album, are shown based on their date in descending order.
 <img src="./img/02-image-stream.png" alt="Image stream">
 ## Albums
 The albums correspond to your folder structure in your image collection. In this example, albums/folders have been created based on the date they were taken on. Frickl will display them in that exact structure without you having to do anything.
