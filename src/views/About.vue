@@ -40,7 +40,7 @@
             <GithubCircleIcon class="github" />
           </div>
           <b-card-footer class="text-center">
-            <a href="https://github.com/sebastian-raubach">Sebastian Raubach on Github</a>
+            <a href="https://github.com/sponsors/sebastian-raubach">Buy Sebastian Raubach a coffee!</a>
           </b-card-footer>
         </b-card>
       </b-col>
