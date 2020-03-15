@@ -26,8 +26,8 @@ export default {
         iconSize: [40, 40],
         iconAnchor: [20, 40]
       }),
-      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
     }
   },
   props: {
@@ -61,17 +61,28 @@ export default {
     }
   },
   mounted: function () {
-    var vm = this
-    this.locations.forEach(function (l) {
-      vm.latLngBounds.extend(l.location)
+    this.locations.forEach(l => {
+      this.latLngBounds.extend(l.location)
     })
 
+    const map = this.$refs.map
+
     if (this.locations.length === 1) {
-      this.$refs.map.setCenter(this.locations[0].location)
-      this.$refs.map.setZoom(10)
+      map.setCenter(this.locations[0].location)
+      map.setZoom(10)
     } else {
-      this.$refs.map.fitBounds(this.latLngBounds.pad(0.5))
+      map.fitBounds(this.latLngBounds.pad(0.5))
     }
+
+    // Disable zoom until focus gained, disable when blur
+    const mapObject = map.mapObject
+    mapObject.scrollWheelZoom.disable()
+    mapObject.on('focus', () => {
+      mapObject.scrollWheelZoom.enable()
+    })
+    mapObject.on('blur', () => {
+      mapObject.scrollWheelZoom.disable()
+    })
   }
 }
 </script>

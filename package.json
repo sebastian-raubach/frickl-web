@@ -30,7 +30,7 @@
     "portal-vue": "^2.1.5",
     "vue": "^2.6.6",
     "vue-ins-progress-bar": "^1.0.0",
-    "vue-material-design-icons": "^3.1.0",
+    "vue-material-design-icons": "^4.4.0",
     "vue-router": "^3.0.1",
     "vue2-leaflet": "^2.0.3",
     "vue2-leaflet-markercluster": "^3.0.0",

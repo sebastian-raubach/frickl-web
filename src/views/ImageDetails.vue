@@ -70,15 +70,23 @@
               </b-row>
             </template>
           </div>
-          <b-row>
+          <b-row v-if="token">
             <b-col cols=12>
               <b-button-group class="image-actions">
                 <b-button v-b-tooltip.hover title="Unmark as favorite" v-if="image.isFavorite" @click="onToggleFavorite($event)">
                   <HeartIcon />
                 </b-button>
                 <b-button v-b-tooltip.hover title="Mark as favorite" v-else @click="onToggleFavorite($event)">
-                  <HeartOutlineIcon/>
+                  <HeartOutlineIcon />
                 </b-button>
+                <template v-if="token && (authEnabled === true)">
+                  <b-button v-b-tooltip.hover title="Make private" @click="onTogglePublic($event)" v-if="image.isPublic === 1">
+                    <LockOpenVariantIcon />
+                  </b-button>
+                  <b-button v-b-tooltip.hover title="Make public" @click="onTogglePublic($event)" v-else>
+                    <LockIcon />
+                  </b-button>
+                </template>
                 <b-button v-b-tooltip.hover title="Set image as album cover" @click="onSetImageAsAlbumCover($event)">
                   <FolderImageIcon />
                 </b-button>
@@ -114,6 +122,8 @@ import SelectAlbumModal from '../components/modals/SelectAlbumModal.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
+import LockIcon from 'vue-material-design-icons/Lock.vue'
+import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
 import TagWidget from '../components/TagWidget.vue'
 var Vibrant = require('node-vibrant')
 
@@ -133,14 +143,24 @@ export default {
     HeartIcon,
     HeartOutlineIcon,
     FolderImageIcon,
+    LockIcon,
+    LockOpenVariantIcon,
     TagWidget
   },
   computed: {
     ...mapGetters([
-      'baseUrl'
+      'baseUrl',
+      'token'
     ])
   },
   methods: {
+    onTogglePublic: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.image.isPublic = Math.abs(this.image.isPublic - 1)
+
+      this.apiPatchImage(this.image)
+    },
     onAlbumClicked: function (album) {
       album.bannerImageId = this.image.id
 

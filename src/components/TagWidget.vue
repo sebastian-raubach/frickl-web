@@ -13,7 +13,7 @@
         {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)"/>
       </b-badge>
     </div>
-    <b-button variant="primary" size="sm" @click="onAddClicked()" class="mt-3">Add tag</b-button>
+    <b-button variant="primary" size="sm" @click="onAddClicked()" class="mt-3" v-if="token">Add tag</b-button>
 
     <div class="bg-white text-body">
       <AddTagModal :id="id"
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import CloseCircleOutlineIcon from 'vue-material-design-icons/CloseCircleOutline.vue'
 import AddTagModal from '../components/modals/AddTagModal.vue'
 import DeleteTagModal from '../components/modals/DeleteTagModal.vue'
@@ -53,6 +54,11 @@ export default {
       type: String,
       default: null
     }
+  },
+  computed: {
+    ...mapGetters([
+      'token'
+    ])
   },
   components: {
     AddTagModal,

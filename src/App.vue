@@ -17,12 +17,16 @@
           <b-nav-item to="/albums">Albums</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
           <b-nav-item to="/maps">Maps</b-nav-item>
-          <b-nav-item to="/calendar">Calendar</b-nav-item>
-          <b-nav-item to="/stats">Statistics</b-nav-item>
+          <b-nav-item to="/calendar" v-if="token">Calendar</b-nav-item>
+          <b-nav-item to="/stats" v-if="token">Statistics</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <template v-if="authEnabled === true">
+            <b-nav-item v-if="token" @click="logout">Logout</b-nav-item>
+            <b-nav-item v-else @click="login">Login</b-nav-item>
+          </template>
           <b-nav-item to="/about">About</b-nav-item>
           <b-nav-form @submit.prevent="onSearch()">
             <b-input-group>
@@ -39,11 +43,15 @@
     <b-tooltip placement="bottom" target="importStatus" title="Checking photos for updates..." />
     <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
     <router-view :key="$route.path" id="content"/>
+
+    <LoginModal ref="loginModal" v-on:login="onLogin" />
   </div>
 </template>
 
 <script>
+import LoginModal from '@/components/modals/LoginModal'
 import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   data: function () {
@@ -55,12 +63,29 @@ export default {
       message: ''
     }
   },
+  computed: {
+    ...mapGetters([
+      'authEnabled',
+      'token'
+    ])
+  },
   components: {
+    LoginModal,
     MagnifyIcon
   },
   methods: {
+    login: function () {
+      this.$refs.loginModal.show()
+    },
+    onLogin: function () {
+      this.$router.go({ name: 'home' })
+    },
+    logout: function () {
+      this.$store.dispatch('ON_TOKEN_CHANGED', null)
+      this.$router.go({ name: 'home' })
+    },
     onSearch: function () {
-      this.$router.push('/search/' + this.searchTerm)
+      this.$router.push({ name: 'search', params: { searchTerm: this.searchTerm } })
       this.searchTerm = ''
     },
     checkImportStatus: function () {
@@ -86,6 +111,11 @@ export default {
       this.message = message
       this.showAlert = true
     }
+  },
+  created: async function () {
+    await this.apiGetSettings(result => {
+      this.$store.dispatch('ON_AUTH_CHANGED', result.authEnabled)
+    })
   },
   beforeDestroy: function () {
     if (this.timer) {

@@ -2,7 +2,7 @@
   <b-card no-body :class="`image-card ${imageDetailsMode}`">
     <router-link :to="'/images/' + image.id">
       <div class="card-img-wrap">
-        <img :src="baseUrl + 'image/' + image.id + '/img?size=SMALL'" class="card-img" :style="'height:' + imageHeight + 'px'"/>
+        <img :src="getSrc('SMALL')" class="card-img" :style="'height:' + imageHeight + 'px'"/>
       </div>
     </router-link>
     <div class="card-img-overlay flex-column justify-content-end" v-if="imageDetailsMode === 'overlay'">
@@ -11,26 +11,37 @@
         <div><small class="text-light" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
         <div><small class="text-light" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
         <div class="mt-2">
-          <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-          <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
-          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?size=ORIGINAL'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+          <HeartIcon v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"/>
+          <HeartOutlineIcon v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"/>
+          <span v-if="token && (authEnabled === true)">
+            <LockOpenVariantIcon v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1" />
+            <LockIcon v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else />
+          </span>
+          <FolderImageIcon v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"/>
+          <a class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent><MagnifyPlusIcon /></a>
         </div>
       </div>
     </div>
-    <b-card-body v-else class="card-image-details">
-      <div>
-        <div class="mb-2">{{ image.name }}</div>
-        <div><small class="text-muted" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
-        <div><small class="text-muted" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
-        <div class="image-actions mt-2">
-          <HeartIcon v-if="image.isFavorite" @click.native="onToggleFavorite($event)"/>
-          <HeartOutlineIcon v-else  @click.native="onToggleFavorite($event)"/>
-          <FolderImageIcon title="Set image as album cover" @click.native="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          <a class="baguettebox" :href="baseUrl + 'image/' + image.id + '/img?size=ORIGINAL'" :title="image.name" @click.stop.prevent><OpenInNewIcon /></a>
+    <div v-else class="card-image-details">
+      <b-card-body>
+        <div>
+          <div class="mb-2">{{ image.name }}</div>
+          <div><small class="text-muted" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="text-muted mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
+          <div><small class="text-muted" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
         </div>
-      </div>
-    </b-card-body>
+      </b-card-body>
+
+      <b-button-group class="image-actions mt-2 w-100">
+        <template v-if="token && (authEnabled === true)">
+          <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
+          <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
+          <b-button v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1"><LockOpenVariantIcon /></b-button>
+          <b-button v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else><LockIcon /></b-button>
+          <b-button v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"><FolderImageIcon/></b-button>
+        </template>
+        <b-button class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent><MagnifyPlusIcon /></b-button>
+      </b-button-group>
+    </div>
   </b-card>
 </template>
 
@@ -40,7 +51,9 @@ import CameraIcon from 'vue-material-design-icons/Camera.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
-import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
+import LockIcon from 'vue-material-design-icons/Lock.vue'
+import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
+import MagnifyPlusIcon from 'vue-material-design-icons/MagnifyPlus.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -51,8 +64,10 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'authEnabled',
       'imageDetailsMode',
-      'baseUrl'
+      'baseUrl',
+      'token'
     ])
   },
   props: {
@@ -75,9 +90,20 @@ export default {
     HeartIcon,
     HeartOutlineIcon,
     FolderImageIcon,
-    OpenInNewIcon
+    LockIcon,
+    LockOpenVariantIcon,
+    MagnifyPlusIcon
   },
   methods: {
+    getSrc: function (size) {
+      var result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+
+      return result
+    },
     getTime: function () {
       if (this.image.exif.dateTime) {
         return this.image.exif.dateTime
@@ -119,13 +145,19 @@ export default {
           console.error(err)
         })
     },
+    onTogglePublic: function (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.image.isPublic = Math.abs(this.image.isPublic - 1)
+
+      this.apiPatchImage(this.image)
+    },
     onToggleFavorite: function (event) {
       event.stopPropagation()
       event.preventDefault()
       this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
 
-      this.apiPatchImage(this.image, function (result) {
-      })
+      this.apiPatchImage(this.image)
     }
   }
 }
@@ -142,8 +174,8 @@ export default {
     border-bottom-right-radius: 0;
   }
   .image-card .mdi-sm,
-  .image-card .image-actions .material-design-icon {
-    margin-right: 0.5rem;
+  .image-card .card-img-overlay .image-actions .material-design-icon {
+    margin-right: 0.75rem;
   }
   .image-card .card-img-overlay {
     padding: 0;
@@ -162,7 +194,7 @@ export default {
   .image-actions svg:hover {
     cursor: pointer;
   }
-  .image-card .card-img-overlay > .image-actions {
+  .image-card .card-img-overlay .image-actions {
     opacity: 0;
     padding: 1rem;
     background-color: rgba(1,1,1,.5);
@@ -173,18 +205,22 @@ export default {
     color: white;
     transition: opacity .2s ease-in-out;
   }
-  .image-card .card-image-details > .image-actions {
+  .image-card .card-image-details .image-actions {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .image-card .card-img-overlay > .image-actions > div {
+  .image-card .card-image-details .image-actions .btn {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  .image-card .card-img-overlay .image-actions > div {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 11pt;
   }
-  .image-card:hover .card-img-overlay > .image-actions {
+  .image-card:hover .card-img-overlay .image-actions {
     opacity: 1;
   }
   .image-card .card-img-overlay .material-design-icon.heart-icon {
@@ -199,9 +235,12 @@ export default {
     fill: white;
   }
   .image-card .card-image-details .material-design-icon > .material-design-icon__svg {
-    height: 1.5rem;
-    width: 1.5rem;
-    fill: #636e72;
+    height: 1.2rem;
+    width: 1.2rem;
+    fill: white;
+  }
+  .image-card .card-image-details .card-body .material-design-icon > .material-design-icon__svg {
+    fill: #6c757d;
   }
   .image-card .card-img-overlay .material-design-icon.heart-icon > .material-design-icon__svg,
   .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg,
@@ -213,9 +252,15 @@ export default {
   .image-card .card-image-details .material-design-icon.folder-image-icon:hover > .material-design-icon__svg {
       fill: #FFC312;
   }
-  .image-card .image-actions .material-design-icon.open-in-new-icon:hover > .material-design-icon__svg,
-  .image-card .card-image-details .material-design-icon.open-in-new-icon:hover > .material-design-icon__svg {
+  .image-card .image-actions .material-design-icon.magnify-plus-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.magnify-plus-icon:hover > .material-design-icon__svg {
       fill: #A3CB38;
+  }
+  .image-card .image-actions .material-design-icon.lock-open-variant-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.lock-open-variant-icon:hover > .material-design-icon__svg,
+  .image-card .image-actions .material-design-icon.lock-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.lock-icon:hover > .material-design-icon__svg {
+      fill: #3498db;
   }
 
   .col-xxl-1 .card-body {

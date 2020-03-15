@@ -15,15 +15,18 @@
             </b-dropdown-item>
           </b-dropdown>
         </b-button-group>
+        <b-button-group v-if="albumId" class="pb-3 pr-2 float-right">
+          <b-button v-b-tooltip.hover title="Change public visibility of album" v-if="token && (authEnabled === true)" href="#" @click.prevent="$refs.publicModal.show" ><LockOpenVariantIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Download album" :href="baseUrl + 'album/' + albumId + '/download'"><DownloadIcon /></b-button>
+        </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
           <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
           <b-button v-b-tooltip.hover title="Show information below image" :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
-          <b-button v-if="albumId" :href="baseUrl + 'album/' + albumId + '/download'" v-b-tooltip.hover title="Download album"><DownloadIcon /></b-button>
         </b-button-group>
       </b-col>
     </b-row>
     <b-row class="image-grid">
-      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" :class="'mb-3 ' + getColumns('xxl')">
+      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" :class="'mb-4 ' + getColumns('xxl')">
         <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
       </b-col>
     </b-row>
@@ -35,6 +38,7 @@
       :per-page="imagesPerPage"
       @change="page => $emit('onImageNavigation', page)">
     </b-pagination>
+    <PublicVisibilityModal ref="publicModal" v-on:visibility-changed="onVisibilityChanged" />
   </div>
 </template>
 
@@ -43,6 +47,8 @@ import ImageNode from '../components/ImageNode.vue'
 import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
 import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
 import DownloadIcon from 'vue-material-design-icons/Download.vue'
+import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
+import PublicVisibilityModal from '@/components/modals/PublicVisibilityModal'
 import { mapGetters } from 'vuex'
 
 import baguetteBox from 'baguettebox.js'
@@ -87,10 +93,12 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'authEnabled',
       'baseUrl',
       'imageWidth',
       'imagesPerPage',
-      'imageDetailsMode'
+      'imageDetailsMode',
+      'token'
     ])
   },
   props: {
@@ -119,9 +127,19 @@ export default {
     'image-node': ImageNode,
     CardsVariantIcon,
     CardTextOutlineIcon,
-    DownloadIcon
+    DownloadIcon,
+    LockOpenVariantIcon,
+    PublicVisibilityModal
   },
   methods: {
+    onVisibilityChanged: function (isPublic) {
+      if (this.albumId) {
+        this.apiGetAlbumPublicVisibility(this.albumId, isPublic, result => {
+          this.$emit('onImageNavigation', this.currentPage)
+          this.$refs.publicModal.hide()
+        })
+      }
+    },
     setColWidth: function (size) {
       this.$store.dispatch('ON_IMAGE_WIDTH_CHANGED', size)
     },

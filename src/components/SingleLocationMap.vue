@@ -17,8 +17,8 @@ export default {
   data: function () {
     return {
       center: L.latLng(this.latitude, this.longitude),
-      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
     }
   },
   props: {
@@ -40,6 +40,17 @@ export default {
       type: Number,
       default: 3
     }
+  },
+  mounted: function () {
+    // Disable zoom until focus gained, disable when blur
+    const mapObject = this.$refs.map.mapObject
+    mapObject.scrollWheelZoom.disable()
+    mapObject.on('focus', () => {
+      mapObject.scrollWheelZoom.enable()
+    })
+    mapObject.on('blur', () => {
+      mapObject.scrollWheelZoom.disable()
+    })
   }
 }
 </script>

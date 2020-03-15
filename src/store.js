@@ -6,6 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    authEnabled: false,
     baseUrl: null,
     album: null,
     image: null,
@@ -14,9 +15,12 @@ export default new Vuex.Store({
     albumsPerPage: '12',
     imagesPerPage: '12',
     albumDetailsMode: 'below',
-    imageDetailsMode: 'below'
+    imageDetailsMode: 'below',
+    token: null
   },
   getters: {
+    authEnabled: state => state.authEnabled,
+    token: state => state.token,
     baseUrl: state => state.baseUrl,
     album: state => state.album,
     image: state => state.image,
@@ -28,6 +32,13 @@ export default new Vuex.Store({
     imageDetailsMode: state => state.imageDetailsMode
   },
   mutations: {
+    ON_AUTH_CHANGED_MUTATION: function (state, newAuthEnabled) {
+      state.authEnabled = newAuthEnabled
+    },
+    ON_TOKEN_CHANGED_MUTATION: function (state, newToken) {
+      state.token = newToken
+      document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+    },
     ON_BASE_URL_CHANGED_MUTATION: function (state, newBaseUrl) {
       state.baseUrl = newBaseUrl
     },
@@ -57,6 +68,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    ON_AUTH_CHANGED: function ({ commit }, authEnabled) {
+      commit('ON_AUTH_CHANGED_MUTATION', authEnabled)
+    },
+    ON_TOKEN_CHANGED: function ({ commit }, token) {
+      commit('ON_TOKEN_CHANGED_MUTATION', token)
+    },
     ON_BASE_URL_CHANGED: function ({ commit }, baseUrl) {
       commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
     },
@@ -86,6 +103,8 @@ export default new Vuex.Store({
     }
   },
   plugins: [
-    createPersistedState()
+    createPersistedState({
+      key: 'frickl'
+    })
   ]
 })

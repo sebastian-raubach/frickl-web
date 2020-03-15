@@ -5,19 +5,19 @@
     <b-card :class="`album-card ${albumDetailsMode} ${albumDetailsMode === 'below' ? 'h-100': ''}`" no-body>
       <router-link :to="'/albums/' + album.id" :title="album.name">
         <div class="card-img-wrap">
-          <img :src="baseUrl + 'image/' + album.bannerImageId + '/img?size=SMALL'" class="card-img" :style="'height:' + albumHeight + 'px'"/>
+          <img :src="getSrc('SMALL')" class="card-img" :style="'height:' + albumHeight + 'px'"/>
         </div>
       </router-link>
       <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
         <div>
-          <h5 class="mb-2">{{ album.name }}</h5>
-          <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
+          <h5>{{ album.name }}</h5>
+          <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
         </div>
       </div>
       <b-card-body v-else>
         <div>
-          <h5 class="mb-2">{{ album.name }}</h5>
-          <span v-if="album.count > 0" class="font-weight-light"><ImageMultipleIcon /> {{ album.count }}</span>
+          <h5>{{ album.name }}</h5>
+          <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
         </div>
       </b-card-body>
     </b-card>
@@ -49,8 +49,20 @@ export default {
   computed: {
     ...mapGetters([
       'baseUrl',
-      'albumDetailsMode'
+      'albumDetailsMode',
+      'token'
     ])
+  },
+  methods: {
+    getSrc: function (size) {
+      var result = `${this.baseUrl}image/${this.album.bannerImageId}/img?size=${size}`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+
+      return result
+    }
   }
 }
 </script>

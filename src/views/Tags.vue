@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-container class="tags">
-      <div v-if="tags && tags.length > 0" class="pt-3">
+    <b-container class="tags pt-3">
+      <div v-if="tags && tags.length > 0">
         <h1>Tags <b-badge>{{ tags.length }}</b-badge></h1>
         <p>All tags currently used in your collection are shown below. Click on a tag to show images with that tag.</p>
         <b-form inline @submit.prevent>
@@ -13,6 +13,7 @@
           <b-badge variant="light">{{ tag.count }}</b-badge>
         </b-button>
       </div>
+      <h3 v-else>No tags found</h3>
     </b-container>
     <b-container fluid v-if="imageCount > 0" class="pt-3">
       <h1>Images tagged '{{ tag.name }}' <b-badge>{{ imageCount }}</b-badge></h1>

@@ -1,5 +1,11 @@
 export default {
   methods: {
+    apiPostToken: function (data, onSuccess, onError) {
+      this.unauthAjax({ url: 'token', method: 'POST', data: data, success: onSuccess, error: onError })
+    },
+    apiGetSettings: function (onSuccess) {
+      this.unauthAjax({ url: 'settings', success: onSuccess })
+    },
     apiGetAlbum: function (albumId, onSuccess) {
       this.unauthAjax({ url: 'album/' + albumId, success: onSuccess })
     },
@@ -92,6 +98,9 @@ export default {
     },
     apiGetRandomFavorite: function (onSuccess) {
       this.unauthAjax({ url: 'image/fav/random', success: onSuccess })
+    },
+    apiGetAlbumPublicVisibility: function (albumId, isPublic, onSuccess) {
+      this.unauthAjax({ url: `album/${albumId}/public`, data: { public: isPublic }, success: onSuccess })
     }
   }
 }
