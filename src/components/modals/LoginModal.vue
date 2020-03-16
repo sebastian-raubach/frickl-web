@@ -31,6 +31,7 @@
           placeholder="Enter password" />
       </b-form-group>
     </b-form>
+    <p class="text-danger" v-if="error">{{ error }}</p>
   </b-modal>
 </template>
 
@@ -46,7 +47,8 @@ export default {
         username: null,
         password: null
       },
-      validated: false
+      validated: false,
+      error: null
     }
   },
   methods: {
@@ -62,11 +64,12 @@ export default {
       }
 
       this.apiPostToken(this.userDetails, result => {
+        this.error = null
         this.$store.dispatch('ON_TOKEN_CHANGED', result)
         this.$refs.loginModal.hide()
         this.$emit('login')
       }, error => {
-        console.error(error)
+        this.error = error.message
       })
     },
     show () {
