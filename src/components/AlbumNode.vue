@@ -11,13 +11,23 @@
       <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
         <div>
           <h5>{{ album.name }}</h5>
-          <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
+          <template v-if="authEnabled === false || token">
+            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
+          </template>
+          <template v-else>
+            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.countPublic }}</span>
+          </template>
         </div>
       </div>
       <b-card-body v-else>
         <div>
           <h5>{{ album.name }}</h5>
-          <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
+          <template v-if="authEnabled === false || token">
+            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
+          </template>
+          <template v-else>
+            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.countPublic }}</span>
+          </template>
         </div>
       </b-card-body>
     </b-card>
@@ -55,7 +65,7 @@ export default {
   },
   methods: {
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${this.album.bannerImageId}/img?size=${size}`
+      var result = `${this.baseUrl}image/${this.token ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

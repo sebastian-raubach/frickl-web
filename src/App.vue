@@ -17,14 +17,14 @@
           <b-nav-item to="/albums">Albums</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
           <b-nav-item to="/maps">Maps</b-nav-item>
-          <b-nav-item to="/calendar" v-if="token">Calendar</b-nav-item>
-          <b-nav-item to="/stats" v-if="token">Statistics</b-nav-item>
+          <b-nav-item to="/calendar" v-if="authEnabled === false || token">Calendar</b-nav-item>
+          <b-nav-item to="/stats" v-if="authEnabled === false || token">Statistics</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <template v-if="authEnabled === true">
-            <b-nav-item v-if="token" @click="logout">Logout</b-nav-item>
+            <b-nav-item v-if="authEnabled === false || token" @click="logout">Logout</b-nav-item>
             <b-nav-item v-else @click="login">Login</b-nav-item>
           </template>
           <b-nav-item to="/about">About</b-nav-item>

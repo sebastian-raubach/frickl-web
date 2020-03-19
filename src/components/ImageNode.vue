@@ -11,13 +11,13 @@
         <div><small class="text-light" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
         <div><small class="text-light" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
         <div class="mt-2">
-          <HeartIcon v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"/>
-          <HeartOutlineIcon v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"/>
-          <span v-if="token && (authEnabled === true)">
+          <span v-if="authEnabled === false || token">
+            <HeartIcon v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"/>
+            <HeartOutlineIcon v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"/>
             <LockOpenVariantIcon v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1" />
             <LockIcon v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else />
+            <FolderImageIcon v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"/>
           </span>
-          <FolderImageIcon v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"/>
           <a class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent><MagnifyPlusIcon /></a>
         </div>
       </div>
@@ -32,7 +32,7 @@
       </b-card-body>
 
       <b-button-group class="image-actions mt-2 w-100">
-        <template v-if="token && (authEnabled === true)">
+        <template v-if="authEnabled === false || token">
           <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
           <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
           <b-button v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1"><LockOpenVariantIcon /></b-button>
