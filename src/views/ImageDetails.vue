@@ -6,14 +6,14 @@
           <b-breadcrumb class="align-items-center">
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
             <b-breadcrumb-item :text="image.name" disabled active />
-            <a class="ml-auto btn btn-sm btn-primary" :href="baseUrl + 'image/' + image.id + '/img?size=ORIGINAL'" :download="`${album.name}-${image.name}`">Download</a>
+            <a class="ml-auto btn btn-sm btn-primary" :href="getSrc('ORIGINAL')" :download="`${album.name}-${image.name}`">Download</a>
           </b-breadcrumb>
         </b-col>
       </b-row>
       <b-row v-if="image" >
         <b-col cols=12 sm=12 md=12 lg=8 xl=9 class="img-col">
-          <a :href="baseUrl + 'image/' + image.id + '/img?size=ORIGINAL'">
-            <b-img fluid-grow :src="baseUrl + 'image/' + image.id + '/img?size=MEDIUM'" class="img-details"/>
+          <a :href="getSrc('ORIGINAL')">
+            <b-img fluid-grow :src="getSrc('MEDIUM')" class="img-details"/>
           </a>
         </b-col>
         <b-col cols=12 sm=12 md=12 lg=4 xl=3 class="exif">
@@ -152,6 +152,15 @@ export default {
     ])
   },
   methods: {
+    getSrc: function (size) {
+      var result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+
+      return result
+    },
     onTogglePublic: function (event) {
       event.stopPropagation()
       event.preventDefault()
@@ -220,7 +229,7 @@ export default {
           vm.image = result[0]
           vm.updateTags()
           vm.updateAlbum()
-          Vibrant.from(vm.baseUrl + 'image/' + vm.image.id + '/img?size=SMALL')
+          Vibrant.from(vm.getSrc('SMALL'))
             .getPalette(function (err, palette) {
               if (!err && palette && palette.Vibrant) {
                 vm.backgroundColor = palette.Vibrant.getHex()
