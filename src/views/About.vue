@@ -30,7 +30,7 @@
             <img src="../assets/docker.svg" class="img-fluid p-5" alt="Docker" />
           </div>
           <b-card-footer class="text-center">
-            <a href="https://github.com/sebastian-raubach/frickl-docker">Frickl Docker Container</a>
+            <a href="https://github.com/sebastian-raubach/frickl-web/docker">Frickl Docker Container</a>
           </b-card-footer>
         </b-card>
       </b-col>

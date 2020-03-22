@@ -15,7 +15,7 @@ export default {
     handleError: function (error) {
       var variant = 'danger'
       var title = 'Error'
-      var message = error.statusText
+      var message = error ? error.statusText : 'UNKNOWN ERROR'
 
       switch (error.status) {
         case 400:

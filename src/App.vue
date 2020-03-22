@@ -92,7 +92,7 @@ export default {
     checkImportStatus: function () {
       var vm = this
       this.apiGetImportStatus(function (result) {
-        this.importStatus = result
+        vm.importStatus = result
 
         if (result.status === 'IMPORTING') {
           vm.$insProgress.start()
