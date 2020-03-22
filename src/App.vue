@@ -40,7 +40,7 @@
       </b-collapse>
     </b-navbar>
     <vue-ins-progress-bar id="importStatus" />
-    <b-tooltip placement="bottom" target="importStatus" title="Checking photos for updates..." />
+    <b-tooltip v-if="importStatus" placement="bottom" target="importStatus" :title="`Checking photos for updates. Remaining photos: ${importStatus.queueSize}`" />
     <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
     <router-view :key="$route.path" id="content"/>
 
@@ -60,7 +60,8 @@ export default {
       searchTerm: '',
       showAlert: false,
       variant: 'warning',
-      message: ''
+      message: '',
+      importStatus: null
     }
   },
   computed: {
@@ -91,7 +92,9 @@ export default {
     checkImportStatus: function () {
       var vm = this
       this.apiGetImportStatus(function (result) {
-        if (result === 'IMPORTING') {
+        this.importStatus = result
+
+        if (result.status === 'IMPORTING') {
           vm.$insProgress.start()
           vm.timer = setTimeout(vm.checkImportStatus, 10000)
         } else {
@@ -99,7 +102,7 @@ export default {
 
           if (vm.timer) {
             clearInterval(vm.timer)
-            vm.$eventHub.$emit('alert', 'success', 'Photo update successfully completed.')
+            vm.$eventHub.$emit('alert', 'success', `Photo update of ${result.totalImages} successfully completed.`)
             clearInterval(vm.timer)
             vm.timer = null
           }

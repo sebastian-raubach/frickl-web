@@ -9,7 +9,9 @@
         <div class="wheel"></div>
       </div> -->
     </div>
-    <div v-else class="bg-img bg-dark"></div>
+    <div v-else class="bg-img bg-dark d-flex justify-content-center align-items-center">
+      <img src="../assets/photos.svg" class="img-fluid" alt="Github" />
+    </div>
     <!-- The text -->
     <div class="home-wrapper">
       <div class="container">
@@ -90,6 +92,11 @@ export default {
     text-align: center;
     color: white;
     z-index: -1;
+  }
+
+  .bg-img .img-fluid {
+    opacity: .2;
+    max-height: 80vh;
   }
 
   .mouse-icon {

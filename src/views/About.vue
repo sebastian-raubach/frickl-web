@@ -17,7 +17,7 @@
       <b-col xs=12 sm=6 lg=4 class="mb-3">
         <b-card no-body>
           <div class="card-img text-center">
-            <GithubCircleIcon class="github" />
+            <img src="../assets/github.svg" class="img-fluid p-5" alt="Github" />
           </div>
           <b-card-footer class="text-center">
             <a href="https://github.com/sebastian-raubach/frickl-web">Frickl on Github</a>
@@ -27,7 +27,7 @@
       <b-col xs=12 sm=6 lg=4 class="mb-3">
         <b-card no-body>
           <div class="card-img text-center">
-            <DockerIcon class="docker"/>
+            <img src="../assets/docker.svg" class="img-fluid p-5" alt="Docker" />
           </div>
           <b-card-footer class="text-center">
             <a href="https://github.com/sebastian-raubach/frickl-docker">Frickl Docker Container</a>
@@ -37,7 +37,7 @@
       <b-col xs=12 sm=6 lg=4 class="mb-3">
         <b-card no-body>
           <div class="card-img text-center">
-            <CoffeeIcon class="github" />
+            <img src="../assets/coffee2.svg" class="img-fluid p-5" alt="Coffee" />
           </div>
           <b-card-footer class="text-center">
             <a href="https://github.com/sponsors/sebastian-raubach">Buy Sebastian a coffee!</a>
@@ -49,27 +49,12 @@
 </template>
 
 <script>
-import CoffeeIcon from 'vue-material-design-icons/Coffee.vue'
-import DockerIcon from 'vue-material-design-icons/Docker.vue'
-import GithubCircleIcon from 'vue-material-design-icons/GithubCircle.vue'
-
-export default {
-  components: {
-    CoffeeIcon,
-    DockerIcon,
-    GithubCircleIcon
-  }
-}
 </script>
 
 <style>
-  .about-links .material-design-icon {
-    height: 10em;
-    width: 10em;
-  }
-  .about-links .material-design-icon > .material-design-icon__svg {
-      height: 10em;
-      width: 10em;
+  .about-links img {
+    height: 15em;
+    max-width: 100%;
   }
   .about-links .docker .material-design-icon__svg {
     fill: #0db7ed;
