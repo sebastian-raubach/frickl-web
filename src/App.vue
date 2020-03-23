@@ -41,8 +41,8 @@
     </b-navbar>
     <vue-ins-progress-bar id="importStatus" />
     <template v-if="importStatus">
-      <b-tooltip v-if="importStatus.status === 'SCANNING'" placement="bottom" target="importStatus" title="Scanning image source for changes." />
-      <b-tooltip v-if="importStatus.status === 'IMPORTING'" placement="bottom" target="importStatus" :title="`Checking ${importStatus.totalImages} photos for updates. Photos on processing queue: ${importStatus.queueSize}`" />
+      <b-tooltip v-show="importStatus.status === 'SCANNING'" placement="bottom" target="importStatus" title="Scanning image source for changes." />
+      <b-tooltip v-show="importStatus.status === 'IMPORTING'" placement="bottom" target="importStatus" :title="`Checking ${importStatus.totalImages} photos for updates. Photos on processing queue: ${importStatus.queueSize}`" />
     </template>
     <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
     <router-view :key="$route.path" id="content"/>
