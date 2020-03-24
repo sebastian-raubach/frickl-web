@@ -97,7 +97,7 @@ export default {
       this.apiGetImportStatus(function (result) {
         vm.importStatus = result
 
-        if (result.status === 'IMPORTING') {
+        if (result.status !== 'IDLE') {
           vm.$insProgress.start()
           vm.timer = setTimeout(vm.checkImportStatus, 10000)
         } else {
