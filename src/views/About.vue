@@ -37,7 +37,7 @@
       <b-col xs=12 sm=6 lg=4 class="mb-3">
         <b-card no-body>
           <div class="card-img text-center">
-            <img src="../assets/coffee2.svg" class="img-fluid p-5" alt="Coffee" />
+            <img src="../assets/coffee.svg" class="img-fluid p-5" alt="Coffee" />
           </div>
           <b-card-footer class="text-center">
             <a href="https://github.com/sponsors/sebastian-raubach">Buy Sebastian a coffee!</a>
