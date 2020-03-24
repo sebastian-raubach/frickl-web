@@ -6,7 +6,7 @@
     <div class="location-map" id="location-map">
     </div>
     <div v-if="location" ref="popupContent">
-      <img :src="`${baseUrl}image/${location.id}/img?size=SMALL`" width="300"/>
+      <img :src="getSrc(location.id, 'SMALL')" width="300"/>
       <button class="btn btn-primary btn-block marker-button" @click="onMarkerClicked(location)">Select</button>
     </div>
   </div>
@@ -28,10 +28,20 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'baseUrl'
+      'baseUrl',
+      'token'
     ])
   },
   methods: {
+    getSrc: function (id, size) {
+      var result = `${this.baseUrl}image/${id}/img?size=${size}`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+
+      return result
+    },
     onMarkerClicked: function (location) {
       this.$router.push('images/' + location.id)
     }

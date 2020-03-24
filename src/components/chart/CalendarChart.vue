@@ -71,7 +71,7 @@ export default {
         ygap: 2,
         colorscale: [
           [0, '#efefef'],
-          [1, '#f97c34']
+          [1, '#f8a631']
         ],
         hovertemplate: '%{x}. %{y}: %{z}'
       }]

@@ -296,9 +296,15 @@ export default {
       width: 2em;
       fill: white;
   }
+  .image-actions .btn .material-design-icon.heart-icon > .material-design-icon__svg,
   .image-actions .btn:hover .material-design-icon.heart-icon > .material-design-icon__svg,
   .image-actions .btn:hover .material-design-icon.heart-outline-icon > .material-design-icon__svg {
       fill: #EA2027;
+  }
+  .image-actions .btn .material-design-icon.lock-open-variant-icon > .material-design-icon__svg,
+  .image-actions .btn:hover .material-design-icon.lock-icon > .material-design-icon__svg,
+  .image-actions .btn:hover .material-design-icon.lock-open-variant-icon > .material-design-icon__svg {
+      fill: #3498db;
   }
   .image-actions .btn:hover .material-design-icon.folder-image-icon > .material-design-icon__svg {
       fill: #FFC312;

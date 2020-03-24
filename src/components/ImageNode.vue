@@ -256,10 +256,10 @@ export default {
   .image-card .card-image-details .material-design-icon.magnify-plus-icon:hover > .material-design-icon__svg {
       fill: #A3CB38;
   }
-  .image-card .image-actions .material-design-icon.lock-open-variant-icon:hover > .material-design-icon__svg,
-  .image-card .card-image-details .material-design-icon.lock-open-variant-icon:hover > .material-design-icon__svg,
-  .image-card .image-actions .material-design-icon.lock-icon:hover > .material-design-icon__svg,
-  .image-card .card-image-details .material-design-icon.lock-icon:hover > .material-design-icon__svg {
+  .image-card .card-img-overlay .material-design-icon.lock-icon:hover > .material-design-icon__svg,
+  .image-card .card-img-overlay .material-design-icon.lock-open-variant-icon > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.lock-icon:hover > .material-design-icon__svg,
+  .image-card .card-image-details .material-design-icon.lock-open-variant-icon > .material-design-icon__svg {
       fill: #3498db;
   }
 

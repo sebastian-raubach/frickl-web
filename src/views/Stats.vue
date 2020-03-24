@@ -17,7 +17,7 @@ export default {
           y: result.map(d => d.count),
           type: 'bar',
           marker: {
-            color: '#f97c34'
+            color: '#f8a631'
           }
         }]
 
