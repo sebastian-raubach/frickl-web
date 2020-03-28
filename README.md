@@ -2,6 +2,10 @@
   <img src="src/assets/frickl.svg" alt="Logo">
 </p>
 
+![GitHub](https://img.shields.io/github/license/sebastian-raubach/frickl-web)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/sebastian-raubach/frickl-web)
+![GitHub last commit](https://img.shields.io/github/last-commit/sebastian-raubach/frickl-web)
+
 # Frickl
 
 Frickl is a self-hosted image library. This repository contains the web interface of Frickl written in Vue.js.
