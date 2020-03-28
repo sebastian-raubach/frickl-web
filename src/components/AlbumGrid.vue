@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="albumGrid">
     <b-row>
       <b-col cols=12>
         <b-button-group class="pb-3 float-right">
@@ -100,6 +100,13 @@ export default {
   watch: {
     albumCount: function (newValue, oldValue) {
       this.currentPage = 1
+    },
+    albums: function (newValue, oldValue) {
+      window.scrollTo({
+        left: 0,
+        top: this.$refs.albumGrid.getBoundingClientRect().top,
+        behavior: 'smooth'
+      })
     }
   },
   components: {

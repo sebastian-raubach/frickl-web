@@ -79,12 +79,14 @@
                 <b-button v-b-tooltip.hover title="Mark as favorite" v-else @click="onToggleFavorite($event)">
                   <HeartOutlineIcon />
                 </b-button>
-                <b-button v-b-tooltip.hover title="Make private" @click="onTogglePublic($event)" v-if="image.isPublic === 1">
-                  <LockOpenVariantIcon />
-                </b-button>
-                <b-button v-b-tooltip.hover title="Make public" @click="onTogglePublic($event)" v-else>
-                  <LockIcon />
-                </b-button>
+                <template v-if="authEnabled === true && token">
+                  <b-button v-b-tooltip.hover title="Make private" @click="onTogglePublic($event)" v-if="image.isPublic === 1">
+                    <LockOpenVariantIcon />
+                  </b-button>
+                  <b-button v-b-tooltip.hover title="Make public" @click="onTogglePublic($event)" v-else>
+                    <LockIcon />
+                  </b-button>
+                </template>
                 <b-button v-b-tooltip.hover title="Set image as album cover" @click="onSetImageAsAlbumCover($event)">
                   <FolderImageIcon />
                 </b-button>
@@ -147,6 +149,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'authEnabled',
       'baseUrl',
       'token'
     ])

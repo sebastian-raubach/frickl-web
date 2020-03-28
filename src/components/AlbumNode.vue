@@ -59,13 +59,14 @@ export default {
   computed: {
     ...mapGetters([
       'baseUrl',
+      'authEnabled',
       'albumDetailsMode',
       'token'
     ])
   },
   methods: {
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${this.token ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
+      var result = `${this.baseUrl}image/${(this.token || this.authEnabled === false) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

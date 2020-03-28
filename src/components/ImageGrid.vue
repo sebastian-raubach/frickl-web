@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="imageGrid">
     <b-row>
       <b-col cols=12>
         <b-button-group class="pb-3 float-right">
@@ -121,6 +121,12 @@ export default {
     },
     images: function (newValue, oldValue) {
       this.baguetteBox()
+
+      window.scrollTo({
+        left: 0,
+        top: this.$refs.imageGrid.getBoundingClientRect().top,
+        behavior: 'smooth'
+      })
     }
   },
   components: {

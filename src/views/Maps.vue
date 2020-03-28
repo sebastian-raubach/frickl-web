@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="map-spinner d-flex justify-content-center h-100 align-items-center" v-if="!locations">
-      <b-spinner label="Loading..." type="grow" variant="primary"></b-spinner>
+    <div class="map-spinner d-flex justify-content-center h-100 align-items-center" v-if="!locations || locations.length < 1">
+      <b-spinner label="Loading..." type="grow" variant="primary" v-if="!locations" />
+      <h2 v-else>No images with geographics locations found.</h2>
     </div>
     <div class="location-map" id="location-map">
     </div>
@@ -120,6 +121,9 @@ export default {
     position: absolute;
     z-index: 9999;
     width: 100%;
+    height: calc(100vh - 66px) !important;
+    background-color: rgba(0,0,0,.6);
+    color: white;
   }
   .map-spinner > span {
     width: 6rem;

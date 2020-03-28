@@ -41,10 +41,17 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'baseUrl'
+      'baseUrl',
+      'token'
     ]),
     getUrl: function () {
-      return this.baseUrl + 'image/' + this.backgroundImageId + '/img?size=MEDIUM'
+      var result = `${this.baseUrl}image/${this.backgroundImageId}/img?size=MEDIUM`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+
+      return result
     }
   },
   mounted: function () {
