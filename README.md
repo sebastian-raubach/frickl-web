@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/frickl.svg" alt="Logo">
+  <img src="https://raw.githubusercontent.com/sebastian-raubach/frickl-web/master/src/assets/frickl.svg?sanitize=true" width="200" alt="Logo">
 </p>
 
 ![GitHub](https://img.shields.io/github/license/sebastian-raubach/frickl-web)
@@ -22,6 +22,7 @@ Frickl is a self-hosted image library. This repository contains the web interfac
 - A way to re-organize your photo collection, this needs to be done before using Frickl
 - Able to handle deletion/renaming of images in your library, just additions
 - Able to handle uploading of images through the web interface, simply add them to the underlying file system
+- Currently able to handle any image formats other than .jpg.
 - Guarenteed to not screw up your images
 - A direct replacement for Flickr or similar, as they host images for you
 
