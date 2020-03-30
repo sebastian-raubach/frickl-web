@@ -48,11 +48,11 @@ export default {
       this.currentPage = 1
       this.update()
     },
-    show () {
-      var vm = this
-      this.$nextTick(function () {
-        vm.$refs.selectAlbumModal.show()
-      })
+    show: function () {
+      this.$nextTick(() => this.$refs.selectAlbumModal.show())
+    },
+    hide: function () {
+      this.$nextTick(() => this.$refs.selectAlbumModal.hide())
     },
     onAlbumNavigation: function (page) {
       this.pageAlbums = this.allAlbums.slice(this.albumsPerPage * (page - 1), this.albumsPerPage * page)
