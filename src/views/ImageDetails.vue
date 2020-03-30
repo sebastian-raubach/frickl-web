@@ -174,7 +174,9 @@ export default {
     onAlbumClicked: function (album) {
       album.bannerImageId = this.image.id
 
-      this.$refs.selectAlbumModal.hide()
+      if (this.$refs.selectAlbumModal) {
+        this.$refs.selectAlbumModal.hide()
+      }
       this.apiPatchAlbum(album, function (result) {
       })
     },
