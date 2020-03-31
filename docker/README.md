@@ -21,7 +21,7 @@ services:
         container_name: mysql
 
     frickl:
-        image: sebastianraubach/frickl:x86 (or :arm)
+        image: sebastianraubach/frickl:x86-release-1.0.0 (or :arm-release-1.0.0)
         environment:
           JAVA_OPTS: -Xmx512m
           FRICKL_USERNAME: <OPTIONAL USERNAME FOR AUTHENTICATION>
@@ -78,5 +78,5 @@ docker run -d \
     -v /path/to/your/images:/data/images \
     -p 80:8080 \
     --restart always \
-    sebastianraubach/frickl:x86 (or :arm)
+    sebastianraubach/frickl:x86-release-1.0.0 (or :arm-release-1.0.0)
 ```
