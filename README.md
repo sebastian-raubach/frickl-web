@@ -32,3 +32,7 @@ Please make sure to make a backup of all your images. I have not experienced any
 ## How to use
 
 - Read the [Wiki](../../wiki/) for a variety of options to download and run Frickl yourself.
+
+## Support Frickl
+
+If you would like to support Frickl or me, please consider [sponsoring me on GitHub](https://github.com/sponsors/sebastian-raubach).
