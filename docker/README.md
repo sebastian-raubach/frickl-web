@@ -26,6 +26,7 @@ services:
           JAVA_OPTS: -Xmx512m
           FRICKL_USERNAME: <OPTIONAL USERNAME FOR AUTHENTICATION>
           FRICKL_PASSWORD: <OPTIONAL PASSWORD FOR AUTHENTICATION>
+          GOOGLE_ANALYTICS_KEY: <OPTIONAL GOOGLE ANALYTICS KEY>
         ports:
           - 80:8080
         restart: always
@@ -74,6 +75,7 @@ docker run -d \
     --e JAVA_OPTS=-Xmx512m \
     --e FRICKL_USERNAME=<OPTIONAL USERNAME FOR AUTHENTICATION> \
     --e FRICKL_PASSWORD=<OPTIONAL PASSWORD FOR AUTHENTICATION> \
+    --e GOOGLE_ANALYTICS_KEY=<OPTIONAL GOOGLE ANALYTICS KEY> \
     -v frickl:/usr/local/tomcat/temp \
     -v /path/to/your/images:/data/images \
     -p 80:8080 \
