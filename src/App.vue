@@ -152,7 +152,7 @@ export default {
         Vue.$ga.disable()
       }
 
-      this.$store.dispatch('ON_AUTH_CHANGED', result)
+      this.$store.dispatch('ON_SERVER_SETTINGS_CHANGED', result)
     })
   },
   beforeDestroy: function () {
