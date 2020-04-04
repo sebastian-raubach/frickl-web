@@ -11,7 +11,7 @@
       <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
         <div>
           <h5>{{ album.name }}</h5>
-          <template v-if="authEnabled === false || token">
+          <template v-if="serverSettings && serverSettings.authEnabled === false || token">
             <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
           </template>
           <template v-else>
@@ -22,7 +22,7 @@
       <b-card-body v-else>
         <div>
           <h5>{{ album.name }}</h5>
-          <template v-if="authEnabled === false || token">
+          <template v-if="serverSettings && serverSettings.authEnabled === false || token">
             <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
           </template>
           <template v-else>
@@ -59,14 +59,14 @@ export default {
   computed: {
     ...mapGetters([
       'baseUrl',
-      'authEnabled',
+      'serverSettings',
       'albumDetailsMode',
       'token'
     ])
   },
   methods: {
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${(this.token || this.authEnabled === false) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
+      var result = `${this.baseUrl}image/${(this.token || (this.serverSettings && this.serverSettings.authEnabled === false)) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

@@ -70,7 +70,7 @@
               </b-row>
             </template>
           </div>
-          <b-row v-if="authEnabled === false || token">
+          <b-row v-if="(serverSettings && serverSettings.authEnabled === false) || token">
             <b-col cols=12>
               <b-button-group class="image-actions">
                 <b-button v-b-tooltip.hover title="Unmark as favorite" v-if="image.isFavorite" @click="onToggleFavorite($event)">
@@ -79,7 +79,7 @@
                 <b-button v-b-tooltip.hover title="Mark as favorite" v-else @click="onToggleFavorite($event)">
                   <HeartOutlineIcon />
                 </b-button>
-                <template v-if="authEnabled === true && token">
+                <template v-if="(serverSettings && serverSettings.authEnabled === true) && token">
                   <b-button v-b-tooltip.hover title="Make private" @click="onTogglePublic($event)" v-if="image.isPublic === 1">
                     <LockOpenVariantIcon />
                   </b-button>
@@ -149,7 +149,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'authEnabled',
+      'serverSettings',
       'baseUrl',
       'token'
     ])

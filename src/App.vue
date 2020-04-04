@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" type="dark" variant="dark">
+    <b-navbar toggleable="lg" type="dark" variant="dark" id="navbar">
       <b-navbar-brand>
         <router-link to="/">
           <img src="./assets/frickl.svg" height="40px" alt="Frickl">
@@ -17,14 +17,14 @@
           <b-nav-item to="/albums">Albums</b-nav-item>
           <b-nav-item to="/tags">Tags</b-nav-item>
           <b-nav-item to="/maps">Maps</b-nav-item>
-          <b-nav-item to="/calendar" v-if="authEnabled === false || token">Calendar</b-nav-item>
-          <b-nav-item to="/stats" v-if="authEnabled === false || token">Statistics</b-nav-item>
+          <b-nav-item to="/calendar" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Calendar</b-nav-item>
+          <b-nav-item to="/stats" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Statistics</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <template v-if="authEnabled === true">
-            <b-nav-item v-if="authEnabled === false || token" @click="logout">Logout</b-nav-item>
+          <template v-if="(serverSettings && serverSettings.authEnabled === true)">
+            <b-nav-item v-if="(serverSettings && serverSettings.authEnabled === false) || token" @click="logout">Logout</b-nav-item>
             <b-nav-item v-else @click="login">Login</b-nav-item>
           </template>
           <b-nav-item to="/about">About</b-nav-item>
@@ -48,13 +48,24 @@
     <router-view :key="$route.path" id="content"/>
 
     <LoginModal ref="loginModal" v-on:login="onLogin" />
+
+    <b-popover target="navbar" show placement="bottom" variant="info" v-if="cookiesAccepted === null">
+      <template v-slot:title>GDPR Cookie Consent</template>
+      <p>Frickl uses cookies to facilitate user login and to remember user preferences.</p>
+      <div class="d-flex flex-row">
+        <b-button variant="success" class="flex-fill mr-2" @click="acceptCookies(true)">Accept</b-button>
+        <b-button variant="outline-secondary" class="flex-fill" v-b-tooltip:hover title="Please be aware that rejecting cookies will disable certain features of Frickl." @click="acceptCookies(false)">Reject</b-button>
+      </div>
+    </b-popover>
   </div>
 </template>
 
 <script>
 import LoginModal from '@/components/modals/LoginModal'
 import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
+import Vue from 'vue'
 import { mapGetters } from 'vuex'
+import VueAnalytics from 'vue-analytics'
 
 export default {
   data: function () {
@@ -69,7 +80,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'authEnabled',
+      'cookiesAccepted',
+      'serverSettings',
       'token'
     ])
   },
@@ -78,6 +90,9 @@ export default {
     MagnifyIcon
   },
   methods: {
+    acceptCookies: function (decision) {
+      this.$store.dispatch('ON_COOKIES_ACCEPTED', decision)
+    },
     login: function () {
       this.$refs.loginModal.show()
     },
@@ -124,7 +139,20 @@ export default {
   },
   created: async function () {
     await this.apiGetSettings(result => {
-      this.$store.dispatch('ON_AUTH_CHANGED', result.authEnabled)
+      if (result && result.googleAnalyticsKey) {
+        Vue.use(VueAnalytics, {
+          id: result.googleAnalyticsKey,
+          router: this.$router,
+          autoTracking: {
+            exception: true,
+            exceptionLogs: false
+          }
+        })
+        // Disable initially, users have to opt-in
+        Vue.$ga.disable()
+      }
+
+      this.$store.dispatch('ON_AUTH_CHANGED', result)
     })
   },
   beforeDestroy: function () {

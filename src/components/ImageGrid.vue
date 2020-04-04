@@ -16,7 +16,7 @@
           </b-dropdown>
         </b-button-group>
         <b-button-group v-if="albumId" class="pb-3 pr-2 float-right">
-          <b-button v-b-tooltip.hover title="Change public visibility of album" v-if="authEnabled === false || token" href="#" @click.prevent="$refs.publicModal.show" ><LockOpenVariantIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Change public visibility of album" v-if="(serverSettings && serverSettings.authEnabled === false) || token" href="#" @click.prevent="$refs.publicModal.show" ><LockOpenVariantIcon /></b-button>
           <b-button v-b-tooltip.hover title="Download album" :href="baseUrl + 'album/' + albumId + '/download'"><DownloadIcon /></b-button>
         </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
@@ -93,7 +93,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'authEnabled',
+      'serverSettings',
       'baseUrl',
       'imageWidth',
       'imagesPerPage',

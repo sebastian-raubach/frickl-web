@@ -10,10 +10,10 @@
     <div v-if="tags && tags.length > 0">
       <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
         <!-- TODO: Change tag redirect -->
-        {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)" v-if="authEnabled === false || token"/>
+        {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)" v-if="(serverSettings && serverSettings.authEnabled === false) || token"/>
       </b-badge>
     </div>
-    <b-button variant="primary" size="sm" @click="onAddClicked()" class="mt-3" v-if="authEnabled === false || token">Add tag</b-button>
+    <b-button variant="primary" size="sm" @click="onAddClicked()" class="mt-3" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Add tag</b-button>
 
     <div class="bg-white text-body">
       <AddTagModal :id="id"
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'authEnabled',
+      'serverSettings',
       'token'
     ])
   },

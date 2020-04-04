@@ -4,7 +4,7 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters([
-      'authEnabled'
+      'serverSettings'
     ])
   },
   methods: {
@@ -27,7 +27,7 @@ export default {
         case 403:
           message = 'Forbidden. You cannot access this resource.'
           this.$store.dispatch('ON_TOKEN_CHANGED', null)
-          if (this.authEnabled === true) {
+          if (this.serverSettings && this.serverSettings.authEnabled === true) {
             this.$router.push({ name: 'home' })
           }
           return

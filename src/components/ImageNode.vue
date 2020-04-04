@@ -11,10 +11,10 @@
         <div><small class="text-light" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
         <div><small class="text-light" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
         <div class="mt-2">
-          <span v-if="authEnabled === false || token">
+          <span v-if="(serverSettings && serverSettings.authEnabled === false) || token">
             <HeartIcon v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"/>
             <HeartOutlineIcon v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"/>
-            <template v-if="authEnabled === true && token">
+            <template v-if="(serverSettings && serverSettings.authEnabled === true) && token">
               <LockOpenVariantIcon v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1" />
               <LockIcon v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else />
             </template>
@@ -34,10 +34,10 @@
       </b-card-body>
 
       <b-button-group class="image-actions mt-2 w-100">
-        <template v-if="authEnabled === false || token">
+        <template v-if="(serverSettings && serverSettings.authEnabled === false) || token">
           <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
           <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
-          <template v-if="authEnabled === true && token">
+          <template v-if="(serverSettings && serverSettings.authEnabled === true) && token">
             <b-button v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1"><LockOpenVariantIcon /></b-button>
             <b-button v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else><LockIcon /></b-button>
           </template>
@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'authEnabled',
+      'serverSettings',
       'imageDetailsMode',
       'baseUrl',
       'token'

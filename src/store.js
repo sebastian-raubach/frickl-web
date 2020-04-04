@@ -4,9 +4,13 @@ import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
+const essentialKeys = ['token', 'baseUrl', 'serverSettings', 'cookiesAccepted']
+
 export default new Vuex.Store({
   state: {
-    authEnabled: false,
+    serverSettings: {
+      authEnabled: false
+    },
     baseUrl: null,
     album: null,
     image: null,
@@ -16,10 +20,11 @@ export default new Vuex.Store({
     imagesPerPage: '12',
     albumDetailsMode: 'below',
     imageDetailsMode: 'below',
-    token: null
+    token: null,
+    cookiesAccepted: null
   },
   getters: {
-    authEnabled: state => state.authEnabled,
+    serverSettings: state => state.serverSettings,
     token: state => state.token,
     baseUrl: state => state.baseUrl,
     album: state => state.album,
@@ -29,11 +34,20 @@ export default new Vuex.Store({
     albumsPerPage: state => state.albumsPerPage,
     imagesPerPage: state => state.imagesPerPage,
     albumDetailsMode: state => state.albumDetailsMode,
-    imageDetailsMode: state => state.imageDetailsMode
+    imageDetailsMode: state => state.imageDetailsMode,
+    cookiesAccepted: state => state.cookiesAccepted
   },
   mutations: {
-    ON_AUTH_CHANGED_MUTATION: function (state, newAuthEnabled) {
-      state.authEnabled = newAuthEnabled
+    ON_SERVER_SETTINGS_CHANGED_MUTATION: function (state, newServerSettings) {
+      state.serverSettings = newServerSettings
+
+      if (newServerSettings && newServerSettings.googleAnalyticsKey) {
+        if (state.cookiesAccepted === true) {
+          Vue.$ga.enable()
+        } else {
+          Vue.$ga.disable()
+        }
+      }
     },
     ON_TOKEN_CHANGED_MUTATION: function (state, newToken) {
       state.token = newToken
@@ -65,11 +79,22 @@ export default new Vuex.Store({
     },
     ON_ALBUM_DETAILS_MODE_CHANGED_MUTATION: function (state, newAlbumDetailsMode) {
       state.albumDetailsMode = newAlbumDetailsMode
+    },
+    ON_COOKIES_ACCEPTED_MUTATION: function (state, newCookiesAccepted) {
+      state.cookiesAccepted = newCookiesAccepted
+
+      if (state.serverSettings && state.serverSettings.googleAnalyticsKey) {
+        if (newCookiesAccepted === true) {
+          Vue.$ga.enable()
+        } else {
+          Vue.$ga.disable()
+        }
+      }
     }
   },
   actions: {
-    ON_AUTH_CHANGED: function ({ commit }, authEnabled) {
-      commit('ON_AUTH_CHANGED_MUTATION', authEnabled)
+    ON_SERVER_SETTINGS_CHANGED: function ({ commit }, serverSettings) {
+      commit('ON_SERVER_SETTINGS_CHANGED_MUTATION', serverSettings)
     },
     ON_TOKEN_CHANGED: function ({ commit }, token) {
       commit('ON_TOKEN_CHANGED_MUTATION', token)
@@ -100,11 +125,33 @@ export default new Vuex.Store({
     },
     ON_ALBUM_DETAILS_MODE_CHANGED: function ({ commit }, albumDetailsMode) {
       commit('ON_ALBUM_DETAILS_MODE_CHANGED_MUTATION', albumDetailsMode)
+    },
+    ON_COOKIES_ACCEPTED: function ({ commit }, cookiesAccepted) {
+      commit('ON_COOKIES_ACCEPTED_MUTATION', cookiesAccepted)
     }
   },
   plugins: [
     createPersistedState({
-      key: 'frickl'
+      key: 'frickl',
+      reducer: (state, paths) => {
+        var result = {}
+        try {
+          result = JSON.parse(JSON.stringify(state))
+        } catch (err) {
+          console.error(err)
+          console.log(state)
+        }
+
+        if (result.cookiesAccepted !== true) {
+          Object.keys(result).forEach(k => {
+            if (essentialKeys.indexOf(k) === -1) {
+              delete result[k]
+            }
+          })
+        }
+
+        return result
+      }
     })
   ]
 })

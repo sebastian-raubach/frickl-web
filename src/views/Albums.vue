@@ -20,7 +20,7 @@
                      :type="'album'"
                      v-on:on-tag-deleted="updateTags"
                      v-on:on-tag-added="updateTags" />
-          <b-button variant="secondary" size="sm" class="mt-3" @click="onApplyTagsToAlbum" v-if="authEnabled === false || token">Apply to all</b-button>
+          <b-button variant="secondary" size="sm" class="mt-3" @click="onApplyTagsToAlbum" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Apply to all</b-button>
         </div>
         <div v-if="images && images.length > 0">
           <h2>Images</h2>
@@ -72,6 +72,7 @@ export default {
     ...mapGetters([
       'albumsPerPage',
       'imagesPerPage',
+      'serverSettings',
       'token'
     ])
   },
