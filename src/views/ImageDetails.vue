@@ -128,6 +128,19 @@ import TagWidget from '../components/TagWidget.vue'
 var Vibrant = require('node-vibrant')
 
 export default {
+  metaInfo () {
+    return {
+      meta: [
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: window.location.href },
+        { property: 'og:title', content: 'Frickl' },
+        { property: 'og:image', content: this.getSrc('SMALL', false) },
+        { property: 'twitter:title', content: 'Frickl' },
+        { property: 'twitter:url', content: window.location.href },
+        { property: 'twitter:image', content: this.getSrc('SMALL', false) }
+      ]
+    }
+  },
   data: function () {
     return {
       tags: [],
@@ -155,10 +168,10 @@ export default {
     ])
   },
   methods: {
-    getSrc: function (size) {
+    getSrc: function (size, includeToken = true) {
       var result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
 
-      if (this.token && this.token.imageToken) {
+      if (this.token && this.token.imageToken && includeToken) {
         result = `${result}&token=${this.token.imageToken}`
       }
 
@@ -224,32 +237,33 @@ export default {
     }
   },
   mounted: function () {
-    var vm = this
-
     var imageId = this.$route.params.imageId
 
     if (!this.image || this.image.id !== parseInt(imageId)) {
-      this.apiGetImage(imageId, function (result) {
+      this.apiGetImage(imageId, result => {
         if (result && result.length > 0) {
-          vm.image = result[0]
-          vm.updateTags()
-          vm.updateAlbum()
-          Vibrant.from(vm.getSrc('SMALL'))
-            .getPalette(function (err, palette) {
+          this.image = result[0]
+          this.updateTags()
+          this.updateAlbum()
+          Vibrant.from(this.getSrc('SMALL'))
+            .getPalette((err, palette) => {
               if (!err && palette && palette.Vibrant) {
-                vm.backgroundColor = palette.Vibrant.getHex()
+                this.backgroundColor = palette.Vibrant.getHex()
                 var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
-                vm.foregroundColor = avg < 128 ? 'white' : 'black'
+                this.foregroundColor = avg < 128 ? 'white' : 'black'
               }
             })
 
-          vm.$nextTick(function () {
+          this.$nextTick(() => {
             baguetteBox.run('.img-col', {
               fullScreen: true,
               captions: 'true',
               filter: /.*/i
             })
           })
+
+          this.$meta().refresh()
+          console.log(this.$meta)
         }
       })
     }

@@ -25,6 +25,9 @@ import VueInsProgressBar from 'vue-ins-progress-bar'
 
 import '@/assets/base.scss'
 
+import VueMeta from 'vue-meta'
+Vue.use(VueMeta)
+
 Vue.use(VueInsProgressBar, {
   show: true,
   position: 'initial',

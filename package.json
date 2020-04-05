@@ -32,6 +32,7 @@
     "vue-analytics": "^5.22.1",
     "vue-ins-progress-bar": "^1.0.0",
     "vue-material-design-icons": "^4.4.0",
+    "vue-meta": "^2.3.3",
     "vue-router": "^3.0.1",
     "vue2-leaflet": "^2.0.3",
     "vue2-leaflet-markercluster": "^3.0.0",
