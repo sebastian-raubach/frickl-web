@@ -134,10 +134,10 @@ export default {
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: 'Frickl' },
-        { property: 'og:image', content: this.getSrc('SMALL', false) },
+        { property: 'og:image', content: this.getExternalSrc() },
         { property: 'twitter:title', content: 'Frickl' },
         { property: 'twitter:url', content: window.location.href },
-        { property: 'twitter:image', content: this.getSrc('SMALL', false) }
+        { property: 'twitter:image', content: this.getExternalSrc() }
       ]
     }
   },
@@ -168,10 +168,19 @@ export default {
     ])
   },
   methods: {
-    getSrc: function (size, includeToken = true) {
-      var result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
+    getExternalSrc: function () {
+      const url = window.location.protocol + '//' + window.location.hostname
 
-      if (this.token && this.token.imageToken && includeToken) {
+      if (this.baseUrl.indexOf(url) === 0) {
+        return this.getSrc('SMALL')
+      } else {
+        return url + this.getSrc('SMALL')
+      }
+    },
+    getSrc: function (size) {
+      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/img?size=${size}`
+
+      if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
       }
 
