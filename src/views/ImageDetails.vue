@@ -134,10 +134,14 @@ export default {
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: window.location.href },
         { property: 'og:title', content: 'Frickl' },
+        { property: 'og:description', content: 'The new home for all your photos.' },
         { property: 'og:image', content: this.getExternalSrc() },
-        { property: 'twitter:title', content: 'Frickl' },
+        { property: 'og:image:type', content: 'image/jpeg' },
+        { property: 'twitter:title', content: 'The new home for all your photos.' },
+        { property: 'twitter:description', content: 'Frickl' },
         { property: 'twitter:url', content: window.location.href },
-        { property: 'twitter:image', content: this.getExternalSrc() }
+        { property: 'twitter:image', content: this.getExternalSrc() },
+        { property: 'twitter:card', content: 'summary_large_image' }
       ]
     }
   },
