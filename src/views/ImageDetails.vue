@@ -137,11 +137,11 @@ export default {
         { property: 'og:description', content: 'The new home for all your photos.' },
         { property: 'og:image', content: this.getExternalSrc() },
         { property: 'og:image:type', content: 'image/jpeg' },
-        { property: 'twitter:title', content: 'The new home for all your photos.' },
-        { property: 'twitter:description', content: 'Frickl' },
-        { property: 'twitter:url', content: window.location.href },
-        { property: 'twitter:image', content: this.getExternalSrc() },
-        { property: 'twitter:card', content: 'summary_large_image' }
+        { name: 'twitter:title', content: 'The new home for all your photos.' },
+        { name: 'twitter:description', content: 'Frickl' },
+        { name: 'twitter:url', content: window.location.href },
+        { name: 'twitter:image', content: this.getExternalSrc() },
+        { name: 'twitter:card', content: 'summary_large_image' }
       ]
     }
   },
@@ -176,9 +176,9 @@ export default {
       const url = window.location.protocol + '//' + window.location.hostname
 
       if (this.baseUrl.indexOf(url) === 0) {
-        return this.getSrc('SMALL')
+        return this.getSrc('MEDIUM')
       } else {
-        return url + this.getSrc('SMALL')
+        return url + this.getSrc('MEDIUM')
       }
     },
     getSrc: function (size) {
