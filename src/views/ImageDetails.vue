@@ -6,7 +6,10 @@
           <b-breadcrumb class="align-items-center">
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
             <b-breadcrumb-item :text="image.name" disabled active />
-            <a class="ml-auto btn btn-sm btn-primary" :href="getSrc('ORIGINAL')" :download="`${album.name}-${image.name}`">Download</a>
+            <div class="ml-auto">
+              <b-btn size="sm" class="mr-2" :href="getShare()" v-if="image.isPublic === 1"><ShareVariantIcon /> Share</b-btn>
+              <b-btn size="sm" variant="primary" :href="getSrc('ORIGINAL')" :download="`${album.name}-${image.name}`"><DownloadIcon /> Download</b-btn>
+            </div>
           </b-breadcrumb>
         </b-col>
       </b-row>
@@ -22,7 +25,7 @@
             <b-row>
               <b-col cols=6>
                 <img src="../assets/icon-camera.svg" fluid>
-                <div>{{ image.exif.cameraMake }}</div>
+                <div class="font-weight-bold">{{ image.exif.cameraMake }}</div>
                 <div>{{ image.exif.cameraModel }}</div>
               </b-col>
               <b-col cols=6>
@@ -119,6 +122,8 @@ import baguetteBox from 'baguettebox.js'
 
 import SingleLocationMap from '../components/SingleLocationMap.vue'
 import SelectAlbumModal from '../components/modals/SelectAlbumModal.vue'
+import DownloadIcon from 'vue-material-design-icons/Download.vue'
+import ShareVariantIcon from 'vue-material-design-icons/ShareVariant.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
@@ -157,18 +162,21 @@ export default {
   components: {
     SingleLocationMap,
     SelectAlbumModal,
+    DownloadIcon,
     HeartIcon,
     HeartOutlineIcon,
     FolderImageIcon,
     LockIcon,
     LockOpenVariantIcon,
+    ShareVariantIcon,
     TagWidget
   },
   computed: {
     ...mapGetters([
       'serverSettings',
       'baseUrl',
-      'token'
+      'token',
+      'accessToken'
     ])
   },
   methods: {
@@ -187,8 +195,15 @@ export default {
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
       }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
+      }
 
       return result
+    },
+    getShare: function () {
+      // TODO
+      return ''
     },
     onTogglePublic: function (event) {
       event.stopPropagation()

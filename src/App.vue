@@ -24,6 +24,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <template v-if="(serverSettings && serverSettings.authEnabled === true)">
+            <b-nav-item v-if="token" to="/accessTokens">Access tokens</b-nav-item>
             <b-nav-item v-if="(serverSettings && serverSettings.authEnabled === false) || token" @click="logout">Logout</b-nav-item>
             <b-nav-item v-else @click="login">Login</b-nav-item>
           </template>

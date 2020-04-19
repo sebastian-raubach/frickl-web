@@ -30,7 +30,8 @@ export default {
   computed: {
     ...mapGetters([
       'baseUrl',
-      'token'
+      'token',
+      'accessToken'
     ])
   },
   methods: {
@@ -39,6 +40,9 @@ export default {
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
+      }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
       }
 
       return result

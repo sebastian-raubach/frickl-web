@@ -22,7 +22,7 @@
       <b-card-body v-else>
         <div>
           <h5>{{ album.name }}</h5>
-          <template v-if="serverSettings && serverSettings.authEnabled === false || token">
+          <template v-if="serverSettings && serverSettings.authEnabled === false || token || accessToken">
             <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
           </template>
           <template v-else>
@@ -61,15 +61,19 @@ export default {
       'baseUrl',
       'serverSettings',
       'albumDetailsMode',
-      'token'
+      'token',
+      'accessToken'
     ])
   },
   methods: {
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${(this.token || (this.serverSettings && this.serverSettings.authEnabled === false)) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
+      var result = `${this.baseUrl}image/${(this.accessToken || this.token || (this.serverSettings && this.serverSettings.authEnabled === false)) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
+      }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
       }
 
       return result

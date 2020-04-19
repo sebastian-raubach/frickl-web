@@ -4,10 +4,18 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters([
-      'serverSettings'
+      'serverSettings',
+      'accessToken'
     ])
   },
   methods: {
+    uuidv4: function () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0
+        var v = c === 'x' ? r : (r & 0x3 | 0x8)
+        return v.toString(16)
+      })
+    },
     /**
      * This is the default error method that gets called if no other error handler is defined for the error code that caused it.
      * @param {*} error The error response object
@@ -68,8 +76,16 @@ export default {
       var requestData = null
       var requestParams = null
 
+      if (this.accessToken) {
+        if (data === null || data === undefined) {
+          data = {}
+        }
+
+        data.accesstoken = this.accessToken
+      }
+
       // Stringify the data object for non-GET requests
-      if (data !== null || data !== undefined) {
+      if (data !== null && data !== undefined) {
         if (method === 'GET') {
           requestData = data
           requestParams = data

@@ -17,6 +17,7 @@
         </b-button-group>
         <b-button-group v-if="albumId" class="pb-3 pr-2 float-right">
           <b-button v-b-tooltip.hover title="Change public visibility of album" v-if="(serverSettings && serverSettings.authEnabled === false) || token" href="#" @click.prevent="$refs.publicModal.show" ><LockOpenVariantIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Generate share token" v-if="(serverSettings && serverSettings.authEnabled === false) || token" href="#" @click.prevent="$refs.accessTokenModal.show"><ShareVariantIcon /></b-button>
           <b-button v-b-tooltip.hover title="Download album" :href="baseUrl + 'album/' + albumId + '/download'"><DownloadIcon /></b-button>
         </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
@@ -39,16 +40,19 @@
       @change="page => $emit('onImageNavigation', page)">
     </b-pagination>
     <PublicVisibilityModal ref="publicModal" v-on:visibility-changed="onVisibilityChanged" />
+    <AccessTokenModal ref="accessTokenModal" />
   </div>
 </template>
 
 <script>
 import ImageNode from '../components/ImageNode.vue'
+import AccessTokenModal from '@/components/modals/AccessTokenModal.vue'
 import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
 import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
 import DownloadIcon from 'vue-material-design-icons/Download.vue'
 import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
 import PublicVisibilityModal from '@/components/modals/PublicVisibilityModal'
+import ShareVariantIcon from 'vue-material-design-icons/ShareVariant.vue'
 import { mapGetters } from 'vuex'
 
 import baguetteBox from 'baguettebox.js'
@@ -130,12 +134,14 @@ export default {
     }
   },
   components: {
+    AccessTokenModal,
     'image-node': ImageNode,
     CardsVariantIcon,
     CardTextOutlineIcon,
     DownloadIcon,
     LockOpenVariantIcon,
-    PublicVisibilityModal
+    PublicVisibilityModal,
+    ShareVariantIcon
   },
   methods: {
     onVisibilityChanged: function (isPublic) {

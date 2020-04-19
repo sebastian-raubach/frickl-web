@@ -21,7 +21,8 @@ export default new Vuex.Store({
     albumDetailsMode: 'below',
     imageDetailsMode: 'below',
     token: null,
-    cookiesAccepted: null
+    cookiesAccepted: null,
+    accessToken: null
   },
   getters: {
     serverSettings: state => state.serverSettings,
@@ -35,7 +36,8 @@ export default new Vuex.Store({
     imagesPerPage: state => state.imagesPerPage,
     albumDetailsMode: state => state.albumDetailsMode,
     imageDetailsMode: state => state.imageDetailsMode,
-    cookiesAccepted: state => state.cookiesAccepted
+    cookiesAccepted: state => state.cookiesAccepted,
+    accessToken: state => state.accessToken
   },
   mutations: {
     ON_SERVER_SETTINGS_CHANGED_MUTATION: function (state, newServerSettings) {
@@ -90,6 +92,9 @@ export default new Vuex.Store({
           Vue.$ga.disable()
         }
       }
+    },
+    ON_ACCESS_TOKEN_CHANGED_MUTATION: function (state, newAccessToken) {
+      state.accessToken = newAccessToken
     }
   },
   actions: {
@@ -128,6 +133,9 @@ export default new Vuex.Store({
     },
     ON_COOKIES_ACCEPTED: function ({ commit }, cookiesAccepted) {
       commit('ON_COOKIES_ACCEPTED_MUTATION', cookiesAccepted)
+    },
+    ON_ACCESS_TOKEN_CHANGED: function ({ commit }, accessToken) {
+      commit('ON_ACCESS_TOKEN_CHANGED_MUTATION', accessToken)
     }
   },
   plugins: [
@@ -149,6 +157,8 @@ export default new Vuex.Store({
             }
           })
         }
+
+        delete result.accessToken
 
         return result
       }

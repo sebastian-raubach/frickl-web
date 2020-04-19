@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -69,6 +70,26 @@ export default new Router({
       path: '/about',
       name: 'about',
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+    },
+    {
+      path: '/accesstokens',
+      name: 'accessTokens',
+      compontnt: () => import(/* webpackChunkName: "accessToken" */'./views/AccessTokens.vue')
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.query && to.query.accesstoken) {
+    store.dispatch('ON_ACCESS_TOKEN_CHANGED', to.query.accesstoken)
+
+    let query = Object.assign({}, to.query)
+    delete query.accesstoken
+
+    next({ path: to.path, query: query, params: to.params })
+  } else {
+    next()
+  }
+})
+
+export default router
