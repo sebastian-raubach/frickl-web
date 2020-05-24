@@ -74,7 +74,7 @@ const router = new Router({
     {
       path: '/accesstokens',
       name: 'accessTokens',
-      compontnt: () => import(/* webpackChunkName: "accessToken" */'./views/AccessTokens.vue')
+      component: () => import(/* webpackChunkName: "accessToken" */'./views/AccessTokens.vue')
     }
   ]
 })

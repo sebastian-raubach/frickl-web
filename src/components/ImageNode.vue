@@ -81,7 +81,7 @@ export default {
       default: null
     },
     albumId: {
-      type: String,
+      type: Number,
       default: null
     },
     imageHeight: {

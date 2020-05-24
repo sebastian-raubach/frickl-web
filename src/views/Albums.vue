@@ -172,7 +172,7 @@ export default {
   mounted: function () {
     var vm = this
 
-    this.parentAlbumId = this.$route.params.albumId
+    const parentAlbumId = this.$route.params.albumId
     var imagePage = 1
     var albumPage = 1
     var query = this.$route.query
@@ -184,12 +184,13 @@ export default {
       albumPage = query.albumPage
     }
 
-    this.apiGetAlbumCount(this.parentAlbumId, function (result) {
+    this.apiGetAlbumCount(parentAlbumId, function (result) {
       vm.albumCount = result
       vm.onAlbumNavigation(albumPage)
     })
 
-    if (this.parentAlbumId) {
+    if (parentAlbumId) {
+      this.parentAlbumId = parseInt(parentAlbumId)
       this.apiGetAlbum(this.parentAlbumId, function (result) {
         vm.album = result[0]
       })

@@ -101,6 +101,18 @@ export default {
     },
     apiGetAlbumPublicVisibility: function (albumId, isPublic, onSuccess) {
       this.unauthAjax({ url: `album/${albumId}/public`, data: { public: isPublic }, success: onSuccess })
+    },
+    apiGetAccessTokenCount: function (onSuccess) {
+      return this.unauthAjax({ url: 'accesstoken/count', success: onSuccess })
+    },
+    apiGetAccessTokens: function (page, imagesPerPage, onSuccess) {
+      return this.unauthAjax({ url: `accesstoken?page=${page}&limit=${imagesPerPage}`, success: onSuccess })
+    },
+    apiPostAccessToken: function (token, onSuccess) {
+      return this.unauthAjax({ url: `album/${token.albumId}/accesstoken`, method: 'POST', data: token, success: onSuccess })
+    },
+    apiDeleteAccessToken: function (token, onSuccess) {
+      return this.unauthAjax({ url: `accesstoken/${token.tokenId}`, method: 'DELETE', data: token, success: onSuccess })
     }
   }
 }

@@ -40,7 +40,7 @@
       @change="page => $emit('onImageNavigation', page)">
     </b-pagination>
     <PublicVisibilityModal ref="publicModal" v-on:visibility-changed="onVisibilityChanged" />
-    <AccessTokenModal ref="accessTokenModal" />
+    <AccessTokenModal :albumId="albumId" ref="accessTokenModal" />
   </div>
 </template>
 
@@ -115,7 +115,7 @@ export default {
       default: null
     },
     albumId: {
-      type: String,
+      type: Number,
       default: null
     }
   },

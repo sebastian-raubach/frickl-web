@@ -25,44 +25,46 @@ export default {
       var title = 'Error'
       var message = error ? error.statusText : 'UNKNOWN ERROR'
 
-      switch (error.status) {
-        case 400:
-          message = 'Bad request. Server refused to respond.'
-          break
-        case 401:
-          message = 'Unauthorized. Authentication failed.'
-          break
-        case 403:
-          message = 'Forbidden. You cannot access this resource.'
-          this.$store.dispatch('ON_TOKEN_CHANGED', null)
-          if (this.serverSettings && this.serverSettings.authEnabled === true) {
-            this.$router.push({ name: 'home' })
-          }
-          return
-        case 404:
-          message = 'Not found. Request returned no data.'
-          break
-        case 405:
-          message = 'Method not allowed.'
-          break
-        case 408:
-          message = 'Timeout. The request timed out.'
-          break
-        case 409:
-          message = 'Conflict. The request conflicts with existing data.'
-          break
-        case 410:
-          message = 'Gone. The resource is no longer available at this address.'
-          break
-        case 500:
-          message = 'Internal Server Error. Something went wrong...'
-          break
-        case 501:
-          message = 'Not implemented. This resource is not implemented yet.'
-          break
-        case 503:
-          message = 'Service unavailable.'
-          break
+      if (error && error.status) {
+        switch (error.status) {
+          case 400:
+            message = 'Bad request. Server refused to respond.'
+            break
+          case 401:
+            message = 'Unauthorized. Authentication failed.'
+            break
+          case 403:
+            message = 'Forbidden. You cannot access this resource.'
+            this.$store.dispatch('ON_TOKEN_CHANGED', null)
+            if (this.serverSettings && this.serverSettings.authEnabled === true) {
+              this.$router.push({ name: 'home' })
+            }
+            return
+          case 404:
+            message = 'Not found. Request returned no data.'
+            break
+          case 405:
+            message = 'Method not allowed.'
+            break
+          case 408:
+            message = 'Timeout. The request timed out.'
+            break
+          case 409:
+            message = 'Conflict. The request conflicts with existing data.'
+            break
+          case 410:
+            message = 'Gone. The resource is no longer available at this address.'
+            break
+          case 500:
+            message = 'Internal Server Error. Something went wrong...'
+            break
+          case 501:
+            message = 'Not implemented. This resource is not implemented yet.'
+            break
+          case 503:
+            message = 'Service unavailable.'
+            break
+        }
       }
 
       this.$bvToast.toast(message, {

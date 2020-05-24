@@ -7,7 +7,7 @@
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
             <b-breadcrumb-item :text="image.name" disabled active />
             <div class="ml-auto">
-              <b-btn size="sm" class="mr-2" :href="getShare()" v-if="image.isPublic === 1"><ShareVariantIcon /> Share</b-btn>
+              <b-btn size="sm" class="mr-2" @click="$refs.shareModal.show()" v-if="image.isPublic === 1"><ShareVariantIcon /> Share</b-btn>
               <b-btn size="sm" variant="primary" :href="getSrc('ORIGINAL')" :download="`${album.name}-${image.name}`"><DownloadIcon /> Download</b-btn>
             </div>
           </b-breadcrumb>
@@ -110,6 +110,7 @@
         </b-col>
       </b-row>
     </b-container>
+    <ShareModal :url="shareUrl" ref="shareModal" />
     <SelectAlbumModal :image="image"
                       ref="selectAlbumModal"
                       v-on:on-album-clicked="album => onAlbumClicked(album)" />
@@ -120,16 +121,17 @@
 import { mapGetters } from 'vuex'
 import baguetteBox from 'baguettebox.js'
 
-import SingleLocationMap from '../components/SingleLocationMap.vue'
-import SelectAlbumModal from '../components/modals/SelectAlbumModal.vue'
-import DownloadIcon from 'vue-material-design-icons/Download.vue'
-import ShareVariantIcon from 'vue-material-design-icons/ShareVariant.vue'
-import HeartIcon from 'vue-material-design-icons/Heart.vue'
-import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
-import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
-import LockIcon from 'vue-material-design-icons/Lock.vue'
-import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
-import TagWidget from '../components/TagWidget.vue'
+import SingleLocationMap from '@/components/SingleLocationMap'
+import SelectAlbumModal from '@/components/modals/SelectAlbumModal'
+import ShareModal from '@/components/modals/ShareModal'
+import DownloadIcon from 'vue-material-design-icons/Download'
+import ShareVariantIcon from 'vue-material-design-icons/ShareVariant'
+import HeartIcon from 'vue-material-design-icons/Heart'
+import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline'
+import FolderImageIcon from 'vue-material-design-icons/FolderImage'
+import LockIcon from 'vue-material-design-icons/Lock'
+import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant'
+import TagWidget from '@/components/TagWidget'
 var Vibrant = require('node-vibrant')
 
 export default {
@@ -168,6 +170,7 @@ export default {
     FolderImageIcon,
     LockIcon,
     LockOpenVariantIcon,
+    ShareModal,
     ShareVariantIcon,
     TagWidget
   },
@@ -177,7 +180,10 @@ export default {
       'baseUrl',
       'token',
       'accessToken'
-    ])
+    ]),
+    shareUrl: function () {
+      return `${this.baseUrl}image/${this.image.id}/share`
+    }
   },
   methods: {
     getExternalSrc: function () {
@@ -200,10 +206,6 @@ export default {
       }
 
       return result
-    },
-    getShare: function () {
-      // TODO
-      return ''
     },
     onTogglePublic: function (event) {
       event.stopPropagation()
