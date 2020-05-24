@@ -108,8 +108,8 @@ export default {
     apiGetAccessTokens: function (page, imagesPerPage, onSuccess) {
       return this.unauthAjax({ url: `accesstoken?page=${page}&limit=${imagesPerPage}`, success: onSuccess })
     },
-    apiPostAccessToken: function (token, onSuccess) {
-      return this.unauthAjax({ url: `album/${token.albumId}/accesstoken`, method: 'POST', data: token, success: onSuccess })
+    apiPostAccessToken: function (albumId, token, onSuccess) {
+      return this.unauthAjax({ url: `album/${albumId}/accesstoken`, method: 'POST', data: token, success: onSuccess })
     },
     apiDeleteAccessToken: function (token, onSuccess) {
       return this.unauthAjax({ url: `accesstoken/${token.tokenId}`, method: 'DELETE', data: token, success: onSuccess })

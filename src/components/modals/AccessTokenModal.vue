@@ -52,7 +52,7 @@ export default {
     ]),
     url: function () {
       const l = window.location
-      return `${l.protocol}://${l.host}${l.pathname}#/albums/${this.albumId}/?accesstoken=${this.uuid}`
+      return `${l.protocol}//${l.host}${l.pathname}#/albums/${this.albumId}/?accesstoken=${this.uuid}`
     }
   },
   components: {
@@ -60,10 +60,9 @@ export default {
   },
   methods: {
     addToken: function () {
-      this.apiPostAccessToken({
-        albumId: this.albumId,
-        tokenToken: this.uuid,
-        tokenExpiresOn: this.expiresOn
+      this.apiPostAccessToken(this.albumId, {
+        token: this.uuid,
+        expiresOn: this.expiresOn
       }, result => {
         if (result) {
           this.generated = true

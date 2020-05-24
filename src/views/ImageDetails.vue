@@ -183,7 +183,7 @@ export default {
     ]),
     shareUrl: function () {
       const l = window.location
-      return `${l.protocol}://${l.host}${l.pathname}/api/image/${this.image.id}/share`
+      return `${l.protocol}//${l.host}${l.pathname}api/image/${this.image.id}/share`
     }
   },
   methods: {
