@@ -89,11 +89,9 @@ export default {
       // Stringify the data object for non-GET requests
       if (data !== null && data !== undefined) {
         if (method === 'GET') {
-          requestData = data
           requestParams = data
         } else {
-          requestData = JSON.stringify(data)
-          requestParams = data
+          requestData = data
         }
       }
 
