@@ -182,7 +182,8 @@ export default {
       'accessToken'
     ]),
     shareUrl: function () {
-      return `${this.baseUrl}image/${this.image.id}/share`
+      const l = window.location
+      return `${l.protocol}://${l.host}${l.pathname}/api/image/${this.image.id}/share`
     }
   },
   methods: {

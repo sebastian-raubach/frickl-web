@@ -2,7 +2,7 @@
   <div>
     <div class="map-spinner d-flex justify-content-center h-100 align-items-center" v-if="!locations || locations.length < 1">
       <b-spinner label="Loading..." type="grow" variant="primary" v-if="!locations" />
-      <h2 v-else>No images with geographics locations found.</h2>
+      <h2 v-else>No images with geographic locations found.</h2>
     </div>
     <div class="location-map" id="location-map">
     </div>
