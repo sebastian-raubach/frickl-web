@@ -4,6 +4,8 @@ LABEL maintainer="sebastian@raubach.co.uk"
 
 COPY qemu-arm-static /usr/bin/qemu-arm-static
 
+# Force docker to not cache the next line
+ADD https://api.github.com/repos/sebastian-raubach/frickl-web/git/refs/heads/master version.json
 # Clone the Frickl server code and client code
 RUN apt-get update && \
     apt-get install -y git && \

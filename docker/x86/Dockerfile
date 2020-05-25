@@ -2,6 +2,8 @@ FROM tomcat:8-jdk8
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
+# Force docker to not cache the next line
+ADD https://api.github.com/repos/sebastian-raubach/frickl-web/git/refs/heads/master version.json
 # Clone the Frickl server code and client code
 RUN git clone https://github.com/sebastian-raubach/frickl-web-server.git /opt/frickl-server && \
     git clone https://github.com/sebastian-raubach/frickl-web /opt/frickl
