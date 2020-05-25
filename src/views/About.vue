@@ -7,7 +7,7 @@
       </b-col>
       <b-col cols=2></b-col>
     </b-row>
-    <h1>About Frickl</h1>
+    <h1>Frickl <small class="text-muted">v1.1.0</small></h1>
     <p>Frickl is an open source, self-hosted image management tool. Frickl uses your existing image library on your
        file system or external hard drive and makes it available through a modern and interactive web interface.</p>
     <p>Mark photos as your favourites, tag them, look at them on a map or just take pleasure from the fact that all
