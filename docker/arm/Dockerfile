@@ -31,8 +31,8 @@ COPY config.properties /opt/frickl-server/config.properties
 # Download Ant and build the server code
 RUN apk add --no-cache openjdk8 && \
     wget https://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.8-bin.tar.gz -P /tmp/ && \
-    tar xvzf /tmp/apache-ant-1.10.6-bin.tar.gz -C /opt/ && \
-    /opt/apache-ant-1.10.6/bin/ant -f /opt/frickl-server/build.xml war
+    tar xvzf /tmp/apache-ant-1.10.8-bin.tar.gz -C /opt/ && \
+    /opt/apache-ant-1.10.8/bin/ant -f /opt/frickl-server/build.xml war
 
 
 
