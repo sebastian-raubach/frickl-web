@@ -21,8 +21,8 @@ RUN rm -f .env && \
     apk add --no-cache python build-base gcc wget && \
     npm i && \
     npm run build && \
-    mkdir /opt/frickl-server/web/dist/ && \
-    cp -a /opt/frickl/dist/. /opt/frickl-server/web/dist/
+    mkdir /opt/frickl-server/client/ && \
+    cp -a /opt/frickl/dist/. /opt/frickl-server/client/
 
 # Copy a configuration for the server
 COPY build.properties /opt/frickl-server/build.properties
