@@ -33,12 +33,12 @@ RUN apk add --no-cache openjdk11 && \
     /opt/gradle-6.0.1/bin/gradle -p /opt/frickl-server war
 
 
-FROM tomcat:8-jdk8
+FROM tomcat:8-jdk11
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
 RUN apt-get update && \
-    apt-get install ffmpeg
+    apt-get --yes --force-yes install ffmpeg
 
 RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT
