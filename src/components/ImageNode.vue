@@ -167,9 +167,6 @@ export default {
             })
           }
         })
-        .catch(err => {
-          console.error(err)
-        })
     },
     onTogglePublic: function (event) {
       event.stopPropagation()
