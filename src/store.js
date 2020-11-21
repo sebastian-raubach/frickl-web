@@ -147,7 +147,6 @@ export default new Vuex.Store({
           result = JSON.parse(JSON.stringify(state))
         } catch (err) {
           console.error(err)
-          console.log(state)
         }
 
         if (result.cookiesAccepted !== true) {
