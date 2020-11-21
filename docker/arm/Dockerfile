@@ -28,22 +28,24 @@ RUN rm -f .env && \
 COPY build.properties /opt/frickl-server/build.properties
 COPY config.properties /opt/frickl-server/config.properties
 
-# Download Ant and build the server code
-RUN apk add --no-cache openjdk8 && \
-    wget https://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.8-bin.tar.gz -P /tmp/ && \
-    tar xvzf /tmp/apache-ant-1.10.8-bin.tar.gz -C /opt/ && \
-    /opt/apache-ant-1.10.8/bin/ant -f /opt/frickl-server/build.xml war
-
+# Download Gradle and build the server code
+RUN apk add --no-cache openjdk11 && \
+    wget https://services.gradle.org/distributions/gradle-6.0.1-bin.zip -P /tmp/ && \
+    unzip /tmp/gradle-6.0.1-bin.zip -d /opt/ && \
+    /opt/gradle-6.0.1/bin/gradle -p /opt/frickl-server war
 
 
 FROM tomcat:8-jdk8
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
+RUN apt-get update && \
+    apt-get install ffmpeg
+
 RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT
 
-COPY --from=builder /opt/frickl-server/ROOT.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=builder /opt/frickl-server/build/libs/frickl-*.war /usr/local/tomcat/webapps/ROOT.war
 COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 
 WORKDIR /usr/local/tomcat/

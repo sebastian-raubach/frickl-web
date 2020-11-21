@@ -123,7 +123,7 @@ export default {
   }
   .map-spinner {
     position: absolute;
-    z-index: 9999;
+    z-index: 1001;
     width: 100%;
     height: calc(100vh - 66px) !important;
     background-color: rgba(0,0,0,.6);

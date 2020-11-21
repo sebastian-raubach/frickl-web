@@ -69,6 +69,10 @@ export default {
         }
       })
 
+      if (this.tempInput !== null && this.tempInput.length > 0) {
+        mappedTags.push(this.tempInput)
+      }
+
       if (this.type === 'image') {
         this.apiAddTagsToImage(this.id, mappedTags, result => {
           this.$refs.addTagModal.hide()

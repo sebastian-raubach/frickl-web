@@ -20,7 +20,8 @@
             </template>
             <FolderImageIcon v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"/>
           </span>
-          <a class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent><MagnifyPlusIcon /></a>
+          <a class="baguettebox" v-b-modal="`video-${image.id}`" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent v-if="image.dataType === 'video'"><MagnifyPlusIcon /></a>
+          <a class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent v-else><MagnifyPlusIcon /></a>
         </div>
       </div>
     </div>
@@ -43,9 +44,14 @@
           </template>
           <b-button v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"><FolderImageIcon/></b-button>
         </template>
-        <b-button class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent><MagnifyPlusIcon /></b-button>
+
+        <b-button class="baguettebox" v-b-modal="`video-${image.id}`" v-if="image.dataType === 'video'"><MagnifyPlusIcon /></b-button>
+        <b-button class="baguettebox" :href="getSrc('ORIGINAL')" v-b-tooltip.hover.bottom="'Open large preview'" @click.stop.prevent v-else><MagnifyPlusIcon /></b-button>
       </b-button-group>
     </div>
+    <b-modal ok="Close" ok-only :id="`video-${image.id}`" ref="video" v-if="image.dataType === 'video'" size="xl">
+      <b-embed type="video" :src="getVideoSrc()" allowfullscreen controls />
+    </b-modal>
   </b-card>
 </template>
 
@@ -100,6 +106,18 @@ export default {
     MagnifyPlusIcon
   },
   methods: {
+    getVideoSrc: function () {
+      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video/${this.image.name}?a=1`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
+      }
+
+      return result
+    },
     getSrc: function (size) {
       var result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
 

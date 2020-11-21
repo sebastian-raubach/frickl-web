@@ -15,7 +15,10 @@
       </b-row>
       <b-row v-if="image" >
         <b-col cols=12 sm=12 md=12 lg=8 xl=9 class="img-col">
-          <a :href="getSrc('ORIGINAL')">
+          <template v-if="image.dataType === 'video'">
+            <b-embed type="video" :src="getVideoSrc()" allowfullscreen controls />
+          </template>
+          <a :href="getSrc('ORIGINAL')" v-else>
             <b-img fluid-grow :src="getSrc('MEDIUM')" class="img-details"/>
           </a>
         </b-col>
@@ -182,8 +185,12 @@ export default {
       'accessToken'
     ]),
     shareUrl: function () {
-      const l = window.location
-      return `${l.protocol}//${l.host}${l.pathname}api/image/${this.image.id}/share`
+      if (this.image) {
+        const l = window.location
+        return `${l.protocol}//${l.host}${l.pathname}api/image/${this.image.id}/share`
+      } else {
+        return null
+      }
     }
   },
   methods: {
@@ -195,6 +202,18 @@ export default {
       } else {
         return url + this.getSrc('MEDIUM')
       }
+    },
+    getVideoSrc: function () {
+      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video?a=1`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
+      }
+
+      return result
     },
     getSrc: function (size) {
       var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/img?size=${size}`
@@ -294,7 +313,6 @@ export default {
           })
 
           this.$meta().refresh()
-          console.log(this.$meta)
         }
       })
     }
