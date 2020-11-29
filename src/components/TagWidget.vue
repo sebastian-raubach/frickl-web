@@ -8,10 +8,14 @@
 <template>
   <div>
     <div v-if="tags && tags.length > 0">
-      <b-badge v-for="tag in tags" :key="tag.id" class="tag-badge" :to="'/tags/' + tag.id">
-        <!-- TODO: Change tag redirect -->
-        {{ tag.name }} <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" v-on:click.native="onDeleteClicked(tag, $event)" v-if="(serverSettings && serverSettings.authEnabled === false) || token"/>
-      </b-badge>
+      <span v-for="tag in tags" :key="tag.id" class="image-tag tag-badge mr-1">
+        <b-badge :to="'/tags/' + tag.id">
+          {{ tag.name }}
+        </b-badge>
+        <b-badge variant="danger" v-if="(serverSettings && serverSettings.authEnabled === false) || token" @click="onDeleteClicked(tag)">
+          <CloseCircleOutlineIcon class="cursor-pointer" title="Remove tag" />
+        </b-badge>
+      </span>
     </div>
     <b-button variant="primary" size="sm" @click="onAddClicked()" class="mt-3" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Add tag</b-button>
 
@@ -67,9 +71,7 @@ export default {
     CloseCircleOutlineIcon
   },
   methods: {
-    onDeleteClicked: function (tag, event) {
-      event.preventDefault()
-      event.stopPropagation()
+    onDeleteClicked: function (tag) {
       this.tagToDelete = tag
       this.$refs.tagDeleteModal.show()
     },
@@ -81,5 +83,18 @@ export default {
 </script>
 
 <style>
-
+.image-tag .badge {
+  padding: 5px;
+}
+.image-tag .badge .material-design-icon {
+  height: unset;
+}
+.image-tag .badge:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.image-tag .badge:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 </style>
