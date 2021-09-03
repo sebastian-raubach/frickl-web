@@ -22,11 +22,12 @@ RUN rm -f .env && \
     npm i && \
     npm run build && \
     mkdir /opt/frickl-server/client/ && \
-    cp -a /opt/frickl/dist/. /opt/frickl-server/client/
+    cp -a /opt/frickl/dist/. /opt/frickl-server/client/ && \
+    echo "config.file=/data/frickl/config.properties" > /opt/frickl-server/config.properties
 
 # Copy a configuration for the server
 COPY build.properties /opt/frickl-server/build.properties
-COPY config.properties /opt/frickl-server/config.properties
+#COPY config.properties /opt/frickl-server/config.properties
 
 # Download Gradle and build the server code
 RUN apk add --no-cache openjdk11 && \
