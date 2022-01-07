@@ -19,11 +19,14 @@
           <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="albumDetailsMode === 'overlay'" @click="setAlbumDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
           <b-button v-b-tooltip.hover title="Show information below image" :pressed="albumDetailsMode === 'below'" @click="setAlbumDetailsMode('below')" ><CardsVariantIcon /></b-button>
         </b-button-group>
+        <b-button-group class="pb-3 pr-2 float-right" v-if="(serverSettings && serverSettings.authEnabled === false) || token">
+          <b-button v-b-tooltip.hover title="Add album" @click="$emit('add-album-clicked')"><FolderPlusOutlineIcon /></b-button>
+        </b-button-group>
       </b-col>
     </b-row>
     <b-row>
       <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="album in albums" :key="album.id" :class="'mb-4 ' + getColumns('xxl')">
-        <album-node :albumHeight="albumHeights[albumWidth]" :album="album" v-on:click.native="onAlbumClicked(album)"/>
+        <AlbumNode :albumHeight="albumHeights[albumWidth]" :album="album" v-on:click.native="onAlbumClicked(album)"/>
       </b-col>
     </b-row>
 
@@ -40,6 +43,7 @@
 import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
 import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
 import AlbumNode from '../components/AlbumNode.vue'
+import FolderPlusOutlineIcon from 'vue-material-design-icons/FolderPlusOutline'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -94,7 +98,8 @@ export default {
     ...mapGetters([
       'albumWidth',
       'albumDetailsMode',
-      'albumsPerPage'
+      'albumsPerPage',
+      'token'
     ])
   },
   watch: {
@@ -110,9 +115,10 @@ export default {
     }
   },
   components: {
-    'album-node': AlbumNode,
+    AlbumNode,
     CardsVariantIcon,
-    CardTextOutlineIcon
+    CardTextOutlineIcon,
+    FolderPlusOutlineIcon
   },
   methods: {
     getColumns: function (size) {

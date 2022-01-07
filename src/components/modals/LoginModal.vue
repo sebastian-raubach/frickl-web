@@ -5,7 +5,7 @@
            cancel-title="Cancel"
            @ok="handleOk"
            @shown="$refs.username.focus()">
-    <b-form @submit="handleOk" :validated="validated">
+    <b-form @submit.prevent="handleOk" :validated="validated">
       <b-form-group
         label="Username"
         label-for="username"
@@ -52,9 +52,7 @@ export default {
     }
   },
   methods: {
-    handleOk: function (event) {
-      event.preventDefault()
-
+    handleOk: function () {
       this.state.username = this.userDetails.username !== null && this.userDetails.username.length > 0
       this.state.password = this.userDetails.password !== null && this.userDetails.password.length > 0
       this.validated = true

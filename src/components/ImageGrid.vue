@@ -24,6 +24,9 @@
           <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
           <b-button v-b-tooltip.hover title="Show information below image" :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
         </b-button-group>
+        <b-button-group class="pb-3 pr-2 float-right" v-if="(serverSettings && serverSettings.authEnabled === false) || token">
+          <b-button @click="$emit('add-image-clicked')"><ImagePlusIcon /></b-button>
+        </b-button-group>
       </b-col>
     </b-row>
     <b-row class="image-grid">
@@ -45,14 +48,15 @@
 </template>
 
 <script>
-import ImageNode from '../components/ImageNode.vue'
-import AccessTokenModal from '@/components/modals/AccessTokenModal.vue'
-import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
-import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
-import DownloadIcon from 'vue-material-design-icons/Download.vue'
-import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
+import ImageNode from '../components/ImageNode'
+import AccessTokenModal from '@/components/modals/AccessTokenModal'
+import CardsVariantIcon from 'vue-material-design-icons/CardsVariant'
+import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline'
+import DownloadIcon from 'vue-material-design-icons/Download'
+import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant'
 import PublicVisibilityModal from '@/components/modals/PublicVisibilityModal'
-import ShareVariantIcon from 'vue-material-design-icons/ShareVariant.vue'
+import ShareVariantIcon from 'vue-material-design-icons/ShareVariant'
+import ImagePlusIcon from 'vue-material-design-icons/ImagePlus'
 import { mapGetters } from 'vuex'
 
 import baguetteBox from 'baguettebox.js'
@@ -120,10 +124,10 @@ export default {
     }
   },
   watch: {
-    imageCount: function (newValue, oldValue) {
+    imageCount: function () {
       this.currentPage = 1
     },
-    images: function (newValue, oldValue) {
+    images: function () {
       this.baguetteBox()
 
       window.scrollTo({
@@ -141,7 +145,8 @@ export default {
     DownloadIcon,
     LockOpenVariantIcon,
     PublicVisibilityModal,
-    ShareVariantIcon
+    ShareVariantIcon,
+    ImagePlusIcon
   },
   methods: {
     onVisibilityChanged: function (isPublic) {

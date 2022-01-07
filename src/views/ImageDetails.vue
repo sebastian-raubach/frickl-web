@@ -14,7 +14,7 @@
         </b-col>
       </b-row>
       <b-row v-if="image" >
-        <b-col cols=12 sm=12 md=12 lg=8 xl=9 class="img-col">
+        <b-col cols=12 sm=12 md=12 lg=9 xl=9 class="img-col col-xxl-10">
           <template v-if="image.dataType === 'video'">
             <b-embed type="video" :src="getVideoSrc()" allowfullscreen controls />
           </template>
@@ -22,8 +22,8 @@
             <b-img fluid-grow :src="getSrc('MEDIUM')" class="img-details"/>
           </a>
         </b-col>
-        <b-col cols=12 sm=12 md=12 lg=4 xl=3 class="exif">
-          <div v-if="image.exif && !(Object.keys(image.exif).length === 0 && img.exif.constructor === Object)" class="mt-3">
+        <b-col cols=12 sm=12 md=12 lg=3 xl=3 class="exif col-xxl-2">
+          <div v-if="image.exif && !(Object.keys(image.exif).length === 0 && image.exif.constructor === Object)" class="mt-3">
             <h3 v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)">Taken on: {{ getTime() | toDate }}</h3>
             <b-row>
               <b-col cols=6>

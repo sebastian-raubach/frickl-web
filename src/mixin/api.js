@@ -9,6 +9,9 @@ export default {
     apiGetAlbum: function (albumId, onSuccess) {
       this.unauthAjax({ url: 'album/' + albumId, success: onSuccess })
     },
+    apiPostAlbum: function (album, onSuccess) {
+      this.unauthAjax({ url: 'album', method: 'POST', data: album, success: onSuccess })
+    },
     apiGetAlbums: function (parentAlbumId, page, imagesPerPage, onSuccess) {
       this.unauthAjax({ url: 'album?page=' + page + '&limit=' + imagesPerPage + '&parentAlbumId=' + parentAlbumId, success: onSuccess })
     },
@@ -47,6 +50,9 @@ export default {
     },
     apiGetImage: function (imageId, onSuccess) {
       this.unauthAjax({ url: 'image/' + imageId, success: onSuccess })
+    },
+    apiPostImageForm: function (albumId, form, onSuccess) {
+      this.unauthForm({ url: `album/${albumId}/image`, formData: form, success: onSuccess })
     },
     apiGetImageCount: function (albumId, onSuccess) {
       this.unauthAjax({ url: 'album/' + albumId + '/image/count', success: onSuccess })

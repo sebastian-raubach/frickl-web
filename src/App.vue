@@ -172,10 +172,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 @import "~leaflet.markercluster/dist/MarkerCluster.css";
 @import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index.scss';
+@import '~bootstrap-xxl/dist/css/bootstrap.min.css';
 
 #app {
   font-family: 'Roboto', Helvetica, Arial, sans-serif;

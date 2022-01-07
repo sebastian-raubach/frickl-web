@@ -74,6 +74,40 @@ export default {
         appendToast: true
       })
     },
+    /**
+     * Sends a FORM to the given URL using authentication
+     * @param {Object} param0 `{ url: String, formData: Object, success: Callback, error: { codes: [], callback: Callback } }`
+     */
+    unauthForm ({ url = null, formData, success = null, error = null }) {
+      return axios({
+        url: url,
+        method: 'POST',
+        data: formData,
+        responseType: 'json',
+        crossDomain: true,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': 'Bearer ' + this.getToken()
+        }
+      })
+        .then(data => {
+          if (success) {
+            success(data.data)
+          }
+        })
+        .catch(err => {
+          if (err && err.response && err.response.status === 403) {
+            this.handleError(err.response)
+          }
+
+          if (error) {
+            error(err)
+          } else {
+            this.handleError(err.response)
+          }
+        })
+    },
     unauthAjax ({ url = null, method = 'GET', data = null, params = null, dataType = 'json', contentType = 'application/json; charset=utf-8', success = null, error = null }) {
       var requestData = null
       var requestParams = null

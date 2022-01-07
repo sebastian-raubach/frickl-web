@@ -5,13 +5,14 @@
     </b-container>
     <b-container class="home mt-3" fluid>
       <div v-if="albums || images">
-        <div v-if="albums && albums.length > 0">
+        <div v-if="albums">
           <h2>Albums</h2>
-          <album-grid :albumCount="albumCount"
+          <AlbumGrid :albumCount="albumCount"
                       :albumsPerPage="albumsPerPage"
                       :albums="albums"
                       ref="albumGrid"
-                      v-on:onAlbumNavigation="page => onAlbumNavigation(page)"/>
+                      @add-album-clicked="$refs.addAlbumModal.show()"
+                      @onAlbumNavigation="page => onAlbumNavigation(page)"/>
         </div>
         <div class="tags" v-if="images && images.length > 0">
           <h2>Tags</h2>
@@ -22,37 +23,45 @@
                      v-on:on-tag-added="updateTags" />
           <b-button variant="secondary" size="sm" class="mt-3" @click="onApplyTagsToAlbum" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Apply to all</b-button>
         </div>
-        <div v-if="images && images.length > 0">
+        <div v-if="images">
           <h2>Images</h2>
-          <image-grid :imageCount="imageCount"
+          <ImageGrid :imageCount="imageCount"
                       :images="images"
                       :albumId="parentAlbumId"
                       ref="imageGrid"
-                      v-on:onImageNavigation="page => onImageNavigation(page)"/>
+                      @add-image-clicked="$refs.imageUploadModal.show()"
+                      @onImageNavigation="page => onImageNavigation(page)"/>
         </div>
       </div>
       <h3 v-else>Loading...</h3>
     </b-container>
     <div class="map" v-if="locations && locations.length > 0">
-      <album-location-map :locations="locations" :currentlyVisibleIds="currentlyVisibleIds" />
+      <AlbumLocationMap :locations="locations" :currentlyVisibleIds="currentlyVisibleIds" />
     </div>
+
+    <AddAlbumModal :parentAlbumId="parentAlbumId" ref="addAlbumModal" @album-added="update" />
+    <ImageUploadModal :albumId="album.id" v-if="album" ref="imageUploadModal" @images-uploaded="update" />
   </div>
 </template>
 
 <script>
 import L from 'leaflet'
 
-import AlbumGrid from '../components/AlbumGrid.vue'
-import ImageGrid from '../components/ImageGrid.vue'
-import AlbumLocationMap from '../components/AlbumLocationMap.vue'
-import TagWidget from '../components/TagWidget.vue'
+import AlbumGrid from '@/components/AlbumGrid'
+import ImageGrid from '@/components/ImageGrid'
+import AlbumLocationMap from '@/components/AlbumLocationMap'
+import TagWidget from '@/components/TagWidget'
+import AddAlbumModal from '@/components/modals/AddAlbumModal'
+import ImageUploadModal from '@/components/modals/ImageUploadModal'
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    'album-grid': AlbumGrid,
-    'image-grid': ImageGrid,
-    'album-location-map': AlbumLocationMap,
+    AddAlbumModal,
+    ImageUploadModal,
+    AlbumGrid,
+    ImageGrid,
+    AlbumLocationMap,
     TagWidget
   },
   data: function () {
@@ -77,17 +86,16 @@ export default {
     ])
   },
   watch: {
-    albumsPerPage: function (newValue, oldValue) {
+    albumsPerPage: function () {
       this.onAlbumNavigation(1)
     },
-    imagesPerPage: function (newValue, oldValue) {
+    imagesPerPage: function () {
       this.onImageNavigation(1)
     }
   },
   methods: {
     onApplyTagsToAlbum: function () {
       // TODO: Show the AddTagModal prefilled with the existing tags, then the user can remove some.
-      var vm = this
       this.$bvModal.msgBoxConfirm('Do you want to apply these tags to all images in this album?', {
         title: 'Confirm',
         okTitle: 'Yes',
@@ -96,8 +104,8 @@ export default {
       })
         .then(value => {
           if (value) {
-            vm.apiPostAlbumTags(vm.album.id, vm.tags, function (result) {
-              vm.$bvToast.toast('Tags applied to all images in album.', {
+            this.apiPostAlbumTags(this.album.id, this.tags, result => {
+              this.$bvToast.toast('Tags applied to all images in album.', {
                 title: 'Success',
                 autoHideDelay: 5000,
                 appendToast: true
@@ -107,19 +115,16 @@ export default {
         })
     },
     updateTags: function () {
-      var vm = this
-      this.apiGetAlbumTags(this.parentAlbumId, function (result) {
-        vm.tags = result
+      this.apiGetAlbumTags(this.parentAlbumId, result => {
+        this.tags = result
       })
     },
     onAlbumNavigation: function (page) {
-      var vm = this
-
-      this.apiGetAlbums(this.parentAlbumId, page - 1, this.albumsPerPage, function (result) {
-        vm.albums = result
+      this.apiGetAlbums(this.parentAlbumId, page - 1, this.albumsPerPage, result => {
+        this.albums = result
 
         if (result && result.length > 0) {
-          var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
+          var query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
           if (!query) {
             query = {}
@@ -127,29 +132,23 @@ export default {
 
           query.albumPage = page
 
-          vm.$router.replace({
-            path: vm.$router.currentRoute.path,
+          this.$router.replace({
+            path: this.$router.currentRoute.path,
             query: query
           })
 
-          vm.$nextTick(function () {
-            vm.$refs.albumGrid.onPageChanged(page)
-          })
+          this.$nextTick(() => this.$refs.albumGrid.onPageChanged(page))
         }
       })
     },
     onImageNavigation: function (page) {
-      var vm = this
-
-      this.apiGetImages(this.parentAlbumId, page - 1, this.imagesPerPage, function (result) {
-        vm.images = result
+      this.apiGetImages(this.parentAlbumId, page - 1, this.imagesPerPage, result => {
+        this.images = result
 
         if (result && result.length > 0) {
-          vm.currentlyVisibleIds = result.map(function (i) {
-            return i.id
-          })
+          this.currentlyVisibleIds = result.map(i => i.id)
 
-          var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
+          var query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
           if (!query) {
             query = {}
@@ -157,55 +156,58 @@ export default {
 
           query.imagePage = page
 
-          vm.$router.replace({
-            path: vm.$router.currentRoute.path,
+          this.$router.replace({
+            path: this.$router.currentRoute.path,
             query: query
           })
 
-          vm.$nextTick(function () {
-            vm.$refs.imageGrid.onPageChanged(page)
-          })
+          this.$nextTick(() => this.$refs.imageGrid.onPageChanged(page))
         }
       })
+    },
+    update: function () {
+      let imagePage = 1
+      let albumPage = 1
+      const query = this.$route.query
+
+      if (query && query.imagePage) {
+        imagePage = query.imagePage
+      }
+      if (query && query.albumPage) {
+        albumPage = query.albumPage
+      }
+
+      this.apiGetAlbumCount(this.parentAlbumId, result => {
+        this.albumCount = result
+        this.onAlbumNavigation(albumPage)
+      })
+
+      if (this.parentAlbumId) {
+        this.apiGetAlbum(this.parentAlbumId, result => {
+          this.album = result[0]
+        })
+        this.apiGetImageCount(this.parentAlbumId, result => {
+          this.imageCount = result
+          this.onImageNavigation(imagePage)
+        })
+        this.apiGetAlbumLocations(this.parentAlbumId, result => {
+          result.forEach(l => {
+            l.location = L.latLng(l.latitude, l.longitude)
+          })
+          this.locations = result
+        })
+        this.updateTags()
+      }
     }
   },
   mounted: function () {
-    var vm = this
+    const id = this.$route.params.albumId
 
-    const parentAlbumId = this.$route.params.albumId
-    var imagePage = 1
-    var albumPage = 1
-    var query = this.$route.query
-
-    if (query && query.imagePage) {
-      imagePage = query.imagePage
-    }
-    if (query && query.albumPage) {
-      albumPage = query.albumPage
+    if (id) {
+      this.parentAlbumId = parseInt(id)
     }
 
-    this.apiGetAlbumCount(parentAlbumId, function (result) {
-      vm.albumCount = result
-      vm.onAlbumNavigation(albumPage)
-    })
-
-    if (parentAlbumId) {
-      this.parentAlbumId = parseInt(parentAlbumId)
-      this.apiGetAlbum(this.parentAlbumId, function (result) {
-        vm.album = result[0]
-      })
-      this.apiGetImageCount(this.parentAlbumId, function (result) {
-        vm.imageCount = result
-        vm.onImageNavigation(imagePage)
-      })
-      this.apiGetAlbumLocations(this.parentAlbumId, function (result) {
-        result.forEach(function (l) {
-          l.location = L.latLng(l.latitude, l.longitude)
-        })
-        vm.locations = result
-      })
-      this.updateTags()
-    }
+    this.update()
   }
 }
 </script>
