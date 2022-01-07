@@ -2,8 +2,6 @@ FROM node:12-alpine3.10 AS builder
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
-COPY qemu-arm-static /usr/bin/qemu-arm-static
-
 ARG BRANCH=master
 
 # Force docker to not cache the next line
@@ -17,7 +15,7 @@ RUN apk add --no-cache git && \
 # Build the client code
 WORKDIR /opt/frickl
 RUN rm -f .env && \
-    echo "VUE_APP_BASE_URL=/api/" > .env && \
+    echo "VUE_APP_BASE_URL=./api/" > .env && \
     apk add --no-cache python build-base gcc wget && \
     npm i && \
     npm run build && \
@@ -27,7 +25,6 @@ RUN rm -f .env && \
 
 # Copy a configuration for the server
 COPY build.properties /opt/frickl-server/build.properties
-#COPY config.properties /opt/frickl-server/config.properties
 
 # Download Gradle and build the server code
 RUN apk add --no-cache openjdk11 && \
@@ -47,6 +44,5 @@ RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT
 
 COPY --from=builder /opt/frickl-server/build/libs/frickl-*.war /usr/local/tomcat/webapps/ROOT.war
-COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 
 WORKDIR /usr/local/tomcat/
