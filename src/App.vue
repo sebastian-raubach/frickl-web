@@ -58,6 +58,13 @@
         <b-button variant="outline-secondary" class="flex-fill" v-b-tooltip:hover title="Please be aware that rejecting cookies will disable certain features of Frickl." @click="acceptCookies(false)">Reject</b-button>
       </div>
     </b-popover>
+
+    <b-modal ref="loadingModal" title="Loading" hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
+      <div class="text-center">
+        <b-spinner style="width: 3rem; height: 3rem;" variant="primary" type="grow" />
+        <p class="text-muted mt-3">Loading...</p>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -136,6 +143,13 @@ export default {
       this.variant = variant
       this.message = message
       this.showAlert = true
+    },
+    showLoading: function (show) {
+      if (show) {
+        this.$refs.loadingModal.show()
+      } else {
+        this.$refs.loadingModal.hide()
+      }
     }
   },
   created: async function () {
@@ -163,11 +177,13 @@ export default {
     }
 
     this.$eventHub.$off('alert')
+    this.$eventHub.$off('show-loading')
   },
   mounted: function () {
     this.checkImportStatus()
 
     this.$eventHub.$on('alert', this.handleAlert)
+    this.$eventHub.$on('show-loading', this.showLoading)
   }
 }
 </script>

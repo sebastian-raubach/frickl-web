@@ -4,11 +4,16 @@
     title="Upload images"
     ok-title="Upload"
     ok-only
+    size="xl"
     @ok.prevent="uploadImage">
-    <b-img v-for="(image, index) in imageData" :src="imageData[index]" :key="`image-preview-${index}`" fluid-grow rounded @load="clearMemory(index)" />
+    <b-row>
+      <b-col cols=6 md=4 lg=3 v-for="(image, index) in imageData" :key="`image-preview-${index}`" class="mb-3">
+        <b-img :src="imageData[index]" fluid-grow rounded @load="clearMemory(index)" class="preview-img" />
+      </b-col>
+    </b-row>
     <b-form @submit.prevent>
       <b-form-file
-        class="mt-3"
+        class="mt-3 file-input"
         v-model="imageFiles"
         multiple
         :state="Boolean(imageFiles)"
@@ -57,17 +62,29 @@ export default {
       let formData = new FormData()
       this.imageFiles.forEach(i => formData.append('imageFiles', i))
 
+      this.$eventHub.$emit('show-loading', true)
       this.apiPostImageForm(this.albumId, formData, result => {
         if (result) {
           this.$emit('images-uploaded')
           this.hide()
         }
+        this.$eventHub.$emit('show-loading', false)
       })
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.preview-img {
+  width: 100%;
+  object-fit: cover;
+  max-height: 250px;
+}
+</style>
 
+<style>
+.file-input > label {
+  overflow: hidden;
+}
 </style>
