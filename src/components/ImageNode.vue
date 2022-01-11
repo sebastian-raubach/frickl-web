@@ -28,13 +28,13 @@
     <div v-else class="card-image-details">
       <b-card-body>
         <div>
-          <div class="mb-2">{{ image.name }}</div>
-          <div><small class="text-muted" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="text-muted mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
-          <div><small class="text-muted" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
+          <div>{{ image.name }}</div>
+          <div v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)" class="mt-2"><small class="text-muted"><CalendarClockIcon class="text-muted mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
+          <div v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)" class="mb-2"><small class="text-muted"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
         </div>
       </b-card-body>
 
-      <b-button-group class="image-actions mt-2 w-100">
+      <b-button-group class="image-actions w-100">
         <template v-if="(serverSettings && serverSettings.authEnabled === false) || token">
           <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
           <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
