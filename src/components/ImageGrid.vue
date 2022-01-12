@@ -30,8 +30,8 @@
       </b-col>
     </b-row>
     <b-row class="image-grid">
-      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="image in images" :key="image.id" :class="'mb-4 ' + getColumns('xxl')">
-        <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :albumId="albumId" v-on:click.native="onImageClicked(image)" />
+      <b-col :cols="getColumns('cols')" :sm="getColumns('sm')" :md="getColumns('md')" :lg="getColumns('lg')" :xl="getColumns('xl')" v-for="(image, index) in images" :key="image.id" :class="'mb-4 ' + getColumns('xxl')">
+        <image-node :imageHeight="imageHeights[imageWidth]" :image="image" :albumId="albumId" @click.native="onImageClicked(image)" @image-preview-clicked="coolboxIndex = index" />
       </b-col>
     </b-row>
 
@@ -44,10 +44,19 @@
     </b-pagination>
     <PublicVisibilityModal ref="publicModal" v-on:visibility-changed="onVisibilityChanged" />
     <AccessTokenModal :albumId="albumId" ref="accessTokenModal" />
+
+    <CoolLightBox
+      :items="coolboxImages"
+      :index="coolboxIndex"
+      :useZoomBar="true"
+      @close="coolboxIndex = null" />
   </div>
 </template>
 
 <script>
+import CoolLightBox from 'vue-cool-lightbox'
+import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
+
 import ImageNode from '../components/ImageNode'
 import AccessTokenModal from '@/components/modals/AccessTokenModal'
 import CardsVariantIcon from 'vue-material-design-icons/CardsVariant'
@@ -59,11 +68,10 @@ import ShareVariantIcon from 'vue-material-design-icons/ShareVariant'
 import ImagePlusIcon from 'vue-material-design-icons/ImagePlus'
 import { mapGetters } from 'vuex'
 
-import baguetteBox from 'baguettebox.js'
-
 export default {
   data: function () {
     return {
+      coolboxIndex: null,
       currentPage: 1,
       imagesPerPageOptions: ['12', '24', '48', '96'],
       imageHeights: {
@@ -107,7 +115,28 @@ export default {
       'imagesPerPage',
       'imageDetailsMode',
       'token'
-    ])
+    ]),
+    coolboxImages: function () {
+      if (this.images) {
+        return this.images.map(i => {
+          if (i.dataType === 'video') {
+            return {
+              src: this.getVideoSrc(i),
+              thumb: this.getSrc(i, 'SMALL'),
+              title: i.name,
+              mediaType: 'video'
+            }
+          } else {
+            return {
+              src: this.getSrc(i, 'ORIGINAL'),
+              title: i.name
+            }
+          }
+        })
+      } else {
+        return []
+      }
+    }
   },
   props: {
     imageCount: {
@@ -128,8 +157,6 @@ export default {
       this.currentPage = 1
     },
     images: function () {
-      this.baguetteBox()
-
       window.scrollTo({
         left: 0,
         top: this.$refs.imageGrid.getBoundingClientRect().top,
@@ -138,6 +165,7 @@ export default {
     }
   },
   components: {
+    CoolLightBox,
     AccessTokenModal,
     'image-node': ImageNode,
     CardsVariantIcon,
@@ -149,6 +177,30 @@ export default {
     ImagePlusIcon
   },
   methods: {
+    getVideoSrc: function (image) {
+      var result = `${this.baseUrl}image/${image ? image.id : 'null'}/video/${image.name}?a=1`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
+      }
+
+      return result
+    },
+    getSrc: function (image, size) {
+      var result = `${this.baseUrl}image/${image.id}/img?size=${size}`
+
+      if (this.token && this.token.imageToken) {
+        result = `${result}&token=${this.token.imageToken}`
+      }
+      if (this.accessToken) {
+        result = `${result}&accesstoken=${this.accessToken}`
+      }
+
+      return result
+    },
     onVisibilityChanged: function (isPublic) {
       if (this.albumId) {
         this.apiGetAlbumPublicVisibility(this.albumId, isPublic, result => {
@@ -178,19 +230,7 @@ export default {
     },
     onPageChanged: function (page) {
       this.currentPage = page
-    },
-    baguetteBox: function () {
-      this.$nextTick(function () {
-        baguetteBox.run('.image-grid', {
-          captions: 'true',
-          filter: /.*image\/[0-9]+\/img.*/i,
-          fullscreen: true
-        })
-      })
     }
-  },
-  mounted: function () {
-    this.baguetteBox()
   }
 }
 </script>

@@ -17,7 +17,6 @@
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
     "axios": "^0.21.4",
-    "baguettebox.js": "^1.11.0",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.6.1",
     "bootstrap-xxl": "^4.1.0",
@@ -30,6 +29,7 @@
     "portal-vue": "^2.1.5",
     "vue": "^2.6.6",
     "vue-analytics": "^5.22.1",
+    "vue-cool-lightbox": "^2.7.4",
     "vue-ins-progress-bar": "^1.0.0",
     "vue-material-design-icons": "^4.4.0",
     "vue-meta": "^2.3.3",

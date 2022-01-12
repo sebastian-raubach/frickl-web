@@ -18,7 +18,7 @@
           <template v-if="image.dataType === 'video'">
             <b-embed type="video" :src="getVideoSrc()" allowfullscreen controls />
           </template>
-          <a :href="getSrc('ORIGINAL')" v-else>
+          <a :href="getSrc('ORIGINAL')" @click.prevent="coolboxIndex = 0" v-else>
             <b-img fluid-grow :src="getSrc('MEDIUM')" class="img-details"/>
           </a>
         </b-col>
@@ -113,6 +113,12 @@
         </b-col>
       </b-row>
     </b-container>
+    <CoolLightBox
+        :items="coolboxImages"
+        :index="coolboxIndex"
+        :useZoomBar="true"
+        @close="coolboxIndex = null"
+        :fullscreen="true" />
     <ShareModal :url="shareUrl" ref="shareModal" />
     <SelectAlbumModal :image="image"
                       ref="selectAlbumModal"
@@ -122,7 +128,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import baguetteBox from 'baguettebox.js'
+import CoolLightBox from 'vue-cool-lightbox'
+import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 
 import SingleLocationMap from '@/components/SingleLocationMap'
 import SelectAlbumModal from '@/components/modals/SelectAlbumModal'
@@ -157,6 +164,7 @@ export default {
   },
   data: function () {
     return {
+      coolboxIndex: null,
       tags: [],
       image: null,
       album: null,
@@ -165,6 +173,7 @@ export default {
     }
   },
   components: {
+    CoolLightBox,
     SingleLocationMap,
     SelectAlbumModal,
     DownloadIcon,
@@ -190,6 +199,16 @@ export default {
         return `${l.protocol}//${l.host}${l.pathname}api/image/${this.image.id}/share`
       } else {
         return null
+      }
+    },
+    coolboxImages: function () {
+      if (this.image) {
+        return [{
+          src: this.getSrc('ORIGINAL'),
+          title: this.image.name
+        }]
+      } else {
+        return []
       }
     }
   },
@@ -304,14 +323,6 @@ export default {
               }
             })
 
-          this.$nextTick(() => {
-            baguetteBox.run('.img-col', {
-              fullScreen: true,
-              captions: 'true',
-              filter: /.*/i
-            })
-          })
-
           this.$meta().refresh()
         }
       })
@@ -381,5 +392,10 @@ export default {
   #image-details {
     transition: all 1.5s;
     transition-property: background-color, color;
+  }
+
+  .breadcrumb-item span {
+    word-break: break-word!important;
+    overflow-wrap: break-word!important;
   }
 </style>

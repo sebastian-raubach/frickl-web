@@ -15,8 +15,6 @@ import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import 'baguettebox.js/dist/baguetteBox.min.css'
-
 import mixin from './mixin/mixin.js'
 import api from './mixin/api.js'
 
