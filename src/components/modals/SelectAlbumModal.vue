@@ -63,7 +63,7 @@ export default {
     }
   },
   mounted: function () {
-    this.apiGetAlbums(-1, 0, Number.MAX_SAFE_INTEGER, result => {
+    this.apiGetAlbums(-1, 0, this.MAX_JAVA_INTEGER, result => {
       this.allAlbums = result
       this.filteredAlbums = result
       this.update()

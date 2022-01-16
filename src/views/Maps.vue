@@ -22,7 +22,6 @@ export default {
     return {
       locations: null,
       location: null,
-      zoom: 3,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }
@@ -52,53 +51,58 @@ export default {
     }
   },
   mounted: function () {
-    var vm = this
-
     // Note: We create the map and markers and popups manually, because using the Vue way of doing things, it would
     // create reactive vue elements for each marker which is a big overhead (sloooow). Popups are dynamically
     // populated on demand as well, to further reduce the load.
-    var map = L.map('location-map').setView([22.5937, 2.1094], 3)
+    let map = L.map('location-map')
+
+    map.on('load', () => {
+      var markers = L.markerClusterGroup()
+
+      this.apiGetLocations(result => {
+        if (result && result.length > 0) {
+          var latLngBounds = L.latLngBounds()
+          result.forEach(l => {
+            var marker = L.marker([l.latitude, l.longitude]).bindPopup('')
+            marker.on('click', e => {
+              this.location = l
+
+              this.$nextTick(() => {
+                var popup = e.target.getPopup()
+                popup.setContent(this.$refs.popupContent)
+              })
+            })
+            markers.addLayer(marker)
+            l.location = L.latLng(l.latitude, l.longitude)
+            latLngBounds.extend(l.location)
+          })
+
+          map.addLayer(markers)
+
+          this.locations = result
+
+          if (result.length === 1) {
+            map.panTo([this.locations[0].latitude, this.locations[0].longitude])
+          } else {
+            map.fitBounds(latLngBounds.pad(0.1))
+          }
+
+          map.on('popupopen', e => {
+            var px = map.project(e.popup._latlng)
+            px.y -= e.popup._container.clientHeight / 2
+            map.panTo(map.unproject(px), { animate: true })
+          })
+        } else {
+          this.locations = []
+        }
+      })
+    })
+
+    map.setView([22.5937, 2.1094], 3)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map)
-
-    var markers = L.markerClusterGroup()
-
-    this.apiGetLocations(function (result) {
-      var latLngBounds = L.latLngBounds()
-      result.forEach(function (l) {
-        var marker = L.marker([l.latitude, l.longitude]).bindPopup('')
-        marker.on('click', function (e) {
-          vm.location = l
-
-          vm.$nextTick(() => {
-            var popup = e.target.getPopup()
-            popup.setContent(vm.$refs.popupContent)
-          })
-        })
-        markers.addLayer(marker)
-        l.location = L.latLng(l.latitude, l.longitude)
-        latLngBounds.extend(l.location)
-      })
-
-      map.addLayer(markers)
-
-      vm.locations = result
-
-      if (result.length === 1) {
-        map.setCenter(vm.locations[0].latLng)
-        vm.zoom = 10
-      } else {
-        map.fitBounds(latLngBounds.pad(0.1))
-      }
-
-      map.on('popupopen', function (e) {
-        var px = map.project(e.popup._latlng)
-        px.y -= e.popup._container.clientHeight / 2
-        map.panTo(map.unproject(px), { animate: true })
-      })
-    })
   }
 }
 </script>

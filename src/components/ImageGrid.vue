@@ -18,13 +18,13 @@
         <b-button-group v-if="albumId" class="pb-3 pr-2 float-right">
           <b-button v-b-tooltip.hover title="Change public visibility of album" v-if="(serverSettings && serverSettings.authEnabled === false) || token" href="#" @click.prevent="$refs.publicModal.show" ><LockOpenVariantIcon /></b-button>
           <b-button v-b-tooltip.hover title="Generate share token" v-if="(serverSettings && serverSettings.authEnabled === false) || token" href="#" @click.prevent="$refs.accessTokenModal.show"><ShareVariantIcon /></b-button>
-          <b-button v-b-tooltip.hover title="Download album" :href="baseUrl + 'album/' + albumId + '/download'"><DownloadIcon /></b-button>
+          <b-button v-b-tooltip.hover title="Download album" @click="downloadAlbum"><DownloadIcon /></b-button>
         </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right">
           <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
           <b-button v-b-tooltip.hover title="Show information below image" :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
         </b-button-group>
-        <b-button-group class="pb-3 pr-2 float-right" v-if="(serverSettings && serverSettings.authEnabled === false) || token">
+        <b-button-group class="pb-3 pr-2 float-right" v-if="albumId && ((serverSettings && serverSettings.authEnabled === false) || token)">
           <b-button @click="$emit('add-image-clicked')"><ImagePlusIcon /></b-button>
         </b-button-group>
       </b-col>
@@ -150,6 +150,10 @@ export default {
     albumId: {
       type: Number,
       default: null
+    },
+    albumName: {
+      type: String,
+      default: 'unknown-album'
     }
   },
   watch: {
@@ -177,8 +181,26 @@ export default {
     ImagePlusIcon
   },
   methods: {
+    downloadAlbum: function () {
+      this.$eventHub.$emit('show-loading', true)
+      // Download the current table data
+      this.apiDownloadAlbum(this.albumId, result => {
+        this.downloadFile(`${this.baseUrl}download/${result}`, `${this.albumName}.zip`)
+        this.$eventHub.$emit('show-loading', false)
+      })
+    },
+    downloadFile: function (url, filename) {
+      let downloadLink = document.createElement('a')
+      downloadLink.href = url
+      if (filename) {
+        downloadLink.download = filename
+      }
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+    },
     getVideoSrc: function (image) {
-      var result = `${this.baseUrl}image/${image ? image.id : 'null'}/video/${image.name}?a=1`
+      var result = `${this.baseUrl}image/${image ? image.id : 'null'}/video/${image.name.toLowerCase()}?a=1`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

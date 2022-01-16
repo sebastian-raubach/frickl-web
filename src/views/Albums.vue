@@ -28,6 +28,7 @@
           <ImageGrid :imageCount="imageCount"
                       :images="images"
                       :albumId="parentAlbumId"
+                      :albumName="album ? album.name : null"
                       ref="imageGrid"
                       @add-image-clicked="$refs.imageUploadModal.show()"
                       @onImageNavigation="page => onImageNavigation(page)"/>

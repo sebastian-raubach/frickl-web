@@ -223,7 +223,7 @@ export default {
       }
     },
     getVideoSrc: function () {
-      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video?a=1`
+      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video/${this.image.name.toLowerCase()}?a=1`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

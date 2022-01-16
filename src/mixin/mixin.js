@@ -2,6 +2,11 @@ import axios from 'axios'
 import { mapGetters } from 'vuex'
 
 export default {
+  data: function () {
+    return {
+      MAX_JAVA_INTEGER: 2147483647
+    }
+  },
   computed: {
     ...mapGetters([
       'serverSettings',
@@ -32,7 +37,11 @@ export default {
             break
           case 401:
             message = 'Unauthorized. Authentication failed.'
-            break
+            this.$store.dispatch('ON_TOKEN_CHANGED', null)
+            if (this.serverSettings && this.serverSettings.authEnabled === true) {
+              this.$router.push({ name: 'home' })
+            }
+            return
           case 403:
             message = 'Forbidden. You cannot access this resource.'
             this.$store.dispatch('ON_TOKEN_CHANGED', null)
