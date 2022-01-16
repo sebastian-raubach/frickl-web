@@ -129,6 +129,7 @@ export default {
           } else {
             return {
               src: this.getSrc(i, 'ORIGINAL'),
+              thumb: this.getSrc(i, 'SMALL'),
               title: i.name
             }
           }

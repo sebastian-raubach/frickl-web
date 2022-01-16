@@ -142,6 +142,9 @@ export default {
     },
     apiDownloadAlbum: function (albumId, onSuccess) {
       return this.unauthAjax({ url: `album/${albumId}/download`, success: onSuccess })
+    },
+    apiScanAlbum: function (albumId, onSuccess) {
+      return this.unauthAjax({ url: `album/${albumId}/scan`, success: onSuccess })
     }
   }
 }

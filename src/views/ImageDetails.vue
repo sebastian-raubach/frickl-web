@@ -205,6 +205,7 @@ export default {
       if (this.image) {
         return [{
           src: this.getSrc('ORIGINAL'),
+          thumb: this.getSrc('SMALL'),
           title: this.image.name
         }]
       } else {

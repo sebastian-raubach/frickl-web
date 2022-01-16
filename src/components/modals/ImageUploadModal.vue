@@ -9,7 +9,7 @@
     no-close-on-esc
     hide-header-close
     @cancel="$refs.upload.clear()"
-    @ok="refresh">
+    @ok.prevent="refresh">
     <UploadWidget :albumId="albumId" ref="upload" />
   </b-modal>
 </template>
@@ -35,7 +35,10 @@ export default {
       this.$refs.imageUploadModal.hide()
     },
     refresh: function () {
-      this.$emit('images-uploaded')
+      this.apiScanAlbum(this.albumId, () => {
+        this.$emit('images-uploaded')
+        this.$nextTick(() => this.hide())
+      })
     }
   }
 }
