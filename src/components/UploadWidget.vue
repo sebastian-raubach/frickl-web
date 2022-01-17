@@ -19,25 +19,25 @@
       <template #cell(name)="data">
         <div class="filename">{{ data.item.name }}</div>
         <div class="progress" v-if="data.item.active || data.item.progress !== '0.00'">
-          <div :class="{'progress-bar': true, 'progress-bar-striped': true, 'bg-danger': data.item.error, 'progress-bar-animated': data.item.active}" role="progressbar" :style="{width: data.item.progress + '%'}">{{data.item.progress}}%</div>
+          <div :class="{'progress-bar': true, 'progress-bar-striped': true, 'bg-success': data.item.success, 'bg-danger': data.item.error, 'progress-bar-animated': data.item.active}" role="progressbar" :style="{width: data.item.progress + '%'}">{{data.item.progress}}%</div>
         </div>
       </template>
       <template #cell(width)="data">
-        {{data.item.width || 0}}
+        {{data.item.width || 'N/A'}}
       </template>
       <template #cell(height)="data">
-        {{data.item.height || 0}}
+        {{data.item.height || 'N/A'}}
       </template>
       <template #cell(size)="data">
         {{formatSize(data.item.size)}}
       </template>
-      <template #cell(speed)="data">
-        {{formatSize(data.item.speed)}}
+      <template #cell(speed)="data" v-if="data.item.speed">
+        {{formatSize(data.item.speed)}}/s
       </template>
       <template #cell(status)="data">
-        <span v-if="data.item.error">{{data.item.error}}</span>
-        <span v-else-if="data.item.success">success</span>
-        <span v-else-if="data.item.active">active</span>
+        <b-badge variant="danger" v-if="data.item.error">{{data.item.error}}</b-badge>
+        <b-badge variant="success" v-else-if="data.item.success">success</b-badge>
+        <b-badge variant="info" v-else-if="data.item.active">active</b-badge>
         <span v-else></span>
       </template>
       <template #cell(actions)="data">
