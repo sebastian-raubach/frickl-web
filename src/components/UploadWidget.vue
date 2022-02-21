@@ -31,8 +31,8 @@
       <template #cell(size)="data">
         {{formatSize(data.item.size)}}
       </template>
-      <template #cell(speed)="data" v-if="data.item.speed">
-        {{formatSize(data.item.speed)}}/s
+      <template #cell(speed)="data">
+        <span v-if="data.item.speed">{{formatSize(data.item.speed)}}/s</span>
       </template>
       <template #cell(status)="data">
         <b-badge variant="danger" v-if="data.item.error">{{data.item.error}}</b-badge>
