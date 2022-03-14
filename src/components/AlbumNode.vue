@@ -2,49 +2,37 @@
   <div class="album h-100">
     <hr/>
     <hr/>
-    <b-card :class="`album-card ${albumDetailsMode} ${albumDetailsMode === 'below' ? 'h-100': ''}`" no-body>
-      <router-link :to="'/albums/' + album.id" :title="album.name">
-        <div class="card-img-wrap">
-          <img :src="getSrc('SMALL')" class="card-img" :style="'height:' + albumHeight + 'px'"/>
-        </div>
-      </router-link>
-      <div class="card-img-overlay flex-column justify-content-end" v-if="albumDetailsMode === 'overlay'">
-        <div>
-          <h5>{{ album.name }}</h5>
-          <template v-if="serverSettings && serverSettings.authEnabled === false || token">
-            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
-          </template>
-          <template v-else>
-            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.countPublic }}</span>
-          </template>
+
+    <b-card no-body class="album-card">
+      <div class="bg-img" :style="{ height: `${albumHeight}px`, backgroundImage: `url(${getSrc('SMALL')})` }">
+        <div class="overlay"></div>
+        <div class="inner p-4">
+          <h1>{{ cardTitle }}</h1>
         </div>
       </div>
-      <b-card-body v-else>
-        <div>
-          <h5>{{ album.name }}</h5>
-          <template v-if="serverSettings && serverSettings.authEnabled === false || token || accessToken">
-            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.count }}</span>
-          </template>
-          <template v-else>
-            <span v-if="album.count > 0" class="font-weight-light mt-2"><ImageMultipleIcon /> {{ album.countPublic }}</span>
-          </template>
+      <div class="info d-flex align-items-stretch">
+        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center">
+          <h3 v-if="serverSettings && serverSettings.authEnabled === false || token || accessToken">{{ album.count }}</h3>
+          <h3 v-else>{{ album.countPublic }}</h3>
+          <span>images</span>
         </div>
-      </b-card-body>
+        <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center">
+          <h3>{{ day }}</h3><span>{{ month }} {{ year }}</span>
+        </div>
+      </div>
+
+      <router-link :to="routerTo" :title="album.name" class="stretched-link" />
     </b-card>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import ImageMultipleIcon from 'vue-material-design-icons/ImageMultiple.vue'
 
 export default {
   data: function () {
     return {
     }
-  },
-  components: {
-    ImageMultipleIcon
   },
   props: {
     album: {
@@ -54,6 +42,14 @@ export default {
     albumHeight: {
       type: Number,
       default: 300
+    },
+    title: {
+      type: String,
+      default: null
+    },
+    to: {
+      type: String,
+      default: null
     }
   },
   computed: {
@@ -63,7 +59,37 @@ export default {
       'albumDetailsMode',
       'token',
       'accessToken'
-    ])
+    ]),
+    cardTitle: function () {
+      return this.title || this.album.name
+    },
+    routerTo: function () {
+      return this.to || `/albums/${this.album.id}`
+    },
+    month: function () {
+      if (this.album.newestImage) {
+        const date = new Date(this.album.newestImage)
+        return date.toLocaleDateString(undefined, { month: 'short' })
+      } else {
+        return null
+      }
+    },
+    day: function () {
+      if (this.album.newestImage) {
+        const date = new Date(this.album.newestImage)
+        return date.toLocaleDateString(undefined, { day: '2-digit' })
+      } else {
+        return null
+      }
+    },
+    year: function () {
+      if (this.album.newestImage) {
+        const date = new Date(this.album.newestImage)
+        return date.toLocaleDateString(undefined, { year: 'numeric' })
+      } else {
+        return null
+      }
+    }
   },
   methods: {
     getSrc: function (size) {
@@ -83,53 +109,57 @@ export default {
 </script>
 
 <style>
-  .album-card .card-img {
-    width: 100%;
-    object-fit: cover;
-    height: 300px;
-    transition: transform .2s ease-in-out;
-  }
-  .album-card.below .card-img {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  .album-card h5 {
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .album-card .card-img-overlay {
-    padding: 0!important;
-    top: inherit;
-  }
-  .album-card .card-img-overlay > *:first-child {
-    padding: 1.25rem;
-    margin:0 !important;
-    background-color: rgba(1,1,1,.5);
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .album-card .card-img-wrap {
-    overflow: hidden;
-    position: relative;
-  }
-  .album-card:hover .card-img {
-    transform: scale(1.05);
-  }
-  .album > hr {
-    margin-top: 0.1rem;
-    margin-bottom: 0.1rem;
-    border-color:  rgba(0, 0, 0, 0.2)
-  }
-  .album > hr:first-child {
-    margin-left: 1rem;
-    margin-right: 1rem;
-  }
-  .album > hr:nth-child(2) {
-    margin-left: 0.65rem;
-    margin-right: 0.65rem;
-  }
+.album > hr {
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  border-color:  rgba(0, 0, 0, 0.2)
+}
+.album > hr:first-child {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.album > hr:nth-child(2) {
+  margin-left: 0.65rem;
+  margin-right: 0.65rem;
+}
+
+.album-card .bg-img {
+  position: relative;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.album-card .bg-img .inner {
+  position: relative;
+}
+
+.album-card .bg-img .inner h1 {
+  color: #fff;
+  font-size: 28px;
+  max-width: 50%;
+  line-height: 1.2em;
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+
+.album-card .overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.15);
+  transition: background 0.1s linear;
+}
+
+.album-card:hover .overlay {
+  background: rgba(0,0,0,.05);
+}
+
+.album-card .info > .wrapper {
+  flex: 1;
+}
+
+.album-card .info h3 {
+  margin-bottom: 0;
+}
 </style>

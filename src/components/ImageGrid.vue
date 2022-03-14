@@ -20,10 +20,6 @@
           <b-button v-b-tooltip.hover title="Generate share token" v-if="(serverSettings && serverSettings.authEnabled === false) || token" href="#" @click.prevent="$refs.accessTokenModal.show"><ShareVariantIcon /></b-button>
           <b-button v-b-tooltip.hover title="Download album" @click="downloadAlbum"><DownloadIcon /></b-button>
         </b-button-group>
-        <b-button-group class="pb-3 pr-2 float-right">
-          <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="imageDetailsMode === 'overlay'" @click="setImageDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
-          <b-button v-b-tooltip.hover title="Show information below image" :pressed="imageDetailsMode === 'below'" @click="setImageDetailsMode('below')" ><CardsVariantIcon /></b-button>
-        </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right" v-if="albumId && ((serverSettings && serverSettings.authEnabled === false) || token)">
           <b-button @click="$emit('add-image-clicked')"><ImagePlusIcon /></b-button>
         </b-button-group>
@@ -59,8 +55,6 @@ import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 
 import ImageNode from '../components/ImageNode'
 import AccessTokenModal from '@/components/modals/AccessTokenModal'
-import CardsVariantIcon from 'vue-material-design-icons/CardsVariant'
-import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline'
 import DownloadIcon from 'vue-material-design-icons/Download'
 import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant'
 import PublicVisibilityModal from '@/components/modals/PublicVisibilityModal'
@@ -113,7 +107,6 @@ export default {
       'baseUrl',
       'imageWidth',
       'imagesPerPage',
-      'imageDetailsMode',
       'token'
     ]),
     coolboxImages: function () {
@@ -173,8 +166,6 @@ export default {
     CoolLightBox,
     AccessTokenModal,
     'image-node': ImageNode,
-    CardsVariantIcon,
-    CardTextOutlineIcon,
     DownloadIcon,
     LockOpenVariantIcon,
     PublicVisibilityModal,
@@ -234,9 +225,6 @@ export default {
     },
     setColWidth: function (size) {
       this.$store.dispatch('ON_IMAGE_WIDTH_CHANGED', size)
-    },
-    setImageDetailsMode: function (mode) {
-      this.$store.dispatch('ON_IMAGE_DETAILS_MODE_CHANGED', mode)
     },
     setImagesPerPage: function (option) {
       this.$store.dispatch('ON_IMAGES_PER_PAGE_CHANGED', option)

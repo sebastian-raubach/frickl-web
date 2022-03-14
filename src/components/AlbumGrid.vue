@@ -15,10 +15,6 @@
             </b-dropdown-item>
           </b-dropdown>
         </b-button-group>
-        <b-button-group class="pb-3 pr-2 float-right">
-          <b-button v-b-tooltip.hover title="Overlay information on hover" :pressed="albumDetailsMode === 'overlay'" @click="setAlbumDetailsMode('overlay')" ><CardTextOutlineIcon /></b-button>
-          <b-button v-b-tooltip.hover title="Show information below image" :pressed="albumDetailsMode === 'below'" @click="setAlbumDetailsMode('below')" ><CardsVariantIcon /></b-button>
-        </b-button-group>
         <b-button-group class="pb-3 pr-2 float-right" v-if="(serverSettings && serverSettings.authEnabled === false) || token">
           <b-button v-b-tooltip.hover title="Add album" @click="$emit('add-album-clicked')"><FolderPlusOutlineIcon /></b-button>
         </b-button-group>
@@ -40,8 +36,6 @@
 </template>
 
 <script>
-import CardsVariantIcon from 'vue-material-design-icons/CardsVariant.vue'
-import CardTextOutlineIcon from 'vue-material-design-icons/CardTextOutline.vue'
 import AlbumNode from '../components/AlbumNode.vue'
 import FolderPlusOutlineIcon from 'vue-material-design-icons/FolderPlusOutline'
 import { mapGetters } from 'vuex'
@@ -97,7 +91,6 @@ export default {
   computed: {
     ...mapGetters([
       'albumWidth',
-      'albumDetailsMode',
       'albumsPerPage',
       'token'
     ])
@@ -116,8 +109,6 @@ export default {
   },
   components: {
     AlbumNode,
-    CardsVariantIcon,
-    CardTextOutlineIcon,
     FolderPlusOutlineIcon
   },
   methods: {
@@ -133,9 +124,6 @@ export default {
     },
     setAlbumsPerPage: function (option) {
       this.$store.dispatch('ON_ALBUMS_PER_PAGE_CHANGED', option)
-    },
-    setAlbumDetailsMode: function (mode) {
-      this.$store.dispatch('ON_ALBUM_DETAILS_MODE_CHANGED', mode)
     },
     onAlbumClicked: function (album) {
       this.$store.dispatch('ON_ALBUM_CHANGED', album)

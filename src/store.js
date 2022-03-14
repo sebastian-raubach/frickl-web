@@ -18,8 +18,6 @@ export default new Vuex.Store({
     imageWidth: 'large',
     albumsPerPage: '12',
     imagesPerPage: '12',
-    albumDetailsMode: 'below',
-    imageDetailsMode: 'below',
     token: null,
     cookiesAccepted: null,
     accessToken: null
@@ -34,8 +32,6 @@ export default new Vuex.Store({
     imageWidth: state => state.imageWidth,
     albumsPerPage: state => state.albumsPerPage,
     imagesPerPage: state => state.imagesPerPage,
-    albumDetailsMode: state => state.albumDetailsMode,
-    imageDetailsMode: state => state.imageDetailsMode,
     cookiesAccepted: state => state.cookiesAccepted,
     accessToken: state => state.accessToken
   },
@@ -75,12 +71,6 @@ export default new Vuex.Store({
     },
     ON_ALBUMS_PER_PAGE_CHANGED_MUTATION: function (state, newAlbumsPerPage) {
       state.albumsPerPage = newAlbumsPerPage
-    },
-    ON_IMAGE_DETAILS_MODE_CHANGED_MUTATION: function (state, newImageDetailsMode) {
-      state.imageDetailsMode = newImageDetailsMode
-    },
-    ON_ALBUM_DETAILS_MODE_CHANGED_MUTATION: function (state, newAlbumDetailsMode) {
-      state.albumDetailsMode = newAlbumDetailsMode
     },
     ON_COOKIES_ACCEPTED_MUTATION: function (state, newCookiesAccepted) {
       state.cookiesAccepted = newCookiesAccepted
@@ -124,12 +114,6 @@ export default new Vuex.Store({
     },
     ON_ALBUMS_PER_PAGE_CHANGED: function ({ commit }, albumsPerPage) {
       commit('ON_ALBUMS_PER_PAGE_CHANGED_MUTATION', albumsPerPage)
-    },
-    ON_IMAGE_DETAILS_MODE_CHANGED: function ({ commit }, imageDetailsMode) {
-      commit('ON_IMAGE_DETAILS_MODE_CHANGED_MUTATION', imageDetailsMode)
-    },
-    ON_ALBUM_DETAILS_MODE_CHANGED: function ({ commit }, albumDetailsMode) {
-      commit('ON_ALBUM_DETAILS_MODE_CHANGED_MUTATION', albumDetailsMode)
     },
     ON_COOKIES_ACCEPTED: function ({ commit }, cookiesAccepted) {
       commit('ON_COOKIES_ACCEPTED_MUTATION', cookiesAccepted)

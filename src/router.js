@@ -22,6 +22,11 @@ const router = new Router({
       component: () => import(/* webpackChunkName: "albums" */ './views/Albums.vue')
     },
     {
+      path: '/xago/:year',
+      name: 'xago',
+      component: () => import(/* webpackChunkName: "xago" */ './views/XAgo.vue')
+    },
+    {
       path: '/calendar',
       name: 'calendar',
       component: () => import(/* webpackChunkName: "calendar" */ './views/Calendar.vue')

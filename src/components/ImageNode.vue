@@ -1,37 +1,18 @@
 <template>
-  <b-card no-body :class="`image-card ${imageDetailsMode}`">
-    <router-link :to="'/images/' + image.id">
-      <div class="card-img-wrap">
-        <img :src="getSrc('SMALL')" class="card-img" :style="'height:' + imageHeight + 'px'"/>
-      </div>
-    </router-link>
-    <div class="card-img-overlay flex-column justify-content-end" v-if="imageDetailsMode === 'overlay'">
-      <div class="image-actions">
-        <div class="mb-2">{{ image.name }}</div>
-        <div><small class="text-light" v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)"><CalendarClockIcon class="mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
-        <div><small class="text-light" v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
-        <div class="mt-2">
-          <span v-if="(serverSettings && serverSettings.authEnabled === false) || token">
-            <HeartIcon v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"/>
-            <HeartOutlineIcon v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"/>
-            <template v-if="(serverSettings && serverSettings.authEnabled === true) && token">
-              <LockOpenVariantIcon v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1" />
-              <LockIcon v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else />
-            </template>
-            <FolderImageIcon v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"/>
-          </span>
-          <a @click="$emit('image-preview-clicked')" v-b-tooltip.hover.bottom="'Open large preview'"><MagnifyPlusIcon /></a>
-        </div>
-      </div>
+  <b-card no-body class="image-card">
+    <div class="bg-img" :style="{ height: `${imageHeight}px`, backgroundImage: `url(${getSrc('SMALL')})` }">
+      <div class="overlay"></div>
     </div>
-    <div v-else class="card-image-details">
-      <b-card-body>
-        <div>
-          <div>{{ image.name }}</div>
-          <div v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)" class="mt-2"><small class="text-muted"><CalendarClockIcon class="text-muted mdi-sm" /> {{ getTime() | toDateTime }}</small></div>
-          <div v-if="image.exif && (image.exif.cameraMake || image.exif.cameraModel)" class="mb-2"><small class="text-muted"><CameraIcon class="mdi-sm" /> <span v-if="image.exif.cameraMake"> {{ image.exif.cameraMake }}</span><span v-if="image.exif.cameraModel"> {{ image.exif.cameraModel }}</span></small></div>
+    <div class="card-image-details">
+      <div class="info d-flex align-items-stretch">
+        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
+          <h3>{{ image.exif.cameraMake }}</h3>
+          <span>{{ image.exif.cameraModel }}</span>
         </div>
-      </b-card-body>
+        <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
+          <h3>{{ day }}</h3><span>{{ month }} {{ year }}</span>
+        </div>
+      </div>
 
       <b-button-group class="image-actions w-100">
         <template v-if="(serverSettings && serverSettings.authEnabled === false) || token">
@@ -46,13 +27,13 @@
 
         <b-button @click="$emit('image-preview-clicked')" v-b-tooltip.hover.bottom="'Open large preview'"><MagnifyPlusIcon /></b-button>
       </b-button-group>
+
+      <router-link :to="'/images/' + image.id" class="stretched-link" />
     </div>
   </b-card>
 </template>
 
 <script>
-import CalendarClockIcon from 'vue-material-design-icons/CalendarClock.vue'
-import CameraIcon from 'vue-material-design-icons/Camera.vue'
 import HeartIcon from 'vue-material-design-icons/Heart.vue'
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue'
 import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
@@ -70,11 +51,34 @@ export default {
   computed: {
     ...mapGetters([
       'serverSettings',
-      'imageDetailsMode',
       'baseUrl',
       'token',
       'accessToken'
-    ])
+    ]),
+    month: function () {
+      if (this.image.exif && (this.image.exif.dateTimeOriginal || this.image.exif.dateTime)) {
+        const date = new Date(this.getTime())
+        return date.toLocaleDateString(undefined, { month: 'short' })
+      } else {
+        return null
+      }
+    },
+    day: function () {
+      if (this.image.exif && (this.image.exif.dateTimeOriginal || this.image.exif.dateTime)) {
+        const date = new Date(this.getTime())
+        return date.toLocaleDateString(undefined, { day: '2-digit' })
+      } else {
+        return null
+      }
+    },
+    year: function () {
+      if (this.image.exif && (this.image.exif.dateTimeOriginal || this.image.exif.dateTime)) {
+        const date = new Date(this.getTime())
+        return date.toLocaleDateString(undefined, { year: 'numeric' })
+      } else {
+        return null
+      }
+    }
   },
   props: {
     image: {
@@ -91,8 +95,6 @@ export default {
     }
   },
   components: {
-    CalendarClockIcon,
-    CameraIcon,
     HeartIcon,
     HeartOutlineIcon,
     FolderImageIcon,
@@ -191,20 +193,6 @@ export default {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
-  .image-card .mdi-sm,
-  .image-card .card-img-overlay .image-actions .material-design-icon {
-    margin-right: 0.75rem;
-  }
-  .image-card .card-img-overlay {
-    padding: 0;
-    top: inherit;
-  }
-  .image-card .card-img-overlay .material-design-icon {
-    height: 1.5rem;
-    width: 1.5rem;
-    opacity: 0;
-    transition: opacity .2s ease-in-out;
-  }
   .image-card .card-image-details .material-design-icon {
     height: 1.5rem;
     width: 1.5rem;
@@ -212,45 +200,15 @@ export default {
   .image-actions svg:hover {
     cursor: pointer;
   }
-  .image-card .card-img-overlay .image-actions {
-    opacity: 0;
-    padding: 1rem;
-    background-color: rgba(1,1,1,.5);
-    margin:0 !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: white;
-    transition: opacity .2s ease-in-out;
-  }
   .image-card .card-image-details .image-actions {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    z-index: 2;
   }
   .image-card .card-image-details .image-actions .btn {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-  }
-  .image-card .card-img-overlay .image-actions > div {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 11pt;
-  }
-  .image-card:hover .card-img-overlay .image-actions {
-    opacity: 1;
-  }
-  .image-card .card-img-overlay .material-design-icon.heart-icon {
-    opacity: 1;
-  }
-  .image-card:hover .card-img-overlay .material-design-icon {
-    opacity: 1;
-  }
-  .image-card .card-img-overlay .material-design-icon > .material-design-icon__svg {
-    height: 1.5rem;
-    width: 1.5rem;
-    fill: white;
   }
   .image-card .card-image-details .material-design-icon > .material-design-icon__svg {
     height: 1.2rem;
@@ -260,8 +218,6 @@ export default {
   .image-card .card-image-details .card-body .material-design-icon > .material-design-icon__svg {
     fill: #6c757d;
   }
-  .image-card .card-img-overlay .material-design-icon.heart-icon > .material-design-icon__svg,
-  .image-card .card-img-overlay .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg,
   .image-card .card-image-details .material-design-icon.heart-icon > .material-design-icon__svg,
   .image-card .card-image-details .material-design-icon.heart-outline-icon:hover > .material-design-icon__svg {
       fill: #EA2027;
@@ -274,8 +230,6 @@ export default {
   .image-card .card-image-details .material-design-icon.magnify-plus-icon:hover > .material-design-icon__svg {
       fill: #A3CB38;
   }
-  .image-card .card-img-overlay .material-design-icon.lock-icon:hover > .material-design-icon__svg,
-  .image-card .card-img-overlay .material-design-icon.lock-open-variant-icon > .material-design-icon__svg,
   .image-card .card-image-details .material-design-icon.lock-icon:hover > .material-design-icon__svg,
   .image-card .card-image-details .material-design-icon.lock-open-variant-icon > .material-design-icon__svg {
       fill: #3498db;
@@ -288,5 +242,36 @@ export default {
   .image-card .mdi-sm.material-design-icon .material-design-icon__svg {
     height: 1rem;
     width: 1rem;
+  }
+
+  .image-card .info > .wrapper {
+    flex: 1;
+  }
+
+  .image-card .info h3 {
+    margin-bottom: 0;
+  }
+
+  .image-card .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.15);
+    transition: background 0.1s linear;
+  }
+
+  .image-card:hover .overlay {
+    background: rgba(0,0,0,.05);
+  }
+
+  .image-card .bg-img {
+    position: relative;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .image-card .bg-img .inner {
+    position: relative;
   }
 </style>

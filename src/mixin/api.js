@@ -12,6 +12,9 @@ export default {
     apiPostAlbum: function (album, onSuccess) {
       this.unauthAjax({ url: 'album', method: 'POST', data: album, success: onSuccess })
     },
+    apiGetAlbumsXAgo: function (year, page, albumsPerPage, onSuccess) {
+      this.unauthAjax({ url: 'album/xago', data: { year: year, page: page, limit: albumsPerPage }, success: onSuccess })
+    },
     apiGetAlbums: function (parentAlbumId, page, imagesPerPage, onSuccess) {
       const params = { page: page, limit: imagesPerPage }
       if (parentAlbumId) {
