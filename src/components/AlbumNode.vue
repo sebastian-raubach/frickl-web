@@ -11,11 +11,11 @@
         </div>
       </div>
       <div class="info d-flex align-items-stretch">
-        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center">
+        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount">
           <h3>{{ imageCount }}</h3>
           <span>{{ categoryTitle }}</span>
         </div>
-        <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center">
+        <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
           <h3>{{ day }}</h3><span>{{ month }} {{ year }}</span>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .album > hr {
   margin-top: 0.1rem;
   margin-bottom: 0.1rem;
@@ -155,7 +155,7 @@ export default {
 .album-card .bg-img .inner h1 {
   color: #fff;
   font-size: 28px;
-  max-width: 50%;
+  max-width: 75%;
   line-height: 1.2em;
   margin-bottom: 12px;
   font-weight: 300;
