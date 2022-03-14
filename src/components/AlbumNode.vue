@@ -12,9 +12,8 @@
       </div>
       <div class="info d-flex align-items-stretch">
         <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center">
-          <h3 v-if="serverSettings && serverSettings.authEnabled === false || token || accessToken">{{ album.count }}</h3>
-          <h3 v-else>{{ album.countPublic }}</h3>
-          <span>images</span>
+          <h3>{{ imageCount }}</h3>
+          <span>{{ categoryTitle }}</span>
         </div>
         <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center">
           <h3>{{ day }}</h3><span>{{ month }} {{ year }}</span>
@@ -50,6 +49,14 @@ export default {
     to: {
       type: String,
       default: null
+    },
+    count: {
+      type: Number,
+      default: null
+    },
+    categoryTitle: {
+      type: String,
+      default: 'images'
     }
   },
   computed: {
@@ -88,6 +95,17 @@ export default {
         return date.toLocaleDateString(undefined, { year: 'numeric' })
       } else {
         return null
+      }
+    },
+    imageCount: function () {
+      if (this.count) {
+        return this.count
+      } else {
+        if ((this.serverSettings && this.serverSettings.authEnabled === false) || this.token || this.accessToken) {
+          return this.album.count
+        } else {
+          return this.album.countPublic
+        }
       }
     }
   },

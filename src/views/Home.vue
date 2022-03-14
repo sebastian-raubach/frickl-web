@@ -5,9 +5,9 @@
       <!-- The semi-transparent overlay -->
       <div class="overlay bg-dark"></div>
       <!-- The scroll indicator -->
-      <div class="mouse-icon">
+      <!-- <div class="mouse-icon">
         <div class="wheel"></div>
-      </div>
+      </div> -->
     </div>
     <div v-else class="bg-img bg-dark d-flex justify-content-center align-items-center">
       <img src="../assets/photos.svg" class="img-fluid" alt="Github" />
