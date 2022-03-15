@@ -6,11 +6,12 @@
     <div class="card-image-details">
       <div class="info d-flex align-items-stretch">
         <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
-          <h3>{{ image.exif.cameraMake }}</h3>
-          <span>{{ image.exif.cameraModel }}</span>
+          <h4>{{ image.exif.cameraMake }}</h4>
+          <small>{{ image.exif.cameraModel }}</small>
         </div>
         <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
-          <h3>{{ day }}</h3><span>{{ month }} {{ year }}</span>
+          <h4>{{ day }}</h4>
+          <small>{{ month }} {{ year }}</small>
         </div>
       </div>
 
@@ -28,7 +29,7 @@
         <b-button @click="$emit('image-preview-clicked')" v-b-tooltip.hover.bottom="'Open large preview'"><MagnifyPlusIcon /></b-button>
       </b-button-group>
 
-      <router-link :to="'/images/' + image.id" class="stretched-link" />
+      <router-link :to="'/images/' + image.id" class="stretched-link" :title="image.name" />
     </div>
   </b-card>
 </template>
@@ -248,7 +249,7 @@ export default {
     flex: 1;
   }
 
-  .image-card .info h3 {
+  .image-card .info h4 {
     margin-bottom: 0;
   }
 

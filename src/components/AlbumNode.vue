@@ -12,11 +12,12 @@
       </div>
       <div class="info d-flex align-items-stretch">
         <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount">
-          <h3>{{ imageCount }}</h3>
-          <span>{{ categoryTitle }}</span>
+          <h4>{{ imageCount }}</h4>
+          <small>{{ categoryTitle }}</small>
         </div>
         <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
-          <h3>{{ day }}</h3><span>{{ month }} {{ year }}</span>
+          <h4>{{ day }}</h4>
+          <small>{{ month }} {{ year }}</small>
         </div>
       </div>
 
@@ -177,7 +178,7 @@ export default {
   flex: 1;
 }
 
-.album-card .info h3 {
+.album-card .info h4 {
   margin-bottom: 0;
 }
 </style>
