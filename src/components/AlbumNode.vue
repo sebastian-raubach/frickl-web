@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="info d-flex align-items-stretch">
-        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount">
+        <div class="p-4 wrapper d-flex flex-wrap flex-column justify-content-center align-items-center text-center" v-if="imageCount">
           <h4>{{ imageCount }}</h4>
           <small>{{ categoryTitle }}</small>
         </div>

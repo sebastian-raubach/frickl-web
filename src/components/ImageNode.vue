@@ -5,7 +5,7 @@
     </div>
     <div class="card-image-details">
       <div class="info d-flex align-items-stretch">
-        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
+        <div class="p-4 wrapper d-flex flex-wrap flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
           <h4>{{ image.exif.cameraMake }}</h4>
           <small>{{ image.exif.cameraModel }}</small>
         </div>
