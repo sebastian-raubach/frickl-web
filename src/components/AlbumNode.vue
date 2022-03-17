@@ -15,8 +15,8 @@
           <h4>{{ imageCount }}</h4>
           <small>{{ categoryTitle }}</small>
         </div>
-        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="album.imageViewCount">
-          <h4>{{ album.imageViewCount }}</h4>
+        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="album.imageViewCount" :title="toThousandSeparators(album.imageViewCount)">
+          <h4>{{ getNumberWithSuffix(album.imageViewCount, 0) }}</h4>
           <small>views</small>
         </div>
         <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">

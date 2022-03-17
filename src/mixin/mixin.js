@@ -14,6 +14,32 @@ export default {
     ])
   },
   methods: {
+    /**
+     * Formats the given value into a human-readable number (e.g. 1.000 -> 1K, 1.000.000 -> 1G)
+     * @param {Number} value The value to format
+     * @param {Number} decimals The decimal places
+     * @param {Number} k The thousand value (e.g. 1000 or 1024)
+     * @param {String} separator The separator between the number and the letter
+     */
+    getNumberWithSuffix: function (value, decimals = 2, k = 1000, separator = '') {
+      if (value === undefined || value === null || value === 0) {
+        return '0'
+      }
+
+      const dm = decimals < 0 ? 0 : decimals
+      const sizes = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+
+      const i = Math.floor(Math.log(value) / Math.log(k))
+
+      return parseFloat((value / Math.pow(k, i)).toFixed(dm)) + separator + sizes[i]
+    },
+    toThousandSeparators: function (value) {
+      if (value === null || value === undefined) {
+        return null
+      } else {
+        return value.toLocaleString()
+      }
+    },
     uuidv4: function () {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0

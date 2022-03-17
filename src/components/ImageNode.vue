@@ -9,8 +9,8 @@
           <h4>{{ image.exif.cameraMake }}</h4>
           <small>{{ image.exif.cameraModel }}</small>
         </div>
-        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="image.viewCount !== undefined && image.viewCount !== null">
-          <h4>{{ image.viewCount }}</h4>
+        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="image.viewCount !== undefined && image.viewCount !== null" :title="toThousandSeparators(image.viewCount)">
+          <h4>{{ getNumberWithSuffix(image.viewCount, 0) }}</h4>
           <small>views</small>
         </div>
         <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">

@@ -25,6 +25,7 @@
         <b-col cols=12 sm=12 md=12 lg=3 xl=3 class="exif col-xxl-2">
           <div v-if="image.exif && !(Object.keys(image.exif).length === 0 && image.exif.constructor === Object)" class="mt-3">
             <h3 v-if="image.exif && (image.exif.dateTimeOriginal || image.exif.dateTime)">Taken on: {{ getTime() | toDate }}</h3>
+            <h4 :title="toThousandSeparators(image.viewCount)">Views: {{ getNumberWithSuffix(image.viewCount, 0) }}</h4>
             <b-row>
               <b-col cols=6>
                 <img src="../assets/icon-camera.svg" fluid>
