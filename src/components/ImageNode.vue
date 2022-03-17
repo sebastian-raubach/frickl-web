@@ -7,15 +7,15 @@
       <div class="info d-flex flex-wrap align-items-stretch">
         <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
           <h4>{{ image.exif.cameraMake }}</h4>
-          <small>{{ image.exif.cameraModel }}</small>
+          <small class="text-muted">{{ image.exif.cameraModel }}</small>
         </div>
         <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="image.viewCount !== undefined && image.viewCount !== null" :title="toThousandSeparators(image.viewCount)">
           <h4>{{ getNumberWithSuffix(image.viewCount, 0) }}</h4>
-          <small>views</small>
+          <small class="text-muted">views</small>
         </div>
         <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
           <h4>{{ day }}</h4>
-          <small>{{ month }} {{ year }}</small>
+          <small class="text-muted">{{ month }} {{ year }}</small>
         </div>
       </div>
 

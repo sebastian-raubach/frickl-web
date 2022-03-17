@@ -11,17 +11,17 @@
         </div>
       </div>
       <div class="info d-flex flex-wrap align-items-stretch">
-        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount">
+        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount !== undefined && imageCount !== null">
           <h4>{{ imageCount }}</h4>
-          <small>{{ categoryTitle }}</small>
+          <small class="text-muted">{{ categoryTitle }}</small>
         </div>
-        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="album.imageViewCount" :title="toThousandSeparators(album.imageViewCount)">
+        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="album.imageViewCount !== undefined && album.imageViewCount !== null" :title="toThousandSeparators(album.imageViewCount)">
           <h4>{{ getNumberWithSuffix(album.imageViewCount, 0) }}</h4>
-          <small>views</small>
+          <small class="text-muted">views</small>
         </div>
         <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
           <h4>{{ day }}</h4>
-          <small>{{ month }} {{ year }}</small>
+          <small class="text-muted">{{ month }} {{ year }}</small>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export default {
       }
     },
     imageCount: function () {
-      if (this.count) {
+      if (this.count !== null) {
         return this.count
       } else {
         if ((this.serverSettings && this.serverSettings.authEnabled === false) || this.token || this.accessToken) {
