@@ -5,11 +5,15 @@
     </div>
     <div class="card-image-details">
       <div class="info d-flex flex-wrap align-items-stretch">
-        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
+        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="image.exif && image.exif.cameraModel">
           <h4>{{ image.exif.cameraMake }}</h4>
           <small>{{ image.exif.cameraModel }}</small>
         </div>
-        <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
+        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="image.viewCount !== undefined && image.viewCount !== null">
+          <h4>{{ image.viewCount }}</h4>
+          <small>views</small>
+        </div>
+        <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
           <h4>{{ day }}</h4>
           <small>{{ month }} {{ year }}</small>
         </div>

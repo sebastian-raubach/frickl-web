@@ -11,11 +11,15 @@
         </div>
       </div>
       <div class="info d-flex flex-wrap align-items-stretch">
-        <div class="p-4 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount">
+        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount">
           <h4>{{ imageCount }}</h4>
           <small>{{ categoryTitle }}</small>
         </div>
-        <div class="p-4 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
+        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="album.imageViewCount">
+          <h4>{{ album.imageViewCount }}</h4>
+          <small>views</small>
+        </div>
+        <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
           <h4>{{ day }}</h4>
           <small>{{ month }} {{ year }}</small>
         </div>
