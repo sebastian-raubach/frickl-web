@@ -3,7 +3,7 @@
 ## Using Docker Compose
 Modify `docker-compose.yml` and bind your image folder into the container:
 
-```
+```yml
 version: '3.3'
 services:
     mysql:
@@ -82,3 +82,32 @@ docker run -d \
     --restart always \
     sebastianraubach/frickl:x86-release-1.0.0 (or :arm-release-1.0.0)
 ```
+
+## Using an existing database
+
+If you are using an existing database rather than using the MySQL Docker database, you need to do some additional configuration.
+
+Add this to your `docker-compose.yml` file:
+
+```yml
+        volumes:
+          - type: bind
+            source: ./config.properties
+            target: /data/frickl/config.properties
+```
+
+This will bind a local `config.properties` file into the Docker container overwriting Frickl's default configuration.
+
+The content of the `config.properties` file should then look something like this:
+
+```ini
+database.username=<your database username>
+database.password=<your database password>
+database.server=<'host.docker.internal' if the database runs on the Docker host or the IP of the database server>
+database.name=<name of the database within the server>
+database.port=<optional port of the database server>
+
+base.path=/data/images
+```
+
+You can then remove the `mysql` Docker container from the `docker-compose.yml` file.

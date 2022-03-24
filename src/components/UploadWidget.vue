@@ -103,7 +103,7 @@ export default {
       multiple: true,
       drop: true,
       thread: 3,
-      name: 'imageFiles',
+      name: 'imageFile',
       headers: {
         'Authorization': 'Bearer ' + this.getToken()
       },
@@ -125,7 +125,7 @@ export default {
       'baseUrl'
     ]),
     postAction: function () {
-      return `${this.baseUrl}album/${this.albumId}/image`
+      return `${this.baseUrl}album/${this.albumId}/upload/image`
     }
   },
   methods: {

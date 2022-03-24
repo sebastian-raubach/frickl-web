@@ -12,7 +12,7 @@ Frickl is a self-hosted image library. This repository contains the web interfac
 
 ## What is Frickl?
 - It's free!
-- A self-hosted image library
+- A self-hosted image and video library
 - A way to explore your images through a modern web interface
 - A way to make your images available to friends and family
 - A way to tag your images for better catalogization and searching
@@ -21,9 +21,7 @@ Frickl is a self-hosted image library. This repository contains the web interfac
 ## What is Frickl not?
 - A way to re-organize your photo collection, this needs to be done before using Frickl
 - Able to handle deletion/renaming of images in your library, just additions
-- Able to handle uploading of images through the web interface, simply add them to the underlying file system
-- Currently able to handle any image formats other than .jpg.
-- Guarenteed to not screw up your images
+- Currently able to handle any image formats other than .jpg
 - A direct replacement for Flickr or similar, as they host images for you
 
 ## A word of warning
