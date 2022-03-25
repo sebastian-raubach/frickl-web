@@ -24,7 +24,7 @@ export default {
     const year = this.$route.params.year
 
     if (year) {
-      this.apiGetAlbumsXAgo(year, 0, 1, result => {
+      this.apiGetAlbumsXAgo(year, 0, this.MAX_JAVA_INTEGER, result => {
         this.albums = result
       })
     }
