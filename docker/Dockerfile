@@ -33,7 +33,7 @@ RUN apk add --no-cache openjdk11 && \
     /opt/gradle-6.0.1/bin/gradle -p /opt/frickl-server war
 
 
-FROM tomcat:8-jdk11
+FROM tomcat:10-jdk11
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
