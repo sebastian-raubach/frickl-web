@@ -107,9 +107,9 @@ export default {
         return this.count
       } else {
         if ((this.serverSettings && this.serverSettings.authEnabled === false) || this.token || this.accessToken) {
-          return this.album.count
+          return this.album.imageCount
         } else {
-          return this.album.countPublic
+          return this.album.imageCountPublic
         }
       }
     }
