@@ -21,8 +21,8 @@
 
       <b-button-group class="image-actions w-100">
         <template v-if="(serverSettings && serverSettings.authEnabled === false) || token">
-          <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
-          <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
+          <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
+          <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
           <template v-if="(serverSettings && serverSettings.authEnabled === true) && token">
             <b-button v-b-tooltip.hover.bottom="'Make private'" @click="onTogglePublic($event)" v-if="image.isPublic === 1"><LockOpenVariantIcon /></b-button>
             <b-button v-b-tooltip.hover.bottom="'Make public'" @click="onTogglePublic($event)" v-else><LockIcon /></b-button>
