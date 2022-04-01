@@ -133,10 +133,10 @@ export default {
       return result
     },
     getTime: function () {
-      if (this.image.exif.dateTime) {
-        return this.image.exif.dateTime
-      } else if (this.image.exif.dateTimeOriginal) {
+      if (this.image.exif.dateTimeOriginal) {
         return this.image.exif.dateTimeOriginal
+      } else if (this.image.exif.dateTime) {
+        return this.image.exif.dateTime
       } else {
         return ''
       }
