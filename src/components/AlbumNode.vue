@@ -12,7 +12,7 @@
       </div>
       <div class="info d-flex flex-wrap align-items-stretch">
         <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount !== undefined && imageCount !== null">
-          <h4>{{ imageCount }}</h4>
+          <h4>{{ getNumberWithSuffix(imageCount, 1) }}</h4>
           <small class="text-muted">{{ categoryTitle }}</small>
         </div>
         <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="album.imageViewCount !== undefined && album.imageViewCount !== null" :title="toThousandSeparators(album.imageViewCount)">
