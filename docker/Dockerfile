@@ -38,7 +38,7 @@ FROM tomcat:10-jdk11
 LABEL maintainer="sebastian@raubach.co.uk"
 
 RUN apt-get update && \
-    apt-get --yes --force-yes install ffmpeg imagemagick
+    apt-get --yes --force-yes install ffmpeg imagemagick exiftool
 
 RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT
