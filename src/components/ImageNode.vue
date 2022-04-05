@@ -33,7 +33,7 @@
         <b-button @click="$emit('image-preview-clicked')" v-b-tooltip.hover.bottom="'Open large preview'"><MagnifyPlusIcon /></b-button>
       </b-button-group>
 
-      <router-link :to="'/images/' + image.id" class="stretched-link" :title="image.name" />
+      <router-link :to="{ name: 'image-details', params: { imageId: image.id } }" class="stretched-link" :title="image.name" />
     </div>
   </b-card>
 </template>

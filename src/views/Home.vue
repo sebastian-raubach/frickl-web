@@ -19,8 +19,11 @@
           <div class="col-md-10 offset-md-1">
             <div class="home-content">
               <img src="../assets/frickl.svg" class="img-fluid" alt="Frickl logo" />
-              <h1 class="white-text">Welcome to Frickl</h1>
-              <p class="white-text">The new home for all your photos.</p>
+              <h1>Welcome to Frickl</h1>
+              <p>The new home for all your photos.</p>
+              <p class="mt-5" v-if="backgroundImageId">
+                Do you like the photo in the background? Go look at it <router-link :to="{ name: 'image-details', params: { imageId: backgroundImageId } }">here</router-link>.
+              </p>
             </div>
           </div>
         </div>
@@ -102,7 +105,6 @@ export default {
     transform: translateY(-50%);
     text-align: center;
     color: white;
-    z-index: -1;
   }
 
   .bg-img .img-fluid {

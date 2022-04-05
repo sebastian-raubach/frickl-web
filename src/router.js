@@ -38,7 +38,7 @@ const router = new Router({
     },
     {
       path: '/images/:imageId',
-      name: 'images',
+      name: 'image-details',
       component: () => import(/* webpackChunkName: "imageDetails" */ './views/ImageDetails.vue')
     },
     {
