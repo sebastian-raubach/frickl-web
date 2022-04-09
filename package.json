@@ -23,7 +23,7 @@
     "core-js": "^2.6.5",
     "dotenv": "^8.0.0",
     "leaflet": "^1.4.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "node-vibrant": "^3.2.0-alpha",
     "plotly.js": "^1.52.1",
     "portal-vue": "^2.1.5",
