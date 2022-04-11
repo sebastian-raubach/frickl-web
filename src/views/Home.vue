@@ -1,33 +1,21 @@
 <template>
   <div>
-    <!-- The background image -->
-    <div class="bg-img" :style="{'background-image': 'url(' + getUrl + ')'}" v-if="backgroundImageId">
-      <!-- The semi-transparent overlay -->
-      <div class="overlay bg-dark"></div>
-      <!-- The scroll indicator -->
-      <!-- <div class="mouse-icon">
-        <div class="wheel"></div>
-      </div> -->
-    </div>
-    <div v-else class="bg-img bg-dark d-flex justify-content-center align-items-center">
-      <img src="../assets/photos.svg" class="img-fluid" alt="Github" />
-    </div>
     <!-- The text -->
-    <div class="home-wrapper">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-10 offset-md-1">
-            <div class="home-content">
-              <img src="../assets/frickl.svg" class="img-fluid" alt="Frickl logo" />
-              <h1>Welcome to Frickl</h1>
-              <p>The new home for all your photos.</p>
-              <p class="mt-5" v-if="backgroundImageId">
-                Do you like the photo in the background? Go look at it <router-link :to="{ name: 'image-details', params: { imageId: backgroundImageId } }">here</router-link>.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div class="position-relative vhc-100">
+      <div class="background-image vhc-100" :style="{'background-image': 'url(' + getUrl + ')'}" v-if="backgroundImageId" />
+      <div class="background-image vhc-100 bg-dark d-flex justify-content-center align-items-center h-100" v-else>
+        <img src="../assets/photos.svg" class="img-fluid mh-75" alt="Photo collection" />
       </div>
+      <b-container class="vhc-100 d-flex justify-content-center align-items-center">
+        <div class="content text-white text-center">
+          <img src="../assets/frickl.svg" class="img-fluid mh-75" alt="Frickl logo" />
+          <h1>Welcome to Frickl</h1>
+          <p>The new home for all your photos.</p>
+          <p class="mt-5" v-if="backgroundImageId">
+            Do you like the photo in the background? Go look at it <router-link :to="{ name: 'image-details', params: { imageId: backgroundImageId } }">here</router-link>.
+          </p>
+        </div>
+      </b-container>
     </div>
   </div>
 </template>
@@ -74,107 +62,23 @@ export default {
 </script>
 
 <style scoped>
-  .bg-img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    background-position: center;
-    background-size: cover;
-    background-attachment: fixed;
-  }
-
-  .bg-img .overlay {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    opacity: .6;
-  }
-
-  .home-wrapper {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    text-align: center;
-    color: white;
-  }
-
-  .bg-img .img-fluid {
-    opacity: .2;
-    max-height: 80vh;
-  }
-
-  .mouse-icon {
-    position: absolute;
-    left: 50%;
-    bottom: 40px;
-    border: 2px solid #fff;
-    border-radius: 16px;
-    height: 50px;
-    width: 30px;
-    margin-left: -17px;
-    display: block;
-    z-index: 10;
-  }
-  .mouse-icon .wheel {
-    position: relative;
-    border-radius: 10px;
-    background: #fff;
-    width: 4px;
-    height: 10px;
-    top: 4px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .mouse-icon .wheel {
-    -webkit-animation-name: drop;
-    -webkit-animation-duration: 1s;
-    -webkit-animation-timing-function: linear;
-    -webkit-animation-delay: 0s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-play-state: running;
-    animation-name: drop;
-    animation-duration: 1s;
-    animation-timing-function: linear;
-    animation-delay: 0s;
-    animation-iteration-count: infinite;
-    animation-play-state: running;
-  }
-  @-webkit-keyframes drop {
-    0% {
-      top: 5px;
-      opacity: 0;
-    }
-    30% {
-      top: 10px;
-      opacity: 1;
-    }
-    100% {
-      top: 25px;
-      opacity: 0;
-    }
-  }
-
-  @keyframes drop {
-    0% {
-      top: 5px;
-      opacity: 0;
-    }
-    30% {
-      top: 10px;
-      opacity: 1;
-    }
-    100% {
-      top: 25px;
-      opacity: 0;
-    }
-  }
+.background-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  filter: brightness(50%);
+  background-size: cover;
+  background-position: center center;
+}
+.vhc-100 {
+  height: calc(100vh - 66px);
+}
+.mh-75 {
+  max-height: 75%;
+}
+.content {
+  z-index: 1;
+}
 </style>
