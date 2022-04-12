@@ -50,11 +50,9 @@ export default {
     }
   },
   mounted: function () {
-    var vm = this
-
-    this.apiGetRandomFavorite(function (result) {
+    this.apiGetRandomFavorite(result => {
       if (result) {
-        vm.backgroundImageId = result.id
+        this.backgroundImageId = result.id
       }
     })
   }
