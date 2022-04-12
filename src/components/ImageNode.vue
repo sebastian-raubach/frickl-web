@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     getVideoSrc: function () {
-      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video/${this.image.name.toLowerCase()}?a=1`
+      let result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video/${this.image.name.toLowerCase()}?a=1`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
@@ -121,7 +121,7 @@ export default {
       return result
     },
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
+      let result = `${this.baseUrl}image/${this.image.id}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
@@ -145,7 +145,6 @@ export default {
       event.stopPropagation()
       event.preventDefault()
 
-      var vm = this
       this.$bvModal.msgBoxConfirm('Set image as album cover?', {
         title: 'Album cover',
         okTitle: 'Yes',
@@ -156,12 +155,12 @@ export default {
         .then(value => {
           if (value) {
             const album = {
-              id: vm.albumId,
-              bannerImageId: vm.image.id
+              id: this.albumId,
+              bannerImageId: this.image.id
             }
 
-            vm.apiPatchAlbum(album, function (result) {
-              vm.$bvToast.toast('Image set as album cover.', {
+            this.apiPatchAlbum(album, result => {
+              this.$bvToast.toast('Image set as album cover.', {
                 title: 'Success',
                 autoHideDelay: 5000,
                 appendToast: true

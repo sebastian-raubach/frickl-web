@@ -54,7 +54,7 @@ Vue.config.productionTip = false
 
 Vue.filter('toDateTime', function (value) {
   if (value) {
-    var date = new Date(value)
+    const date = new Date(value)
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
   } else {
     return null
@@ -62,7 +62,7 @@ Vue.filter('toDateTime', function (value) {
 })
 Vue.filter('toDate', function (value) {
   if (value) {
-    var date = new Date(value)
+    const date = new Date(value)
     return date.toLocaleDateString()
   } else {
     return null
@@ -79,7 +79,7 @@ Vue.filter('decamelize', function (value) {
 Vue.prototype.$eventHub = new Vue()
 
 // Set base URL based on environment
-var baseUrl = 'http://localhost:8080/frickl/v1/api/'
+let baseUrl = 'http://localhost:8080/frickl/v1/api/'
 
 if (process.env.VUE_APP_BASE_URL) {
   baseUrl = process.env.VUE_APP_BASE_URL
@@ -87,7 +87,7 @@ if (process.env.VUE_APP_BASE_URL) {
 
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 
-let axiosDefaults = require('axios/lib/defaults')
+const axiosDefaults = require('axios/lib/defaults')
 axiosDefaults.baseURL = baseUrl
 
 Vue.use({

@@ -68,7 +68,7 @@ export default {
         this.images = result
 
         if (result && result.length > 0) {
-          var query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
+          let query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
           if (!query) {
             query = {}
@@ -87,8 +87,8 @@ export default {
     }
   },
   mounted: function () {
-    var imagePage = 1
-    var query = this.$route.query
+    let imagePage = 1
+    const query = this.$route.query
 
     if (query && query.imagePage) {
       imagePage = query.imagePage

@@ -116,25 +116,24 @@ export default {
       this.searchTerm = ''
     },
     checkImportStatus: function () {
-      var vm = this
-      this.apiGetImportStatus(function (result) {
-        vm.importStatus = result
+      this.apiGetImportStatus(result => {
+        this.importStatus = result
 
         if (result.status !== 'IDLE') {
-          vm.$insProgress.start()
-          vm.timer = setTimeout(vm.checkImportStatus, 10000)
+          this.$insProgress.start()
+          this.timer = setTimeout(this.checkImportStatus, 10000)
         } else {
-          vm.$insProgress.finish()
+          this.$insProgress.finish()
 
-          if (vm.timer) {
-            clearInterval(vm.timer)
+          if (this.timer) {
+            clearInterval(this.timer)
             if (result.totalImages > 0) {
-              vm.$eventHub.$emit('alert', 'success', `Photo update of ${result.totalImages} successfully completed.`)
+              this.$eventHub.$emit('alert', 'success', `Photo update of ${result.totalImages} successfully completed.`)
             } else {
-              vm.$eventHub.$emit('alert', 'success', `Photos scanned for updates. No changes found.`)
+              this.$eventHub.$emit('alert', 'success', 'Photos scanned for updates. No changes found.')
             }
-            clearInterval(vm.timer)
-            vm.timer = null
+            clearInterval(this.timer)
+            this.timer = null
           }
         }
       })

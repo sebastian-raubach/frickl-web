@@ -6,7 +6,7 @@
 
     <b-form @submit.prevent>
       <b-form-group label="Share link" label-for="link">
-        <b-form-input id="link" v-model="url" readonly />
+        <b-form-input id="link" :value="url" readonly />
       </b-form-group>
     </b-form>
   </b-modal>

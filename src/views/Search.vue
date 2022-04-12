@@ -52,31 +52,26 @@ export default {
   },
   methods: {
     onImageNavigation: function (page) {
-      var vm = this
-
-      this.apiGetImagesForSearch(this.searchTerm, page - 1, this.imagesPerPage, function (result) {
-        vm.images = result
+      this.apiGetImagesForSearch(this.searchTerm, page - 1, this.imagesPerPage, result => {
+        this.images = result
       })
     },
     onAlbumNavigation: function (page) {
-      var vm = this
-
-      this.apiGetAlbumsForSearch(this.searchTerm, page - 1, this.albumsPerPage, function (result) {
-        vm.albums = result
+      this.apiGetAlbumsForSearch(this.searchTerm, page - 1, this.albumsPerPage, result => {
+        this.albums = result
       })
     }
   },
   mounted: function () {
     this.searchTerm = this.$route.params.searchTerm
 
-    var vm = this
-    this.apiGetImageCountForSearch(this.searchTerm, function (result) {
-      vm.imageCount = result
-      vm.onImageNavigation(1)
+    this.apiGetImageCountForSearch(this.searchTerm, result => {
+      this.imageCount = result
+      this.onImageNavigation(1)
     })
-    this.apiGetAlbumCountForSearch(this.searchTerm, function (result) {
-      vm.albumCount = result
-      vm.onAlbumNavigation(1)
+    this.apiGetAlbumCountForSearch(this.searchTerm, result => {
+      this.albumCount = result
+      this.onAlbumNavigation(1)
     })
   }
 }

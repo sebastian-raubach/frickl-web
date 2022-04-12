@@ -88,7 +88,7 @@ router.beforeEach((to, from, next) => {
   if (to.query && to.query.accesstoken) {
     store.dispatch('ON_ACCESS_TOKEN_CHANGED', to.query.accesstoken)
 
-    let query = Object.assign({}, to.query)
+    const query = Object.assign({}, to.query)
     delete query.accesstoken
 
     next({ path: to.path, query: query, params: to.params })

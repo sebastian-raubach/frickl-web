@@ -37,7 +37,7 @@ export default {
       'accessToken'
     ]),
     getUrl: function () {
-      var result = `${this.baseUrl}image/${this.backgroundImageId}/img?size=MEDIUM`
+      let result = `${this.baseUrl}image/${this.backgroundImageId}/img?size=MEDIUM`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

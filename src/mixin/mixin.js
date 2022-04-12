@@ -42,8 +42,8 @@ export default {
     },
     uuidv4: function () {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0
-        var v = c === 'x' ? r : (r & 0x3 | 0x8)
+        const r = Math.random() * 16 | 0
+        const v = c === 'x' ? r : (r & 0x3 | 0x8)
         return v.toString(16)
       })
     },
@@ -52,9 +52,9 @@ export default {
      * @param {*} error The error response object
      */
     handleError: function (error) {
-      var variant = 'danger'
-      var title = 'Error'
-      var message = error ? error.statusText : 'UNKNOWN ERROR'
+      const variant = 'danger'
+      const title = 'Error'
+      let message = error ? error.statusText : 'UNKNOWN ERROR'
 
       if (error && error.status) {
         switch (error.status) {
@@ -123,7 +123,7 @@ export default {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': 'Bearer ' + this.getToken()
+          Authorization: 'Bearer ' + this.getToken()
         }
       })
         .then(data => {
@@ -144,8 +144,8 @@ export default {
         })
     },
     unauthAjax ({ url = null, method = 'GET', data = null, params = null, dataType = 'json', contentType = 'application/json; charset=utf-8', success = null, error = null }) {
-      var requestData = null
-      var requestParams = null
+      let requestData = null
+      let requestParams = null
 
       if (this.accessToken) {
         if (data === null || data === undefined) {
@@ -174,7 +174,7 @@ export default {
         withCredentials: true,
         headers: {
           'Content-Type': contentType,
-          'Authorization': 'Bearer ' + this.getToken()
+          Authorization: 'Bearer ' + this.getToken()
         }
       })
         .then(data => {
@@ -195,7 +195,7 @@ export default {
         })
     },
     getToken () {
-      var t = this.$store.getters.token
+      let t = this.$store.getters.token
 
       // Check if the token is still valid
       if (t && ((new Date().getTime() - new Date(t.createdOn).getTime()) > t.lifetime)) {

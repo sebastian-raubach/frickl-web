@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     getSrc: function (id, size) {
-      var result = `${this.baseUrl}image/${id}/img?size=${size}`
+      let result = `${this.baseUrl}image/${id}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
@@ -54,21 +54,21 @@ export default {
     // Note: We create the map and markers and popups manually, because using the Vue way of doing things, it would
     // create reactive vue elements for each marker which is a big overhead (sloooow). Popups are dynamically
     // populated on demand as well, to further reduce the load.
-    let map = L.map('location-map')
+    const map = L.map('location-map')
 
     map.on('load', () => {
-      var markers = L.markerClusterGroup()
+      const markers = L.markerClusterGroup()
 
       this.apiGetLocations(result => {
         if (result && result.length > 0) {
-          var latLngBounds = L.latLngBounds()
+          const latLngBounds = L.latLngBounds()
           result.forEach(l => {
-            var marker = L.marker([l.latitude, l.longitude]).bindPopup('')
+            const marker = L.marker([l.latitude, l.longitude]).bindPopup('')
             marker.on('click', e => {
               this.location = l
 
               this.$nextTick(() => {
-                var popup = e.target.getPopup()
+                const popup = e.target.getPopup()
                 popup.setContent(this.$refs.popupContent)
               })
             })
@@ -88,7 +88,7 @@ export default {
           }
 
           map.on('popupopen', e => {
-            var px = map.project(e.popup._latlng)
+            const px = map.project(e.popup._latlng)
             px.y -= e.popup._container.clientHeight / 2
             map.panTo(map.unproject(px), { animate: true })
           })

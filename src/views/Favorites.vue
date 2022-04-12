@@ -33,23 +33,20 @@ export default {
   },
   methods: {
     onImageNavigation: function (page) {
-      var vm = this
-
       this.apiGetAllImages({
         fav: true
-      }, page - 1, this.imagesPerPage, function (result) {
-        vm.images = result
+      }, page - 1, this.imagesPerPage, result => {
+        this.images = result
       })
     }
   },
   mounted: function () {
-    var vm = this
     this.apiGetAllImageCount({
       fav: true
-    }, function (result) {
-      vm.imageCount = result
-      vm.imagesCurPage = 1
-      vm.onImageNavigation(1)
+    }, result => {
+      this.imageCount = result
+      this.imagesCurPage = 1
+      this.onImageNavigation(1)
     })
   }
 }

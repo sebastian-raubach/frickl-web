@@ -33,22 +33,19 @@ export default {
   },
   methods: {
     handleOk (event) {
-      var vm = this
-
       if (this.type === 'image') {
-        this.apiDeleteTagFromImage(this.id, { id: this.tag.id }, function () {
-          vm.$emit('on-tag-deleted')
+        this.apiDeleteTagFromImage(this.id, { id: this.tag.id }, () => {
+          this.$emit('on-tag-deleted')
         })
       } else if (this.type === 'album') {
-        this.apiDeleteTagFromAlbum(this.id, [{ id: this.tag.id }], function () {
-          vm.$emit('on-tag-deleted')
+        this.apiDeleteTagFromAlbum(this.id, [{ id: this.tag.id }], () => {
+          this.$emit('on-tag-deleted')
         })
       }
     },
     show () {
-      var vm = this
-      this.$nextTick(function () {
-        vm.$refs.deleteTagModal.show()
+      this.$nextTick(() => {
+        this.$refs.deleteTagModal.show()
       })
     }
   }

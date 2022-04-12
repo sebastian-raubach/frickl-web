@@ -182,7 +182,7 @@ export default {
       })
     },
     downloadFile: function (url, filename) {
-      let downloadLink = document.createElement('a')
+      const downloadLink = document.createElement('a')
       downloadLink.href = url
       if (filename) {
         downloadLink.download = filename
@@ -192,7 +192,7 @@ export default {
       document.body.removeChild(downloadLink)
     },
     getVideoSrc: function (image) {
-      var result = `${this.baseUrl}image/${image ? image.id : 'null'}/video/${image.name.toLowerCase()}?a=1`
+      let result = `${this.baseUrl}image/${image ? image.id : 'null'}/video/${image.name.toLowerCase()}?a=1`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
@@ -204,7 +204,7 @@ export default {
       return result
     },
     getSrc: function (image, size) {
-      var result = `${this.baseUrl}image/${image.id}/img?size=${size}`
+      let result = `${this.baseUrl}image/${image.id}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

@@ -125,7 +125,7 @@ export default {
         this.albums = result
 
         if (result && result.length > 0) {
-          var query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
+          let query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
           if (!query) {
             query = {}
@@ -149,7 +149,7 @@ export default {
         if (result && result.length > 0) {
           this.currentlyVisibleIds = result.map(i => i.id)
 
-          var query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
+          let query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
           if (!query) {
             query = {}

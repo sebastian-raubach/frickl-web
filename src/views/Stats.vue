@@ -8,9 +8,7 @@
 <script>
 export default {
   mounted: function () {
-    var vm = this
-
-    this.apiGetStatsCamera(function (result) {
+    this.apiGetStatsCamera(result => {
       if (result) {
         const data = [{
           x: result.map(d => d.camera),
@@ -37,7 +35,7 @@ export default {
           displaylogo: false
         }
 
-        vm.$plotly.newPlot(vm.$refs.chart, data, layout, config)
+        this.$plotly.newPlot(this.$refs.chart, data, layout, config)
       }
     })
   }

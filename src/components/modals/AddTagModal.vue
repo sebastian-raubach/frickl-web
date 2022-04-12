@@ -62,7 +62,7 @@ export default {
     handleOk: function (event) {
       event.preventDefault()
 
-      var mappedTags = this.newTags.map(t => {
+      const mappedTags = this.newTags.map(t => {
         return {
           id: null,
           name: t.text

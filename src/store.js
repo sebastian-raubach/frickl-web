@@ -126,7 +126,7 @@ export default new Vuex.Store({
     createPersistedState({
       key: 'frickl',
       reducer: (state, paths) => {
-        var result = JSON.parse(JSON.stringify(state))
+        const result = JSON.parse(JSON.stringify(state))
 
         if (result.cookiesAccepted !== true) {
           Object.keys(result).forEach(k => {

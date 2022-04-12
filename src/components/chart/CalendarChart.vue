@@ -19,7 +19,7 @@ export default {
     update: function (result) {
       this.$plotly.purge(this.$refs.chart)
 
-      var z = [
+      const z = [
         new Array(31).fill(0),
         new Array(30).fill(0),
         new Array(31).fill(0),
@@ -34,7 +34,7 @@ export default {
         new Array(31).fill(0)
       ]
 
-      var ids = [
+      const ids = [
         new Array(31).fill(null),
         new Array(30).fill(null),
         new Array(31).fill(null),
@@ -49,7 +49,7 @@ export default {
         new Array(31).fill(null)
       ]
 
-      var max = 0
+      let max = 0
 
       result.forEach(date => {
         const d = new Date(date.date)

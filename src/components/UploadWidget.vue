@@ -105,7 +105,7 @@ export default {
       thread: 3,
       name: 'imageFile',
       headers: {
-        'Authorization': 'Bearer ' + this.getToken()
+        Authorization: 'Bearer ' + this.getToken()
       },
       uploadAuto: false,
       fields: [
@@ -159,7 +159,7 @@ export default {
       if (newFile && newFile.error === '' && newFile.file && (!oldFile || newFile.file !== oldFile.file)) {
         // Create a blob field
         newFile.blob = ''
-        let URL = (window.URL || window.webkitURL)
+        const URL = (window.URL || window.webkitURL)
         if (URL) {
           newFile.blob = URL.createObjectURL(newFile.file)
         }
@@ -172,7 +172,7 @@ export default {
       // image size
       if (newFile && newFile.error === '' && newFile.type.substr(0, 6) === 'image/' && newFile.blob && (!oldFile || newFile.blob !== oldFile.blob)) {
         newFile.error = 'image parsing'
-        let img = new Image()
+        const img = new Image()
         img.onload = () => {
           this.$refs.upload.update(newFile, { error: '', height: img.height, width: img.width })
         }

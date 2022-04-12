@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${(this.accessToken || this.token || (this.serverSettings && this.serverSettings.authEnabled === false)) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
+      let result = `${this.baseUrl}image/${(this.accessToken || this.token || (this.serverSettings && this.serverSettings.authEnabled === false)) ? this.album.bannerImageId : this.album.bannerImagePublicId}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`

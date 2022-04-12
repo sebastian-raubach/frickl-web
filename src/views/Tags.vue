@@ -59,47 +59,41 @@ export default {
   },
   methods: {
     onTagsFiltered: function () {
-      var vm = this
       if (this.searchTerm && this.searchTerm.length > 0) {
-        this.filteredTags = this.tags.filter(function (t) {
-          return t.tag.name.includes(vm.searchTerm)
+        this.filteredTags = this.tags.filter(t => {
+          return t.tag.name.includes(this.searchTerm)
         })
       } else {
         this.filteredTags = this.tags
       }
     },
     onTagClicked: function (tag) {
-      var vm = this
       this.tag = tag.tag
 
-      this.apiGetImageCountForTag(this.tag.id, function (result) {
-        vm.imageCount = result
-        vm.onImageNavigation(1)
+      this.apiGetImageCountForTag(this.tag.id, result => {
+        this.imageCount = result
+        this.onImageNavigation(1)
       })
     },
     onImageNavigation: function (page) {
-      var vm = this
-
-      this.apiGetImagesForTag(this.tag.id, page - 1, this.imagesPerPage, function (result) {
-        vm.images = result
+      this.apiGetImagesForTag(this.tag.id, page - 1, this.imagesPerPage, result => {
+        this.images = result
       })
     }
   },
   mounted: function () {
-    var vm = this
-
-    this.apiGetTags(function (result) {
-      vm.tags = result
-      vm.filteredTags = result
+    this.apiGetTags(result => {
+      this.tags = result
+      this.filteredTags = result
     })
 
     const tagId = this.$route.params.tagId
 
     if (tagId) {
-      this.apiGetTag(tagId, function (result) {
+      this.apiGetTag(tagId, result => {
         if (result && result.length > 0) {
-          vm.tag = result[0]
-          vm.onTagClicked(vm.tag)
+          this.tag = result[0]
+          this.onTagClicked(this.tag)
         }
       })
     }

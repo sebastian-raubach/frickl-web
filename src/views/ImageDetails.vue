@@ -119,7 +119,7 @@
         :index="coolboxIndex"
         :useZoomBar="true"
         @close="coolboxIndex = null"
-        :fullscreen="true" />
+        :fullScreen="true" />
     <ShareModal :url="shareUrl" ref="shareModal" />
     <SelectAlbumModal :image="image"
                       ref="selectAlbumModal"
@@ -143,7 +143,9 @@ import FolderImageIcon from 'vue-material-design-icons/FolderImage'
 import LockIcon from 'vue-material-design-icons/Lock'
 import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant'
 import TagWidget from '@/components/TagWidget'
-var Vibrant = require('node-vibrant')
+
+import ColorThief from 'colorthief'
+const colorThief = new ColorThief()
 
 export default {
   metaInfo () {
@@ -225,7 +227,7 @@ export default {
       }
     },
     getVideoSrc: function () {
-      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video/${this.image.name.toLowerCase()}?a=1`
+      let result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/video/${this.image.name.toLowerCase()}?a=1`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
@@ -237,7 +239,7 @@ export default {
       return result
     },
     getSrc: function (size) {
-      var result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/img?size=${size}`
+      let result = `${this.baseUrl}image/${this.image ? this.image.id : 'null'}/img?size=${size}`
 
       if (this.token && this.token.imageToken) {
         result = `${result}&token=${this.token.imageToken}`
@@ -261,7 +263,7 @@ export default {
       if (this.$refs.selectAlbumModal) {
         this.$refs.selectAlbumModal.hide()
       }
-      this.apiPatchAlbum(album, function (result) {
+      this.apiPatchAlbum(album, result => {
       })
     },
     hasFlash: function () {
@@ -282,15 +284,13 @@ export default {
       }
     },
     updateTags: function () {
-      var vm = this
-      this.apiGetTagsForImage(vm.image.id, function (result) {
-        vm.tags = result
+      this.apiGetTagsForImage(this.image.id, result => {
+        this.tags = result
       })
     },
     updateAlbum: function () {
-      var vm = this
-      this.apiGetAlbum(this.image.albumId, function (result) {
-        vm.album = result[0]
+      this.apiGetAlbum(this.image.albumId, result => {
+        this.album = result[0]
       })
     },
     onSetImageAsAlbumCover: function (event) {
@@ -303,12 +303,11 @@ export default {
       event.preventDefault()
       this.image.isFavorite = Math.abs(this.image.isFavorite - 1)
 
-      this.apiPatchImage(this.image, function (result) {
-      })
+      this.apiPatchImage(this.image)
     }
   },
   mounted: function () {
-    var imageId = this.$route.params.imageId
+    const imageId = this.$route.params.imageId
 
     if (!this.image || this.image.id !== parseInt(imageId)) {
       this.apiGetImage(imageId, result => {
@@ -316,14 +315,19 @@ export default {
           this.image = result[0]
           this.updateTags()
           this.updateAlbum()
-          Vibrant.from(this.getSrc('SMALL'))
-            .getPalette((err, palette) => {
-              if (!err && palette && palette.Vibrant) {
-                this.backgroundColor = palette.Vibrant.getHex()
-                var avg = (palette.Vibrant.r + palette.Vibrant.g + palette.Vibrant.b) / 3
-                this.foregroundColor = avg < 128 ? 'white' : 'black'
-              }
-            })
+
+          const img = document.createElement('img')
+          img.onload = () => {
+            const color = colorThief.getColor(img)
+            this.backgroundColor = '#' + color.map(x => {
+              const hex = x.toString(16)
+              return hex.length === 1 ? `0${hex}` : hex
+            }).join('')
+            const avg = color.reduce((c, s) => c + s) / 3
+            this.foregroundColor = avg < 128 ? 'white' : 'black'
+          }
+          img.crossOrigin = 'Anonymous'
+          img.src = this.getSrc('SMALL')
 
           this.$meta().refresh()
         }

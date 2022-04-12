@@ -73,7 +73,7 @@ export default {
       this.uuid = this.uuidv4()
       this.expiresOn = null
       this.generated = false
-      var date = new Date()
+      const date = new Date()
       date.setDate(date.getDate() + 1)
       this.min = date
 

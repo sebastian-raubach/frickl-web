@@ -28,7 +28,7 @@ import ImageGrid from '../components/ImageGrid.vue'
 import CalendarChart from '../components/chart/CalendarChart.vue'
 import { mapGetters } from 'vuex'
 
-var moment = require('moment')
+const moment = require('moment')
 
 export default {
   data: function () {
@@ -63,90 +63,83 @@ export default {
 
       this.dateSelection.formattedDate = moment(date).format('YYYY-MM-DD')
 
-      var vm = this
       this.apiGetAllImageCount({
         date: this.dateSelection.formattedDate
-      }, function (result) {
-        vm.dateSelection.imageCount = result
-        vm.dateSelection.imagesCurPage = 1
-        vm.onImageNavigation(1)
+      }, result => {
+        this.dateSelection.imageCount = result
+        this.dateSelection.imagesCurPage = 1
+        this.onImageNavigation(1)
 
-        var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
+        let query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
         if (!query) {
           query = {}
         }
 
-        query.date = vm.dateSelection.formattedDate
+        query.date = this.dateSelection.formattedDate
 
-        vm.$router.replace({
-          path: vm.$router.currentRoute.path,
+        this.$router.replace({
+          path: this.$router.currentRoute.path,
           query: query
         })
       })
     },
     onImageNavigation: function (page) {
-      var vm = this
-
       this.apiGetAllImages({
         date: this.dateSelection.formattedDate
-      }, page - 1, this.imagesPerPage, function (result) {
-        vm.dateSelection.images = result
+      }, page - 1, this.imagesPerPage, result => {
+        this.dateSelection.images = result
       })
     },
     getForYear: function (restoreDate) {
-      var vm = this
-
-      this.apiGetCalendar(this.selectedYear, function (result) {
+      this.apiGetCalendar(this.selectedYear, result => {
         if (result && result.length > 0) {
-          vm.$refs.chart.update(result)
+          this.$refs.chart.update(result)
 
-          var query = JSON.parse(JSON.stringify(vm.$router.currentRoute.query))
+          let query = JSON.parse(JSON.stringify(this.$router.currentRoute.query))
 
           if (!query) {
             query = {}
           }
 
-          query.year = vm.selectedYear
+          query.year = this.selectedYear
           if (!restoreDate) {
             delete query.date
           }
 
-          vm.$router.replace({
-            path: vm.$router.currentRoute.path,
+          this.$router.replace({
+            path: this.$router.currentRoute.path,
             query: query
           })
 
           if (restoreDate) {
-            vm.onDateSelected(vm.dateSelection.date)
+            this.onDateSelected(this.dateSelection.date)
           }
         } else {
-          vm.error = 'No calendar data found'
+          this.error = 'No calendar data found'
         }
       })
     }
   },
   mounted: function () {
-    var vm = this
-
-    var query = this.$route.query
-    var yearToRestore = query.year
+    const query = this.$route.query
+    const yearToRestore = query.year
     if (query.date) {
-      var m = moment(query.date)
+      const m = moment(query.date)
       this.dateSelection.date = m.toDate()
       this.dateSelection.formattedDate = m.format('YYYY-MM-DD')
     }
 
-    this.apiGetCalendarYears(function (result) {
-      vm.years = result
+    this.apiGetCalendarYears(result => {
+      this.years = result
 
       if (result && result.length > 0) {
         if (yearToRestore) {
-          vm.selectedYear = +yearToRestore
+          this.selectedYear = +yearToRestore
         } else {
-          vm.selectedYear = result[0]
+          this.selectedYear = result[0]
         }
-        vm.getForYear(yearToRestore !== undefined)
+        this.getForYear(yearToRestore !== undefined)
       }
     })
   }
