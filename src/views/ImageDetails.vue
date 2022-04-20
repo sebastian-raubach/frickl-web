@@ -7,7 +7,7 @@
             <b-breadcrumb-item :text="album.name" :to="'/albums/' + album.id"/>
             <b-breadcrumb-item :text="image.name" disabled active />
             <div class="ml-auto">
-              <b-btn size="sm" class="mr-2" @click="$refs.shareModal.show()" v-if="image.isPublic === 1"><ShareVariantIcon /> Share</b-btn>
+              <b-btn size="sm" class="mr-2" @click="$refs.shareModal.show()" v-if="(image.isPublic === 1) || (serverSettings && (serverSettings.authEnabled === false))"><ShareVariantIcon /> Share</b-btn>
               <b-btn size="sm" variant="primary" :href="getSrc('ORIGINAL')" :download="`${album.name}-${image.name}`"><DownloadIcon /> Download</b-btn>
             </div>
           </b-breadcrumb>
