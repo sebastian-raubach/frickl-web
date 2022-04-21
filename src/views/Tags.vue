@@ -60,8 +60,9 @@ export default {
   methods: {
     onTagsFiltered: function () {
       if (this.searchTerm && this.searchTerm.length > 0) {
+        const lower = this.searchTerm.toLowerCase()
         this.filteredTags = this.tags.filter(t => {
-          return t.tag.name.includes(this.searchTerm)
+          return t.tag.name.toLowerCase().includes(lower)
         })
       } else {
         this.filteredTags = this.tags
