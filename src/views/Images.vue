@@ -5,13 +5,13 @@
         <h2>This time...</h2>
         <b-row class="mb-3 pb-3">
           <b-col cols=12 md=4 lg=3 v-if="xAgo.one && xAgo.one.length > 0">
-            <AlbumNode :album="xAgo.one[0]" title="One year ago" to="/xago/1" />
+            <AlbumNode :album="xAgo.one[0]" title="One year ago" to="/xago/1" :count="xAgo.one.length" categoryTitle="albums" />
           </b-col>
           <b-col cols=12 md=4 lg=3 v-if="xAgo.two && xAgo.two.length > 0">
-            <AlbumNode :album="xAgo.two[0]" title="Two years ago" to="/xago/2" />
+            <AlbumNode :album="xAgo.two[0]" title="Two years ago" to="/xago/2" :count="xAgo.two.length" categoryTitle="albums" />
           </b-col>
           <b-col cols=12 md=4 lg=3 v-if="xAgo.three && xAgo.three.length > 0">
-            <AlbumNode :album="xAgo.three[0]" title="Three years ago" to="/xago/3" />
+            <AlbumNode :album="xAgo.three[0]" title="Three years ago" to="/xago/3" :count="xAgo.three.length" categoryTitle="albums" />
           </b-col>
         </b-row>
       </div>

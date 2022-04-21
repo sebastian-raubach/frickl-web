@@ -11,13 +11,13 @@
         </div>
       </div>
       <div class="info d-flex flex-wrap align-items-stretch">
-        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="album.albumCount !== undefined && album.albumCount !== null" :title="toThousandSeparators(album.albumCount)">
-          <h4>{{ getNumberWithSuffix(album.albumCount, 0) }}</h4>
-          <small class="text-muted">albums</small>
+        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="albumCount !== undefined && albumCount !== null" :title="toThousandSeparators(albumCount)">
+          <h4>{{ getNumberWithSuffix(albumCount, 0) }}</h4>
+          <small class="text-muted">{{ categoryTitle }}</small>
         </div>
         <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount !== undefined && imageCount !== null">
           <h4>{{ getNumberWithSuffix(imageCount, 1) }}</h4>
-          <small class="text-muted">{{ categoryTitle }}</small>
+          <small class="text-muted">images</small>
         </div>
         <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
           <h4>{{ day }}</h4>
@@ -61,7 +61,7 @@ export default {
     },
     categoryTitle: {
       type: String,
-      default: 'images'
+      default: 'albums'
     }
   },
   computed: {
@@ -102,15 +102,18 @@ export default {
         return null
       }
     },
-    imageCount: function () {
+    albumCount: function () {
       if (this.count !== null) {
         return this.count
       } else {
-        if ((this.serverSettings && this.serverSettings.authEnabled === false) || this.token || this.accessToken) {
-          return this.album.imageCount
-        } else {
-          return this.album.imageCountPublic
-        }
+        return this.album.albumCount
+      }
+    },
+    imageCount: function () {
+      if ((this.serverSettings && this.serverSettings.authEnabled === false) || this.token || this.accessToken) {
+        return this.album.imageCount
+      } else {
+        return this.album.imageCountPublic
       }
     }
   },
