@@ -11,12 +11,12 @@
         </div>
       </div>
       <div class="info d-flex flex-wrap align-items-stretch">
-        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="albumCount !== undefined && albumCount !== null" :title="toThousandSeparators(albumCount)">
-          <h4>{{ getNumberWithSuffix(albumCount, 0) }}</h4>
-          <small class="text-muted">{{ categoryTitle }}</small>
+        <div class="p-3 wrapper d-flex flex-column justify-content-center align-items-center text-center" v-if="albumCountComp !== undefined && albumCountComp !== null" :title="toThousandSeparators(albumCountComp)">
+          <h4>{{ getNumberWithSuffix(albumCountComp, 0) }}</h4>
+          <small class="text-muted">albums</small>
         </div>
-        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCount !== undefined && imageCount !== null">
-          <h4>{{ getNumberWithSuffix(imageCount, 1) }}</h4>
+        <div class="p-3 wrapper bg-light border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="imageCountComp !== undefined && imageCountComp !== null">
+          <h4>{{ getNumberWithSuffix(imageCountComp, 1) }}</h4>
           <small class="text-muted">images</small>
         </div>
         <div class="p-3 wrapper border-left d-flex flex-column justify-content-center align-items-center text-center" v-if="day">
@@ -55,13 +55,17 @@ export default {
       type: String,
       default: null
     },
-    count: {
+    imageCount: {
       type: Number,
       default: null
     },
-    categoryTitle: {
-      type: String,
-      default: 'albums'
+    imageCountPublic: {
+      type: Number,
+      default: null
+    },
+    albumCount: {
+      type: Number,
+      default: null
     }
   },
   computed: {
@@ -102,18 +106,26 @@ export default {
         return null
       }
     },
-    albumCount: function () {
-      if (this.count !== null) {
-        return this.count
+    albumCountComp: function () {
+      if (this.albumCount !== null) {
+        return this.albumCount
       } else {
         return this.album.albumCount
       }
     },
-    imageCount: function () {
+    imageCountComp: function () {
       if ((this.serverSettings && this.serverSettings.authEnabled === false) || this.token || this.accessToken) {
-        return this.album.imageCount
+        if (this.imageCount) {
+          return this.imageCount
+        } else {
+          return this.album.imageCount
+        }
       } else {
-        return this.album.imageCountPublic
+        if (this.imageCountPublic) {
+          return this.imageCountPublic
+        } else {
+          return this.album.imageCountPublic
+        }
       }
     }
   },
