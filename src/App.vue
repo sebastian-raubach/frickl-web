@@ -72,6 +72,7 @@
 import LoginModal from '@/components/modals/LoginModal'
 import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
 import Vue from 'vue'
+import { VuePlausible } from 'vue-plausible'
 import { mapGetters } from 'vuex'
 import VueAnalytics from 'vue-analytics'
 
@@ -153,17 +154,32 @@ export default {
   },
   created: async function () {
     await this.apiGetSettings(result => {
-      if (result && result.googleAnalyticsKey) {
-        Vue.use(VueAnalytics, {
-          id: result.googleAnalyticsKey,
-          router: this.$router,
-          autoTracking: {
-            exception: true,
-            exceptionLogs: false
-          }
-        })
-        // Disable initially, users have to opt-in
-        Vue.$ga.disable()
+      if (result) {
+        if (result.googleAnalyticsKey) {
+          Vue.use(VueAnalytics, {
+            id: result.googleAnalyticsKey,
+            router: this.$router,
+            autoTracking: {
+              exception: true,
+              exceptionLogs: false
+            }
+          })
+          // Disable initially, users have to opt-in
+          Vue.$ga.disable()
+        }
+
+        if (result.plausibleDomain) {
+          Vue.use(VuePlausible, {
+            domain: result.plausibleDomain,
+            hashMode: result.plausibleHashMode || true,
+            apiHost: result.plausibleApiHost || 'https://plausible.io',
+            trackLocalhost: false
+          })
+
+          this.$nextTick(() => {
+            this.$plausible.enableAutoPageviews()
+          })
+        }
       }
 
       this.$store.dispatch('ON_SERVER_SETTINGS_CHANGED', result)
