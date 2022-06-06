@@ -69,6 +69,7 @@ export default {
   filter: brightness(50%);
   background-size: cover;
   background-position: center center;
+  background-color: #343a40;
 }
 .vhc-100 {
   height: calc(100vh - 66px);
