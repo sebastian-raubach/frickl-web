@@ -115,6 +115,9 @@ export default {
     apiGetStatsCamera: function (onSuccess) {
       this.unauthAjax({ url: 'stats/camera', success: onSuccess })
     },
+    apiGetStatsDayHour: function (onSuccess) {
+      this.unauthAjax({ url: 'stats/dayhour', success: onSuccess })
+    },
     apiGetImportStatus: function (onSuccess) {
       this.unauthAjax({ url: 'status', success: onSuccess })
     },

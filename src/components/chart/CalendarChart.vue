@@ -67,8 +67,8 @@ export default {
         name: '',
         type: 'heatmap',
         hoverongaps: false,
-        xgap: 2,
-        ygap: 2,
+        xgap: 1,
+        ygap: 1,
         colorscale: [
           [0, '#efefef'],
           [1, '#f8a631']
