@@ -16,8 +16,6 @@ export default {
 
         result.forEach(r => { z[r.hour][r.day] += r.count })
 
-        console.log(z)
-
         const data = [{
           x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
           y: Array.from(Array(24).keys()),
