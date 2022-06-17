@@ -1,4 +1,4 @@
-FROM node:12-alpine3.10 AS builder
+FROM node:16-alpine AS builder
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
@@ -17,7 +17,7 @@ WORKDIR /opt/frickl
 RUN rm -f .env && \
     echo "VUE_APP_BASE_URL=./api/" > .env && \
     apk add --no-cache python build-base gcc wget && \
-    npm i && \
+    npm i --legacy-peer-deps && \
     npm run build && \
     mkdir /opt/frickl-server/client/ && \
     cp -a /opt/frickl/dist/. /opt/frickl-server/client/ && \
