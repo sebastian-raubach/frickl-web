@@ -16,7 +16,7 @@ RUN apk add --no-cache git && \
 WORKDIR /opt/frickl
 RUN rm -f .env && \
     echo "VUE_APP_BASE_URL=./api/" > .env && \
-    apk add --no-cache python build-base gcc wget && \
+    apk add --no-cache python3 .gyp build-base gcc wget && \
     npm i --legacy-peer-deps && \
     npm run build && \
     mkdir /opt/frickl-server/client/ && \
