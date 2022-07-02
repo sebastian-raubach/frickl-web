@@ -1,7 +1,9 @@
 <template>
   <b-card no-body class="image-card">
     <div class="bg-img" :style="{ height: `${imageHeight}px`, backgroundImage: `url(${getSrc('SMALL')})` }">
-      <div class="overlay"></div>
+      <div class="overlay d-flex justify-content-center align-items-center">
+        <h1 class="text-light"><PlayIcon v-if="image.dataType === 'video'" /></h1>
+      </div>
     </div>
     <div class="card-image-details">
       <div class="info d-flex flex-wrap align-items-stretch">
@@ -19,7 +21,7 @@
         </div>
       </div>
 
-      <b-button-group class="image-actions w-100">
+      <b-button-group class="image-actions w-100 d-flex flex-wrap">
         <template v-if="(serverSettings && serverSettings.authEnabled === false) || token">
           <b-button v-b-tooltip.hover.bottom="'Unmark as favourite'" v-if="image.isFavorite" @click="onToggleFavorite($event)"><HeartIcon /></b-button>
           <b-button v-b-tooltip.hover.bottom="'Mark as favourite'" v-else  @click="onToggleFavorite($event)"><HeartOutlineIcon /></b-button>
@@ -30,7 +32,10 @@
           <b-button v-b-tooltip.hover.bottom="'Set image as album cover'" @click="onSetImageAsAlbumCover($event)" v-if="albumId"><FolderImageIcon/></b-button>
         </template>
 
-        <b-button @click="$emit('image-preview-clicked')" v-b-tooltip.hover.bottom="'Open large preview'"><MagnifyPlusIcon /></b-button>
+        <b-button @click="$emit('image-preview-clicked')" v-b-tooltip.hover.bottom="'Open large preview'">
+          <MovieOpenPlayIcon v-if="image.dataType === 'video'" />
+          <MagnifyPlusIcon v-else />
+        </b-button>
       </b-button-group>
 
       <router-link :to="{ name: 'image-details', params: { imageId: image.id } }" class="stretched-link" :title="image.name" />
@@ -45,6 +50,8 @@ import FolderImageIcon from 'vue-material-design-icons/FolderImage.vue'
 import LockIcon from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariantIcon from 'vue-material-design-icons/LockOpenVariant.vue'
 import MagnifyPlusIcon from 'vue-material-design-icons/MagnifyPlus.vue'
+import MovieOpenPlayIcon from 'vue-material-design-icons/MovieOpenPlay.vue'
+import PlayIcon from 'vue-material-design-icons/Play.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -105,7 +112,9 @@ export default {
     FolderImageIcon,
     LockIcon,
     LockOpenVariantIcon,
-    MagnifyPlusIcon
+    MagnifyPlusIcon,
+    MovieOpenPlayIcon,
+    PlayIcon
   },
   methods: {
     getVideoSrc: function () {
@@ -159,7 +168,7 @@ export default {
               bannerImageId: this.image.id
             }
 
-            this.apiPatchAlbum(album, result => {
+            this.apiPatchAlbum(album, () => {
               this.$bvToast.toast('Image set as album cover.', {
                 title: 'Success',
                 autoHideDelay: 5000,
