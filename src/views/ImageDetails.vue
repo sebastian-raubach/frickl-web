@@ -269,7 +269,7 @@ export default {
     hasFlash: function () {
       if (this.image.exif.flash) {
         const flashValue = this.image.exif.flash.toLowerCase()
-        return flashValue.startsWith('Flash fired')
+        return flashValue.startsWith('flash fired')
       } else {
         return false
       }
