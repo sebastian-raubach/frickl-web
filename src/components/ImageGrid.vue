@@ -45,6 +45,7 @@
       :items="coolboxImages"
       :index="coolboxIndex"
       :useZoomBar="true"
+      effect="fade"
       @close="coolboxIndex = null" />
   </div>
 </template>

@@ -118,6 +118,7 @@
         :items="coolboxImages"
         :index="coolboxIndex"
         :useZoomBar="true"
+        effect="fade"
         @close="coolboxIndex = null"
         :fullScreen="true" />
     <ShareModal :url="shareUrl" ref="shareModal" />
