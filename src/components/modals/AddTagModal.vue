@@ -39,12 +39,6 @@ export default {
     type: {
       type: String,
       default: null
-    },
-    prefilledTags: {
-      type: Array,
-      default: function () {
-        return []
-      }
     }
   },
   components: {
@@ -75,7 +69,9 @@ export default {
       })
 
       if (this.tempInput !== null && this.tempInput.length > 0) {
-        mappedTags.push(this.tempInput)
+        mappedTags.push({
+          name: this.tempInput
+        })
       }
 
       if (this.type === 'image') {
@@ -90,25 +86,22 @@ export default {
         })
       }
     },
+    update: function () {
+      this.apiGetTags(result => {
+        this.allTags = result.map(t => {
+          return {
+            text: t.tag.name
+          }
+        })
+      })
+    },
     show () {
+      this.newTags = []
+      this.allTags = []
+      this.update()
+
       this.$nextTick(() => this.$refs.addTagModal.show())
     }
-  },
-  mounted: function () {
-    this.apiGetTags(result => {
-      this.allTags = result.map(t => {
-        return {
-          text: t.tag.name
-        }
-      })
-    })
-
-    this.newTags = this.prefilledTags.map(t => {
-      return {
-        text: t,
-        classes: 'bg-primary'
-      }
-    })
   }
 }
 </script>
