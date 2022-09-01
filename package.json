@@ -1,6 +1,6 @@
 {
   "name": "frickl",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "private": true,
   "description": "Frickl is a self-hosted image library. This is the web interface of Frickl written in Vue.js.",
   "author": "sebastian-raubach <sebastian@raubach.co.uk>",

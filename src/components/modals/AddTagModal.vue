@@ -13,7 +13,7 @@
     <VueTagsInput
       v-model="tempInput"
       :tags="newTags"
-      :autocomplete-items="allTags"
+      :autocomplete-items="filteredItems"
       placeholder="Enter tag names"
       @tags-changed="addedTags => addTags(addedTags)"
       ref="focusThis" />
@@ -49,6 +49,11 @@ export default {
   },
   components: {
     VueTagsInput
+  },
+  computed: {
+    filteredItems: function () {
+      return this.allTags.filter(t => t.text.toLowerCase().includes(this.tempInput.toLowerCase()))
+    }
   },
   methods: {
     addTags: function (addedTags) {
