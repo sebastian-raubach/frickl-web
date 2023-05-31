@@ -6,11 +6,11 @@
           <b-button v-b-tooltip.hover title="Large images" :pressed="albumWidth === 'large'" @click="setColWidth('large')" class="grid-icon grid-large"></b-button>
           <b-button v-b-tooltip.hover title="Medium images" :pressed="albumWidth === 'medium'" @click="setColWidth('medium')" class="grid-icon grid-medium"></b-button>
           <b-button v-b-tooltip.hover title="Small images" :pressed="albumWidth === 'small'" @click="setColWidth('small')" class="grid-icon grid-small"></b-button>
-          <b-dropdown right :text="albumsPerPage" v-b-tooltip.hover title="Albums per page">
+          <b-dropdown right :text="localAlbumsPerPage" v-b-tooltip.hover title="Albums per page" :disabled="customAlbumsPerPage !== null">
             <b-dropdown-item v-for="option in albumsPerPageOptions"
                             :key="option"
                             @click="setAlbumsPerPage(option)"
-                            :active="option === albumsPerPage">
+                            :active="option === localAlbumsPerPage">
               {{ option }}
             </b-dropdown-item>
           </b-dropdown>
@@ -26,10 +26,10 @@
       </b-col>
     </b-row>
 
-    <b-pagination v-if="albumCount > albumsPerPage"
+    <b-pagination v-if="albumCount > localAlbumsPerPage"
       v-model="currentPage"
       :total-rows="albumCount"
-      :per-page="albumsPerPage"
+      :per-page="localAlbumsPerPage"
       @change="page => $emit('onAlbumNavigation', page)"
     ></b-pagination>
   </div>
@@ -45,6 +45,7 @@ export default {
     return {
       currentPage: 1,
       albumsPerPageOptions: ['12', '24', '48', '96'],
+      localAlbumsPerPage: null,
       albumHeights: {
         large: 300,
         medium: 200,
@@ -86,6 +87,10 @@ export default {
     albums: {
       type: Array,
       default: null
+    },
+    customAlbumsPerPage: {
+      type: Number,
+      default: null
     }
   },
   computed: {
@@ -96,10 +101,10 @@ export default {
     ])
   },
   watch: {
-    albumCount: function (newValue, oldValue) {
+    albumCount: function () {
       this.currentPage = 1
     },
-    albums: function (newValue, oldValue) {
+    albums: function () {
       window.scrollTo({
         left: 0,
         top: this.$refs.albumGrid.getBoundingClientRect().top,
@@ -130,6 +135,13 @@ export default {
     },
     onPageChanged: function (page) {
       this.currentPage = page
+    }
+  },
+  mounted: function () {
+    if (this.customAlbumsPerPage) {
+      this.localAlbumsPerPage = this.customAlbumsPerPage
+    } else {
+      this.localAlbumsPerPage = this.albumsPerPage
     }
   }
 }

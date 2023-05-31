@@ -3,14 +3,14 @@
     <h1>Search: {{ searchTerm }}</h1>
 
     <template v-if="images || albums">
-      <album-grid v-if="albums && albums.length > 0"
+      <AlbumGrid v-if="albums && albums.length > 0"
                   :albumCount="albumCount"
-                  :albumsPerPage="albumsPerPage"
+                  :customAlbumsPerPage="albumsPerPage"
                   :albums="albums"
                   ref="albumGrid"
                   v-on:onAlbumNavigation="page => onAlbumNavigation(page)"/>
 
-      <image-grid v-if="images && images.length > 0"
+      <ImageGrid v-if="images && images.length > 0"
                   :imageCount="imageCount"
                   :images="images"
                   ref="imageGrid"
@@ -22,8 +22,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import AlbumGrid from '../components/AlbumGrid.vue'
-import ImageGrid from '../components/ImageGrid.vue'
+import AlbumGrid from '@/components/AlbumGrid.vue'
+import ImageGrid from '@/components/ImageGrid.vue'
 
 export default {
   data: function () {
@@ -37,8 +37,8 @@ export default {
     }
   },
   components: {
-    'album-grid': AlbumGrid,
-    'image-grid': ImageGrid
+    AlbumGrid,
+    ImageGrid
   },
   computed: {
     ...mapGetters([
