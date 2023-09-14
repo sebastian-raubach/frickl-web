@@ -1,0 +1,15 @@
+{
+  "buttonView": "View",
+  "formLabelSortBy": "Order by",
+  "formLabelPerPage": "Per page",
+  "menuImageStream": "Image stream",
+  "menuAlbums": "Albums",
+  "menuFavorites": "Favorites",
+  "menuTags": "Tags",
+  "menuMap": "Map",
+  "selectOptionSortCreatedOn": "Created on",
+  "selectOptionSortViewCount": "View count",
+  "selectOptionSortIsPublic": "Is public",
+  "selectOptionSortIsFavorite": "Favorites",
+  "selectOptionSortName": "Name"
+}

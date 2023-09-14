@@ -1,235 +1,211 @@
 <template>
-  <div id="app">
-    <b-navbar toggleable="lg" type="dark" variant="dark" id="navbar">
-      <b-navbar-brand>
-        <router-link to="/">
-          <img src="./assets/frickl.svg" height="40px" alt="Frickl">
-        </router-link>
-      </b-navbar-brand>
-      <!-- <b-navbar-brand to="/">Frickl</b-navbar-brand> -->
+  <v-app>
+    <v-main>
+      <v-app-bar color="grey-darken-4">
+        <v-img
+          class="ms-4"
+          src="img/frickl.svg"
+          max-height="40"
+          max-width="40"
+          contain />
 
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <v-app-bar-title>Frickl</v-app-bar-title>
 
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item to="/images">Image stream</b-nav-item>
-          <b-nav-item to="/favorites">Favorites</b-nav-item>
-          <b-nav-item to="/albums">Albums</b-nav-item>
-          <b-nav-item to="/tags">Tags</b-nav-item>
-          <b-nav-item to="/maps">Maps</b-nav-item>
-          <b-nav-item to="/calendar" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Calendar</b-nav-item>
-          <b-nav-item to="/stats" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Statistics</b-nav-item>
-        </b-navbar-nav>
-
-        <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
-          <template v-if="(serverSettings && serverSettings.authEnabled === true)">
-            <b-nav-item v-if="token" to="/accessTokens">Access tokens</b-nav-item>
-            <b-nav-item v-if="(serverSettings && serverSettings.authEnabled === false) || token" @click="logout">Logout</b-nav-item>
-            <b-nav-item v-else @click="login">Login</b-nav-item>
+        <v-spacer></v-spacer>
+        <v-btn icon="mdi-theme-light-dark" @click.stop="toggleTheme"></v-btn>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" icon="mdi-translate" />
           </template>
-          <b-nav-item to="/about">About</b-nav-item>
-          <b-nav-form @submit.prevent="onSearch()">
-            <b-input-group>
-              <b-form-input size="sm" placeholder="Search" v-model="searchTerm"></b-form-input>
-              <b-input-group-append>
-                <b-button size="sm" type="submit"><MagnifyIcon /></b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </b-nav-form>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-    <vue-ins-progress-bar id="importStatus" />
-    <template v-if="importStatus">
-      <b-tooltip v-if="importStatus.status === 'SCANNING'" placement="bottom" target="importStatus" title="Scanning image source for changes." />
-      <b-tooltip v-else-if="importStatus.status === 'IMPORTING'" placement="bottom" target="importStatus" :title="`Checking ${importStatus.totalImages} photos for updates. Photos on processing queue: ${importStatus.queueSize}`" />
-    </template>
-    <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
-    <router-view :key="$route.path" id="content"/>
+          <v-list>
+            <v-list-item
+              @click="changeLocale(language.locale)"
+              v-for="language in languages"
+              :key="`locale-${language.flag}`"
+              :value="language.locale">
+              <v-list-item-title>{{ language.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-btn icon="mdi-login" @click.stop="showLogin" v-if="!storeToken"></v-btn>
+      </v-app-bar>
 
-    <LoginModal ref="loginModal" v-on:login="onLogin" />
+      <v-navigation-drawer
+        permanent
+        :rail="$vuetify.display.mdAndDown"
+        :expand-on-hover="$vuetify.display.mdAndDown">
+        <v-list>
+          <v-list-item
+            title="Administrator"
+            subtitle="Authenticated user">
+            <template v-slot:prepend>
+              <v-avatar color="secondary">
+                <v-icon color="black">mdi-account</v-icon>
+              </v-avatar>
+            </template>
+          </v-list-item>
+        </v-list>
 
-    <b-popover target="navbar" show placement="bottom" variant="info" v-if="cookiesAccepted === null">
-      <template v-slot:title>GDPR Cookie Consent</template>
-      <p>Frickl uses cookies to facilitate user login and to remember user preferences.</p>
-      <div class="d-flex flex-row">
-        <b-button variant="success" class="flex-fill mr-2" @click="acceptCookies(true)">Accept</b-button>
-        <b-button variant="outline-secondary" class="flex-fill" v-b-tooltip:hover title="Please be aware that rejecting cookies will disable certain features of Frickl." @click="acceptCookies(false)">Reject</b-button>
-      </div>
-    </b-popover>
+        <v-divider></v-divider>
 
-    <b-modal ref="loadingModal" title="Loading" hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
-      <div class="text-center">
-        <b-spinner style="width: 3rem; height: 3rem;" variant="primary" type="grow" />
-        <p class="text-muted mt-3">Loading...</p>
-      </div>
-    </b-modal>
-  </div>
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-image-move" :title="$vuetify.locale.t('menuImageStream')" :to="{ name: 'image-stream' }">
+            <template v-slot:append v-if="counts.images">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.images, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-folder-multiple-image" :title="$vuetify.locale.t('menuAlbums')" :to="{ name: 'albums' }">
+            <template v-slot:append v-if="counts.albums">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.albums, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-image-album" :title="$vuetify.locale.t('menuFavorites')" :to="{ name: 'favorites' }">
+            <template v-slot:append v-if="counts.favorites">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.favorites, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-tag-text" :title="$vuetify.locale.t('menuTags')" :to="{ name: 'tags' }">
+            <template v-slot:append v-if="counts.tags">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.tags, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-map-legend" :title="$vuetify.locale.t('menuMap')" :to="{ name: 'map' }" />
+        </v-list>
+      </v-navigation-drawer>
+
+      <router-view :key="$route.path"/>
+
+      <LoginDialog ref="loginDialog" />
+
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import LoginModal from '@/components/modals/LoginModal'
-import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
-import Vue from 'vue'
-import { VuePlausible } from 'vue-plausible'
+import LoginDialog from '@/components/dialogs/LoginDialog.vue'
 import { mapGetters } from 'vuex'
-import VueAnalytics from 'vue-analytics'
+import { apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
+import { getNumberWithSuffix } from '@/plugins/misc'
 
 export default {
+  name: 'App',
+  components: {
+    LoginDialog
+  },
   data: function () {
     return {
-      timer: null,
-      searchTerm: '',
-      showAlert: false,
-      variant: 'warning',
-      message: '',
-      importStatus: null
+      languages: [{
+        locale: 'en',
+        flag: 'gb',
+        name: 'British English'
+      }, {
+        locale: 'de',
+        flag: 'de',
+        name: 'Deutsch - Deutschland'
+      }],
+      counts: {
+        images: null,
+        albums: null,
+        favorites: null,
+        tags: null 
+      }
     }
   },
   computed: {
     ...mapGetters([
-      'cookiesAccepted',
-      'serverSettings',
-      'token'
+      'storeTheme',
+      'storeLocale',
+      'storeToken'
     ])
   },
-  components: {
-    LoginModal,
-    MagnifyIcon
+  watch: {
+    storeTheme: {
+      immediate: true,
+      handler: function (newValue) {
+        this.$vuetify.theme.global.name = newValue
+      }
+    },
+    storeToken: function () {
+      this.updateCounts()
+    },
+    storeLocale: {
+      immediate: true,
+      handler: function (newValue) {
+        this.$vuetify.locale.current = newValue
+      }
+    }
   },
   methods: {
-    acceptCookies: function (decision) {
-      this.$store.dispatch('ON_COOKIES_ACCEPTED', decision)
+    getNumberWithSuffix,
+    showLogin: function () {
+      this.$refs.loginDialog.show()
     },
-    login: function () {
-      this.$refs.loginModal.show()
+    changeLocale (locale) {
+      console.log(locale)
+      this.$store.dispatch('setLocale', locale)
     },
-    onLogin: function () {
-      this.$router.go({ name: 'home' })
-    },
-    logout: function () {
-      this.$store.dispatch('ON_TOKEN_CHANGED', null)
-      this.$router.go({ name: 'home' })
-    },
-    onSearch: function () {
-      this.$router.push({ name: 'search', params: { searchTerm: this.searchTerm } })
-      this.searchTerm = ''
-    },
-    checkImportStatus: function () {
-      this.apiGetImportStatus(result => {
-        this.importStatus = result
-
-        if (result.status !== 'IDLE') {
-          this.$insProgress.start()
-          this.timer = setTimeout(this.checkImportStatus, 10000)
-        } else {
-          this.$insProgress.finish()
-
-          if (this.timer) {
-            clearInterval(this.timer)
-            if (result.totalImages > 0) {
-              this.$eventHub.$emit('alert', 'success', `Photo update of ${result.totalImages} successfully completed.`)
-            } else {
-              this.$eventHub.$emit('alert', 'success', 'Photos scanned for updates. No changes found.')
-            }
-            clearInterval(this.timer)
-            this.timer = null
-          }
-        }
-      })
-    },
-    handleAlert: function (variant, message) {
-      this.variant = variant
-      this.message = message
-      this.showAlert = true
-    },
-    showLoading: function (show) {
-      if (show) {
-        this.$refs.loadingModal.show()
+    toggleTheme: function () {
+      if (this.storeTheme === 'fricklDark') {
+        this.$store.dispatch('setTheme', 'fricklLight')
       } else {
-        this.$refs.loadingModal.hide()
+        this.$store.dispatch('setTheme', 'fricklDark')
       }
+    },
+    updateCounts: function () {
+      apiGetStatsCounts(result => {
+        this.counts = result
+      })
     }
-  },
-  created: async function () {
-    await this.apiGetSettings(result => {
-      if (result) {
-        if (result.googleAnalyticsKey) {
-          Vue.use(VueAnalytics, {
-            id: result.googleAnalyticsKey,
-            router: this.$router,
-            autoTracking: {
-              exception: true,
-              exceptionLogs: false
-            }
-          })
-          // Disable initially, users have to opt-in
-          Vue.$ga.disable()
-        }
-
-        if (result.plausibleDomain) {
-          Vue.use(VuePlausible, {
-            domain: result.plausibleDomain,
-            hashMode: result.plausibleHashMode || true,
-            apiHost: result.plausibleApiHost || 'https://plausible.io',
-            trackLocalhost: false
-          })
-
-          this.$nextTick(() => {
-            this.$plausible.enableAutoPageviews()
-          })
-        }
-      }
-
-      this.$store.dispatch('ON_SERVER_SETTINGS_CHANGED', result)
-    })
-  },
-  beforeDestroy: function () {
-    if (this.timer) {
-      clearInterval(this.timer)
-      this.timer = null
-    }
-
-    this.$eventHub.$off('alert')
-    this.$eventHub.$off('show-loading')
   },
   mounted: function () {
-    this.checkImportStatus()
+    this.updateCounts()
+  },
+  created: async function () {
+    await apiGetSettings(result => {
+      // if (result) {
+      //   if (result.googleAnalyticsKey) {
+      //     Vue.use(VueAnalytics, {
+      //       id: result.googleAnalyticsKey,
+      //       router: this.$router,
+      //       autoTracking: {
+      //         exception: true,
+      //         exceptionLogs: false
+      //       }
+      //     })
+      //     // Disable initially, users have to opt-in
+      //     Vue.$ga.disable()
+      //   }
 
-    this.$eventHub.$on('alert', this.handleAlert)
-    this.$eventHub.$on('show-loading', this.showLoading)
+      //   if (result.plausibleDomain) {
+      //     Vue.use(VuePlausible, {
+      //       domain: result.plausibleDomain,
+      //       hashMode: result.plausibleHashMode || true,
+      //       apiHost: result.plausibleApiHost || 'https://plausible.io',
+      //       trackLocalhost: false
+      //     })
+
+      //     this.$nextTick(() => {
+      //       this.$plausible.enableAutoPageviews()
+      //     })
+      //   }
+      // }
+
+      this.$store.commit('SERVER_SETTINGS_CHANGED_MUTATION', result)
+    })
   }
 }
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import "~leaflet.markercluster/dist/MarkerCluster.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
-
-#app {
-  font-family: 'Roboto', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  min-height: 100vh;
-}
-#nav {
-  padding: 30px;
+.v-toolbar__content {
+  flex-wrap: wrap;
+  height: auto !important;
+  padding: 5px 0;
+  row-gap: 5px;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-
-#app .global-alert {
-  border-radius: 0;
-  margin-bottom: 0;
+.v-card-actions {
+  flex-wrap: wrap;
+  justify-content: end;
 }
 </style>

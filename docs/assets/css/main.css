@@ -2295,27 +2295,27 @@ input, select, textarea {
 		}
 
 		.icon.style1:before {
-			color: #eb3b5a;
+			color: #019532;
 		}
 
 		.icon.style2:before {
-			color: #f25b48;
+			color: #2ca633;
 		}
 
 		.icon.style3:before {
-			color: #f97c34;
+			color: #59b935;
 		}
 
 		.icon.style4:before {
-			color: #f99531;
+			color: #85cb36;
 		}
 
 		.icon.style5:before {
-			color: #f8a631;
+			color: #a5d837;
 		}
 
 		.icon.style6:before {
-			color: #f7b631;
+			color: #c2e438;
 		}
 
 		.icon.major {
@@ -3107,7 +3107,7 @@ input, select, textarea {
 		background-color: #4686a0;
 		color: rgba(255, 255, 255, 0.75);
 		background-attachment: fixed,							fixed,							fixed;
-		background-image: url("images/overlay2.png"), url("images/overlay4.svg"), linear-gradient(45deg, #eb3b5a, #f25b48 20%, #f97c34 40%, #f99531 60%, #f8a631 80%, #f7b631);
+		background-image: url("images/overlay2.png"), url("images/overlay4.svg"), linear-gradient(45deg, #019532, #2ca633 20%, #59b935 40%, #85cb36 60%, #a5d837 80%, #c2e438);
 		background-position: top left,						center center,					center center;
 		background-size: auto,							cover,							cover;
 		text-align: center;
