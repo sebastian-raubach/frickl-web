@@ -17,7 +17,7 @@
         hide-details
         :items="sortByKeys"
         prepend-inner-icon="mdi-sort"
-        :label="$vuetify.locale.t('formLabelSortBy')"
+        :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
       <v-btn-toggle
@@ -39,7 +39,7 @@
 
     <v-row dense>
       <v-col :cols="widths[cardSize].cols" :sm="widths[cardSize].sm" :md="widths[cardSize].md" :lg="widths[cardSize].lg" :xl="widths[cardSize].xl" :xxl="widths[cardSize].xxl" v-if="disabled">
-        <v-card :text="$vuetify.locale.t('genericNoData')" />
+        <v-card :text="$t('genericNoData')" />
       </v-col>
 
       <v-col :cols="widths[cardSize].cols" :sm="widths[cardSize].sm" :md="widths[cardSize].md" :lg="widths[cardSize].lg" :xl="widths[cardSize].xl" :xxl="widths[cardSize].xxl" v-for="(image, index) in images" :key="`image-card-${image.id}`" v-else>
@@ -53,7 +53,7 @@
         hide-details
         :items="perPageKeys"
         prepend-inner-icon="mdi-book-open-page-variant"
-        :label="$vuetify.locale.t('formLabelPerPage')"
+        :label="$t('formLabelPerPage')"
         density="compact" />
       <v-spacer />
       <v-pagination
@@ -137,11 +137,11 @@ export default {
     },
     sortByKeys: function () {
       return [
-        { title: this.$vuetify.locale.t('selectOptionSortCreatedOn'), value: 'createdOn' },
-        { title: this.$vuetify.locale.t('selectOptionSortViewCount'), value: 'viewCount' },
-        { title: this.$vuetify.locale.t('selectOptionSortIsPublic'), value: 'isPublic' },
-        { title: this.$vuetify.locale.t('selectOptionSortIsFavorite'), value: 'isFavorite' },
-        { title: this.$vuetify.locale.t('selectOptionSortName'), value: 'name' }
+        { title: this.$t('selectOptionSortCreatedOn'), value: 'createdOn' },
+        { title: this.$t('selectOptionSortViewCount'), value: 'viewCount' },
+        { title: this.$t('selectOptionSortIsPublic'), value: 'isPublic' },
+        { title: this.$t('selectOptionSortIsFavorite'), value: 'isFavorite' },
+        { title: this.$t('selectOptionSortName'), value: 'name' }
       ]
     },
     perPageKeys: function () {

@@ -116,12 +116,12 @@ export default {
           tickmode: 'array',
           // nticks: 31,
           tickvals: Array.from(Array(31).keys()).map(i => i + 1),
-          title: { text: this.$vuetify.locale.t('widgetChartHeatmapAxisTitleDay'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
+          title: { text: this.$t('widgetChartHeatmapAxisTitleDay'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
           tickfont: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' }
         },
         yaxis: {
           showgrid: false,
-          title: { text: this.$vuetify.locale.t('widgetChartHeatmapAxisTitleMonth'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
+          title: { text: this.$t('widgetChartHeatmapAxisTitleMonth'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
           tickfont: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' }
         }
       }

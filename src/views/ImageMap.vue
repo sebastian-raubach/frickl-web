@@ -5,7 +5,7 @@
     <v-toolbar>
       <v-range-slider hide-details="auto"
                       class="mt-6"
-                      :label="$vuetify.locale.t('widgetMapDateRange')"
+                      :label="$t('widgetMapDateRange')"
                       :min="0"
                       :max="totalDays"
                       :thumb-label="true"

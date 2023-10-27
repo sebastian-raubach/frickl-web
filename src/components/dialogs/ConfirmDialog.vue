@@ -7,13 +7,13 @@
         <v-btn
           variant="text"
           @click="$emit('no')">
-          {{ $vuetify.locale.t('buttonNo') }}
+          {{ $t('buttonNo') }}
         </v-btn>
         <v-btn
           color="primary"
           variant="text"
           @click="$emit('yes')">
-          {{ $vuetify.locale.t('buttonYes') }}
+          {{ $t('buttonYes') }}
         </v-btn>
       </v-card-actions>
     </v-card>

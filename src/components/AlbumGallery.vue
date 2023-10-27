@@ -17,7 +17,7 @@
         hide-details
         :items="sortByKeys"
         prepend-inner-icon="mdi-sort"
-        :label="$vuetify.locale.t('formLabelSortBy')"
+        :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
       <v-btn-toggle
@@ -39,7 +39,7 @@
 
     <v-row dense>
       <v-col :cols="widths[cardSize].cols" :sm="widths[cardSize].sm" :md="widths[cardSize].md" :lg="widths[cardSize].lg" :xl="widths[cardSize].xl" :xxl="widths[cardSize].xxl" v-if="disabled">
-        <v-card :text="$vuetify.locale.t('genericNoData')" />
+        <v-card :text="$t('genericNoData')" />
       </v-col>
 
       <v-col :cols="widths[cardSize].cols" :sm="widths[cardSize].sm" :md="widths[cardSize].md" :lg="widths[cardSize].lg" :xl="widths[cardSize].xl" :xxl="widths[cardSize].xxl" v-for="album in albums" :key="`album-card-${album.id}`" v-else>
@@ -53,7 +53,7 @@
         hide-details
         :items="perPageKeys"
         prepend-inner-icon="mdi-book-open-page-variant"
-        :label="$vuetify.locale.t('formLabelPerPage')"
+        :label="$t('formLabelPerPage')"
         density="compact" />
       <v-spacer />
       <v-pagination
@@ -113,10 +113,10 @@ export default {
     },
     sortByKeys: function () {
       return [
-        { title: this.$vuetify.locale.t('selectOptionSortCreatedOn'), value: 'createdOn' },
-        { title: this.$vuetify.locale.t('selectOptionSortViewCount'), value: 'imageViewCount' },
-        { title: this.$vuetify.locale.t('selectOptionSortImageCount'), value: 'imageCount' },
-        { title: this.$vuetify.locale.t('selectOptionSortName'), value: 'name' }
+        { title: this.$t('selectOptionSortCreatedOn'), value: 'createdOn' },
+        { title: this.$t('selectOptionSortViewCount'), value: 'imageViewCount' },
+        { title: this.$t('selectOptionSortImageCount'), value: 'imageCount' },
+        { title: this.$t('selectOptionSortName'), value: 'name' }
       ]
     },
     perPageKeys: function () {

@@ -13,7 +13,7 @@
 
     <template v-if="selectedDate">
       <h1 class="text-h4 mb-3 mt-6">
-        {{ $vuetify.locale.t('pageStatisticsCalendarImagesTitle') }}
+        {{ $t('pageStatisticsCalendarImagesTitle', { date: selectedDate.toLocaleDateString() }) }}
       </h1>
       <v-divider class="mb-3" />
       <ImageGallery :getData="getImages" ref="imageGallery" />

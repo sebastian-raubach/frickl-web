@@ -36,8 +36,8 @@
         :expand-on-hover="$vuetify.display.mdAndDown">
         <v-list>
           <v-list-item
-            :title="$vuetify.locale.t(storeToken ? 'menuUserInfoType' : 'menuUserNotLoggedIn')"
-            :subtitle="$vuetify.locale.t(storeToken ? 'menuUserInfoExplanation' : 'menuUserNotLoggedInExplanation')">
+            :title="$t(storeToken ? 'menuUserInfoType' : 'menuUserNotLoggedIn')"
+            :subtitle="$t(storeToken ? 'menuUserInfoExplanation' : 'menuUserNotLoggedInExplanation')">
             <template v-slot:prepend>
               <v-avatar color="secondary">
                 <v-icon color="black" v-if="storeToken">mdi-account</v-icon>
@@ -50,28 +50,28 @@
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-image-move" :title="$vuetify.locale.t('menuImageStream')" :to="{ name: 'image-stream' }">
+          <v-list-item prepend-icon="mdi-image-move" :title="$t('menuImageStream')" :to="{ name: 'image-stream' }">
             <template v-slot:append v-if="counts.images">
               <v-badge color="dark" :content="getNumberWithSuffix(counts.images, 0)" inline />
             </template>
           </v-list-item>
-          <v-list-item prepend-icon="mdi-folder-multiple-image" :title="$vuetify.locale.t('menuAlbums')" :to="{ name: 'albums' }">
+          <v-list-item prepend-icon="mdi-folder-multiple-image" :title="$t('menuAlbums')" :to="{ name: 'albums' }">
             <template v-slot:append v-if="counts.albums">
               <v-badge color="dark" :content="getNumberWithSuffix(counts.albums, 0)" inline />
             </template>
           </v-list-item>
-          <v-list-item prepend-icon="mdi-image-album" :title="$vuetify.locale.t('menuFavorites')" :to="{ name: 'favorites' }">
+          <v-list-item prepend-icon="mdi-image-album" :title="$t('menuFavorites')" :to="{ name: 'favorites' }">
             <template v-slot:append v-if="counts.favorites">
               <v-badge color="dark" :content="getNumberWithSuffix(counts.favorites, 0)" inline />
             </template>
           </v-list-item>
-          <v-list-item prepend-icon="mdi-tag-text" :title="$vuetify.locale.t('menuTags')" :to="{ name: 'tags' }">
+          <v-list-item prepend-icon="mdi-tag-text" :title="$t('menuTags')" :to="{ name: 'tags' }">
             <template v-slot:append v-if="counts.tags">
               <v-badge color="dark" :content="getNumberWithSuffix(counts.tags, 0)" inline />
             </template>
           </v-list-item>
-          <v-list-item prepend-icon="mdi-map-legend" :title="$vuetify.locale.t('menuMap')" :to="{ name: 'map' }" />
-          <v-list-item prepend-icon="mdi-chart-bar-stacked" :title="$vuetify.locale.t('menuStatistics')" :to="{ name: 'statistics' }" />
+          <v-list-item prepend-icon="mdi-map-legend" :title="$t('menuMap')" :to="{ name: 'map' }" />
+          <v-list-item prepend-icon="mdi-chart-bar-stacked" :title="$t('menuStatistics')" :to="{ name: 'statistics' }" />
         </v-list>
       </v-navigation-drawer>
 

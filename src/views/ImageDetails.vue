@@ -126,7 +126,7 @@
                 </v-card>
               </v-col>
               <v-col :cols="12">
-                <v-card :title="$vuetify.locale.t('widgetTagsTitle')">
+                <v-card :title="$t('widgetTagsTitle')">
                   <v-card-text>
                     <v-chip-group column v-if="tags && tags.length > 0">
                       <v-chip class="me-2 mb-2" :to="{ name: 'tag-specific', params: { tagId: tag.id } }" closable v-for="tag in tags" :key="`tag-${tag.id}`">
@@ -136,7 +136,7 @@
                         {{ tag.name }}
                       </v-chip>
                     </v-chip-group>
-                    <span v-else>{{ $vuetify.locale.t('widgetTagsNoData') }}</span>
+                    <span v-else>{{ $t('widgetTagsNoData') }}</span>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -154,7 +154,7 @@
         </v-row>
       </div>
     </v-container>
-    <ConfirmDialog :message="$vuetify.locale.t('modalTextConfirmDeleteTag')" @yes="deleteTag" @no="$refs.confirmDialog.hide()" ref="confirmDialog" />
+    <ConfirmDialog :message="$t('modalTextConfirmDeleteTag')" @yes="deleteTag" @no="$refs.confirmDialog.hide()" ref="confirmDialog" />
   </div>
 </template>
 

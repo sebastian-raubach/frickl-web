@@ -40,7 +40,7 @@
     </v-img>
 
     <v-card-actions>
-      <v-btn color="primary" variant="text" :to="{ name: 'albums-for-parent', params: { parentAlbumId: album.id } }">{{ $vuetify.locale.t('buttonView') }}</v-btn>
+      <v-btn color="primary" variant="text" :to="{ name: 'albums-for-parent', params: { parentAlbumId: album.id } }">{{ $t('buttonView') }}</v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
   </v-card>

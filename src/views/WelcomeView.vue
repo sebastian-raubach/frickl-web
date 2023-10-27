@@ -12,10 +12,10 @@
 
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          {{ $vuetify.locale.t('pageHomeTitle') }}
+          {{ $t('pageHomeTitle') }}
         </h1>
 
-        <h2 class="mb-3">{{ $vuetify.locale.t('pageHomeText') }}</h2>
+        <h2 class="mb-3">{{ $t('pageHomeText') }}</h2>
       </v-col>
     </v-row>
   </v-container>

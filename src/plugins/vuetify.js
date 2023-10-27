@@ -15,13 +15,14 @@ const i18n = createI18n({
     en,
     de
   },
-  legacy: false
+  legacy: false,
+  globalInjection: true
 })
 
 // Vuetify
 import { createVuetify } from 'vuetify'
 
-export default createVuetify({
+const vuetify = createVuetify({
   theme: {
     defaultTheme: 'fricklDark',
     themes: {
@@ -47,3 +48,8 @@ export default createVuetify({
     adapter: createVueI18nAdapter({ i18n, useI18n })
   }
 })
+
+export {
+  vuetify,
+  i18n
+} 

@@ -1,6 +1,6 @@
 <template>
   <div id="single-image-map" ref="imageMap" class="d-flex justify-center align-center" v-if="image">
-    <p class="text-h5">{{ $vuetify.locale.t('errorNoGpsAvailable') }}</p>
+    <p class="text-h5">{{ $t('errorNoGpsAvailable') }}</p>
   </div>
 </template>
 

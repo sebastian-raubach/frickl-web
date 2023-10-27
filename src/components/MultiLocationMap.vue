@@ -1,7 +1,7 @@
 <template>
   <div id="image-map" ref="imageMap" class="d-flex justify-center align-center" :style="{ height: `${heightPercent}vh` }">
     <p class="text-h5" v-if="images === null"><v-progress-circular indeterminate></v-progress-circular></p>
-    <p class="text-h5" v-else-if="images.length < 1">{{ $vuetify.locale.t('errorNoGpsAvailable') }}</p>
+    <p class="text-h5" v-else-if="images.length < 1">{{ $t('errorNoGpsAvailable') }}</p>
   </div>
 </template>
 

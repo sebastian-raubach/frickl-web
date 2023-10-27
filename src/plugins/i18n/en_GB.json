@@ -14,6 +14,7 @@
   "menuUserNotLoggedInExplanation": "No information available",
   "pageHomeTitle": "Welcome to Frickl",
   "pageHomeText": "The new home for all your photos",
+  "pageStatisticsCalendarImagesTitle": "Images taken on: {date}",
   "selectOptionSortCreatedOn": "Created on",
   "selectOptionSortViewCount": "View count",
   "selectOptionSortIsPublic": "Is public",

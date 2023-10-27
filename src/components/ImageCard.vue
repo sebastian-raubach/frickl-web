@@ -36,7 +36,7 @@
     </v-img>
 
     <v-card-actions>
-      <v-btn color="primary" variant="text" :to="{ name: 'image-details', params: { imageId: image.id } }">{{ $vuetify.locale.t('buttonView') }}</v-btn>
+      <v-btn color="primary" variant="text" :to="{ name: 'image-details', params: { imageId: image.id } }">{{ $t('buttonView') }}</v-btn>
       <v-spacer></v-spacer>
       <v-btn size="small" color="red" variant="text" icon="mdi-heart" @click.stop.prevent="$emit('onFavoriteChanged')" v-if="image.isFavorite === 1"></v-btn>
       <v-btn size="small" :color="null" variant="text" icon="mdi-heart-outline" @click.stop.prevent="$emit('onFavoriteChanged')" v-else></v-btn>
