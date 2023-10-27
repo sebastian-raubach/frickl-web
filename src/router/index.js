@@ -6,6 +6,7 @@ import Favorites from '@/views/Favorites.vue'
 import AboutView from '@/views/AboutView.vue'
 import ImageMap from '@/views/ImageMap.vue'
 import Tags from '@/views/Tags.vue'
+import Statistics from '@/views/StatisticsView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 
 const routes = [
@@ -53,6 +54,11 @@ const routes = [
     path: '/tag/:tagId',
     name: 'tag-specific',
     component: Tags
+  },
+  {
+    path: '/statistics',
+    name: 'statistics',
+    component: Statistics
   },
   {
     path: '/about',

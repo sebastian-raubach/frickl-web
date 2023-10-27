@@ -9,7 +9,7 @@
           max-width="40"
           contain />
 
-        <v-app-bar-title>Frickl</v-app-bar-title>
+        <v-app-bar-title style="cursor: pointer" @click="$router.push({ name: 'home' })">Frickl</v-app-bar-title>
 
         <v-spacer></v-spacer>
         <v-btn icon="mdi-theme-light-dark" @click.stop="toggleTheme"></v-btn>
@@ -36,11 +36,12 @@
         :expand-on-hover="$vuetify.display.mdAndDown">
         <v-list>
           <v-list-item
-            title="Administrator"
-            subtitle="Authenticated user">
+            :title="$vuetify.locale.t(storeToken ? 'menuUserInfoType' : 'menuUserNotLoggedIn')"
+            :subtitle="$vuetify.locale.t(storeToken ? 'menuUserInfoExplanation' : 'menuUserNotLoggedInExplanation')">
             <template v-slot:prepend>
               <v-avatar color="secondary">
-                <v-icon color="black">mdi-account</v-icon>
+                <v-icon color="black" v-if="storeToken">mdi-account</v-icon>
+                <v-icon color="black" v-else>mdi-account-off</v-icon>
               </v-avatar>
             </template>
           </v-list-item>
@@ -70,6 +71,7 @@
             </template>
           </v-list-item>
           <v-list-item prepend-icon="mdi-map-legend" :title="$vuetify.locale.t('menuMap')" :to="{ name: 'map' }" />
+          <v-list-item prepend-icon="mdi-chart-bar-stacked" :title="$vuetify.locale.t('menuStatistics')" :to="{ name: 'statistics' }" />
         </v-list>
       </v-navigation-drawer>
 

@@ -162,6 +162,10 @@ const apiPostToken = (data, onSuccess, onError) => apiAxios({ url: 'token', meth
 
 const apiGetStatsCounts = (onSuccess, onError) => apiAxios({ url: 'stats/count', success: onSuccess, error: onError })
 
+const apiGetStatsYears = (onSuccess, onError) => apiAxios({ url: 'stats/year', success: onSuccess, error: onError })
+
+const apiGetStatsYearData = (year, onSuccess, onError) => apiAxios({ url: `stats/year/${year}`, success: onSuccess, error: onError })
+
 const apiGetSettings = (onSuccess, onError) => apiAxios({ url: 'settings', success: onSuccess, error: onError })
 
 export {
@@ -177,5 +181,7 @@ export {
   apiGetImageTags,
   apiDeleteImageTag,
   apiGetTags,
+  apiGetStatsYears,
+  apiGetStatsYearData,
   apiGetSettings
 }

@@ -20,48 +20,48 @@
             ></v-progress-linear>
           </template>
 
-          <div class="text-subtitle-1 text-medium-emphasis">Account</div>
+          <v-form @submit.prevent="login">
 
-          <v-text-field
-            density="compact"
-            placeholder="Email address"
-            prepend-inner-icon="mdi-email-outline"
-            autofocus
-            :readonly="loading"
-            v-model="username" />
+            <div class="text-subtitle-1 text-medium-emphasis">Sign in</div>
 
-          <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-            Password
-          </div>
+            <v-text-field
+              density="compact"
+              label="Email address"
+              prepend-inner-icon="mdi-email-outline"
+              autofocus
+              :readonly="loading"
+              v-model="username" />
 
-          <v-text-field
-            :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-            :type="visible ? 'text' : 'password'"
-            density="compact"
-            placeholder="Enter your password"
-            v-model="password"
-            prepend-inner-icon="mdi-lock-outline"
-            :readonly="loading"
-            @click:append-inner="visible = !visible" />
+            <v-text-field
+              :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+              :type="visible ? 'text' : 'password'"
+              label="compact"
+              placeholder="Enter your password"
+              v-model="password"
+              prepend-inner-icon="mdi-lock-outline"
+              :readonly="loading"
+              @click:append-inner="visible = !visible" />
 
-          <v-card
-            v-if="error"
-            class="mb-4"
-            color="red-darken-1">
-            <v-card-text class="text-caption text-white">
-              {{ error }}
-            </v-card-text>
-          </v-card>
+            <v-card
+              v-if="error"
+              class="mb-4"
+              color="red-darken-1">
+              <v-card-text class="text-caption text-white">
+                {{ error }}
+              </v-card-text>
+            </v-card>
 
-          <v-btn
-            block
-            @click="login"
-            :disabled="!valid || loading"
-            class="mb-8"
-            color="primary"
-            size="large">
-            Log In
-          </v-btn>
+            <v-btn
+              block
+              type="submit"
+              @click="login"
+              :disabled="!valid || loading"
+              class="mb-8"
+              color="primary"
+              size="large">
+              Log In
+            </v-btn>
+          </v-form>
 
           <v-card-actions>
             <v-btn

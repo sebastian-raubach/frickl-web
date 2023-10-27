@@ -7,9 +7,18 @@
   "menuFavorites": "Favoriten",
   "menuTags": "Tags",
   "menuMap": "Karte",
+  "menuStatistics": "Statistiken",
+  "menuUserInfoType": "Administrator",
+  "menuUserNotLoggedIn": "Nicht angemeldet",
+  "menuUserInfoExplanation": "Beglaubigter Nutzer",
+  "menuUserNotLoggedInExplanation": "Keine Informationen verfügbar",
+  "pageHomeTitle": "Willkommen zu Frickl",
+  "pageHomeText": "Das neue Zuhause für alle deine Bilder",
   "selectOptionSortCreatedOn": "Erstellt am",
   "selectOptionSortViewCount": "Betrachtungsanzahl",
   "selectOptionSortIsPublic": "Ist öffentlich",
   "selectOptionSortIsFavorite": "Favorit",
-  "selectOptionSortName": "Name"
+  "selectOptionSortName": "Name",
+  "widgetChartHeatmapAxisTitleDay": "Tag",
+  "widgetChartHeatmapAxisTitleMonth": "Monat"
 }
