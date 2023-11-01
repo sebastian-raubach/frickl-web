@@ -21,8 +21,14 @@ const i18n = createI18n({
 
 // Vuetify
 import { createVuetify } from 'vuetify'
+import {
+  VDataTable
+} from 'vuetify/labs/VDataTable'
 
 const vuetify = createVuetify({
+  components: {
+    VDataTable
+  },
   theme: {
     defaultTheme: 'fricklDark',
     themes: {

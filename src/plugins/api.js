@@ -169,6 +169,7 @@ const apiGetStatsYearData = (year, onSuccess, onError) => apiAxios({ url: `stats
 const apiGetSettings = (onSuccess, onError) => apiAxios({ url: 'settings', success: onSuccess, error: onError })
 
 export {
+  getToken,
   apiAxios,
   apiGetImageById,
   apiPostAlbumById,
