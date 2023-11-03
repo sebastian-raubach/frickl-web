@@ -12,6 +12,13 @@
         <v-app-bar-title style="cursor: pointer" @click="$router.push({ name: 'home' })">Frickl</v-app-bar-title>
 
         <v-spacer></v-spacer>
+        <v-tooltip location="top" v-if="importStatus">
+          <template #activator="{ props }">
+            <v-progress-circular v-bind="props" color="primary" class="mx-3" indeterminate />
+          </template>
+          <span v-if="importStatus.status === 'SCANNING'">{{ $t('tooltipScanScanning') }}</span>
+          <span v-if="importStatus.status === 'IMPORTING'">{{ $t('tooltipScanImporting', { total: importStatus.totalImages, queue: importStatus.queueSize }) }}</span>
+        </v-tooltip>
         <v-btn icon="mdi-theme-light-dark" @click.stop="toggleTheme"></v-btn>
         <v-menu>
           <template v-slot:activator="{ props }">
@@ -28,6 +35,7 @@
           </v-list>
         </v-menu>
         <v-btn icon="mdi-login" @click.stop="showLogin" v-if="!storeToken"></v-btn>
+        <v-btn icon="mdi-logout" @click.stop="logout" v-else></v-btn>
       </v-app-bar>
 
       <v-navigation-drawer
@@ -75,7 +83,18 @@
         </v-list>
       </v-navigation-drawer>
 
-      <router-view :key="$route.path"/>
+      <div>
+        <v-container v-if="showAlert">
+          <v-alert
+            v-model="showAlert"
+            closable
+            :icon="alert.icon"
+            :title="alert.title"
+            :text="alert.text"
+            :type="alert.type" />
+        </v-container>
+        <router-view :key="$route.path"/>
+      </div>
 
       <LoginDialog ref="loginDialog" />
 
@@ -86,8 +105,10 @@
 <script>
 import LoginDialog from '@/components/dialogs/LoginDialog.vue'
 import { mapGetters } from 'vuex'
-import { apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
+import { apiGetImportStatus, apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
 import { getNumberWithSuffix } from '@/plugins/misc'
+
+import emitter from 'tiny-emitter/instance'
 
 export default {
   name: 'App',
@@ -110,7 +131,11 @@ export default {
         albums: null,
         favorites: null,
         tags: null 
-      }
+      },
+      importStatus: null,
+      timer: null,
+      showAlert: false,
+      alert: null
     }
   },
   computed: {
@@ -139,6 +164,44 @@ export default {
   },
   methods: {
     getNumberWithSuffix,
+    checkImportStatus: function () {
+      apiGetImportStatus(result => {
+        if (result.status !== 'IDLE') {
+          this.importStatus = result
+          this.timer = setTimeout(this.checkImportStatus, 10000)
+        } else {
+          this.importStatus = null
+
+          if (this.timer) {
+            clearInterval(this.timer)
+            if (result.totalImages > 0) {
+              this.alert = {
+                title: this.$t('alertTitleImportSuccessful'),
+                text: this.$tc('alertTextImportSuccessful', result.totalImages),
+                type: 'success',
+                icon: 'mdi-check-all'
+              }
+              this.showAlert = true
+            } else {
+              this.alert = {
+                title: this.$t('alertTitleImportNoUpdate'),
+                text: this.$t('alertTextImportNoUpdate'),
+                type: 'info',
+                icon: 'mdi-sync'
+              }
+              this.showAlert = true
+            }
+            clearInterval(this.timer)
+            this.timer = null
+          }
+        }
+      })
+    },
+    logout: function () {
+      this.$store.commit('TOKEN_CHANGED_MUTATION', null)
+      emitter.emit('token-changed')
+      this.$router.push({ name: 'home' })
+    },
     showLogin: function () {
       this.$refs.loginDialog.show()
     },
@@ -160,6 +223,7 @@ export default {
     }
   },
   mounted: function () {
+    this.checkImportStatus()
     this.updateCounts()
   },
   created: async function () {

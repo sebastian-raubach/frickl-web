@@ -20,6 +20,15 @@
         :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
+      <template v-if="storeToken">
+        <v-btn-group density="compact" class="me-3">
+          <v-btn
+            @click="showImageUpload"
+            variant="tonal">
+            <v-icon>mdi-image-plus</v-icon>
+          </v-btn>
+        </v-btn-group>
+      </template>
       <v-btn-toggle
         v-model="ascending"
         density="compact"
@@ -86,21 +95,28 @@
     </v-toolbar>
 
     <MultiLocationMap class="mt-3" :heightPercent="33" :images="imageLocations" v-if="imageLocations.length > 0" />
+    <UploadDialog ref="imageUploadDialog" :albumId="albumId" @images-uploaded="reset" />
   </div>
 </template>
 
 <script>
 import ImageCard from '@/components/ImageCard.vue'
 import MultiLocationMap from '@/components/MultiLocationMap.vue'
+import UploadDialog from '@/components/dialogs/UploadDialog.vue'
 import { mapGetters } from 'vuex'
 import { apiPatchImage } from '@/plugins/api'
 
 export default {
   components: {
     ImageCard,
+    UploadDialog,
     MultiLocationMap
   },
   props: {
+    albumId: {
+      type: Number,
+      default: null
+    },
     getData: {
       type: Function,
       default: () => { return { count: 0, data: [] } }
@@ -108,7 +124,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'storeImagesPerPage'
+      'storeImagesPerPage',
+      'storeToken'
     ]),
     imageLocations: function () {
       if (this.images) {
@@ -234,6 +251,9 @@ export default {
     }
   },
   methods: {
+    showImageUpload: function () {
+      this.$refs.imageUploadDialog.show()
+    },
     toggleFavorite: function (index) {
       this.images[index].isFavorite = Math.abs(this.images[index].isFavorite - 1)
 

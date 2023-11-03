@@ -168,6 +168,10 @@ const apiGetStatsYearData = (year, onSuccess, onError) => apiAxios({ url: `stats
 
 const apiGetSettings = (onSuccess, onError) => apiAxios({ url: 'settings', success: onSuccess, error: onError })
 
+const apiScanAlbum = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}/scan`, success: onSuccess, error: onError })
+
+const apiGetImportStatus = (onSuccess, onError) => apiAxios({ url: 'status', success: onSuccess, error: onError })
+
 export {
   getToken,
   apiAxios,
@@ -184,5 +188,7 @@ export {
   apiGetTags,
   apiGetStatsYears,
   apiGetStatsYearData,
-  apiGetSettings
+  apiGetSettings,
+  apiScanAlbum,
+  apiGetImportStatus
 }

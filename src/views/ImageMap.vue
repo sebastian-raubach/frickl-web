@@ -4,7 +4,7 @@
 
     <v-toolbar>
       <v-range-slider hide-details="auto"
-                      class="mt-6"
+                      class="mt-6 me-6"
                       :label="$t('widgetMapDateRange')"
                       :min="0"
                       :max="totalDays"
@@ -13,7 +13,7 @@
                       v-model="dateRange"
                       v-if="totalDays">
         <template v-slot:thumb-label="{ modelValue }">
-          {{ new Date(minDate + modelValue).toLocaleDateString() }}
+          {{ new Date(minDate + (modelValue * 1000 * 60 * 24)).toLocaleDateString() }}
         </template>
       </v-range-slider>
     </v-toolbar>

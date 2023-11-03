@@ -10,7 +10,7 @@
       Images
     </h1>
     <v-divider class="mb-3" />
-    <ImageGallery :getData="getImages" />
+    <ImageGallery :getData="getImages" :albumId="parentAlbumId" />
   </v-container>
 </template>
 

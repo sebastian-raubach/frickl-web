@@ -1,7 +1,18 @@
 {
+  "alertTitleImportSuccessful": "Scan complete",
+  "alertTextImportSuccessful": "Image scan completed. No images imported.|Image scan completed. One image imported.|Image scan completed. {count} images imported.",
+  "alertTitleImportNoUpdate": "Scan complete",
+  "alertTextImportNoUpdate": "Image scan completed. No updates found.",
+  "buttonLogin": "Log in",
+  "buttonClose": "Close",
   "buttonView": "View",
   "formLabelSortBy": "Order by",
   "formLabelPerPage": "Per page",
+  "formLabelUsername": "Username",
+  "formPlaceholderUsername": "Please enter your username",
+  "formLabelPassword": "Password",
+  "formPlaceholderPassword": "Please enter your password",
+  "genericNoData": "No data found",
   "menuImageStream": "Image stream",
   "menuAlbums": "Albums",
   "menuFavorites": "Favorites",
@@ -20,6 +31,13 @@
   "selectOptionSortIsPublic": "Is public",
   "selectOptionSortIsFavorite": "Favorites",
   "selectOptionSortName": "Name",
+  "tooltipScanScanning": "Scanning image source for changes.",
+  "tooltipScanImporting": "Checking {total} photos for updates. Photos on processing queue: {queue}.",
   "widgetChartHeatmapAxisTitleDay": "Day",
-  "widgetChartHeatmapAxisTitleMonth": "Month"
+  "widgetChartHeatmapAxisTitleMonth": "Month",
+  "widgetLoginTitle": "Log in",
+  "widgetMapDateRange": "Date range",
+  "widgetTagsTitle": "Tags",
+  "widgetTagsText": "The following tags have been associated with this item. Click on a tag to see all images associated with this tag. Click on the x icon (if available) to remove  the tag.",
+  "widgetTagsNoData": "No tags found"
 }

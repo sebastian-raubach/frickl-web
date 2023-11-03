@@ -11,11 +11,11 @@
 
       <v-btn icon="mdi-download" :href="imgSrc['ORIGINAL']" :download="`${album.name}-${image.name}`" />
 
-      <v-btn color="red" icon="mdi-heart" @click.stop.prevent="toggleFavorite" v-if="image.isFavorite === 1"></v-btn>
-      <v-btn color="null" icon="mdi-heart-outline" @click.stop.prevent="toggleFavorite" v-else></v-btn>
+      <v-btn color="red" icon="mdi-heart" :disabled="!storeToken" @click.stop.prevent="toggleFavorite" v-if="image.isFavorite === 1"></v-btn>
+      <v-btn color="null" icon="mdi-heart-outline" :disabled="!storeToken" @click.stop.prevent="toggleFavorite" v-else></v-btn>
 
-      <v-btn color="blue" icon="mdi-lock-open-variant" @click.stop.prevent="togglePublic" v-if="image.isPublic === 1"></v-btn>
-      <v-btn color="null" icon="mdi-lock" @click.stop.prevent="togglePublic" v-else></v-btn>
+      <v-btn color="blue" icon="mdi-lock-open-variant" :disabled="!storeToken" @click.stop.prevent="togglePublic" v-if="image.isPublic === 1"></v-btn>
+      <v-btn color="null" icon="mdi-lock" :disabled="!storeToken" @click.stop.prevent="togglePublic" v-else></v-btn>
     </v-toolbar>
 
     <template v-if="image.dataType === 'image'">
@@ -126,16 +126,27 @@
                 </v-card>
               </v-col>
               <v-col :cols="12">
-                <v-card :title="$t('widgetTagsTitle')">
+                <v-card>
+                  <v-card-title>
+                    <span>{{ $t('widgetTagsTitle') }}</span>
+                    <v-tooltip max-width="300">
+                      <template #activator="{ props }">
+                        <v-icon size="x-small" class="ms-2" v-bind="props" icon="mdi-help-circle-outline"></v-icon>
+                      </template>
+                      <span>{{ $t('widgetTagsText') }}</span>
+                    </v-tooltip>
+                  </v-card-title>
                   <v-card-text>
-                    <v-chip-group column v-if="tags && tags.length > 0">
-                      <v-chip class="me-2 mb-2" :to="{ name: 'tag-specific', params: { tagId: tag.id } }" closable v-for="tag in tags" :key="`tag-${tag.id}`">
-                        <template #close>
-                          <v-icon icon="mdi-close-circle" @click.stop="askRemoveTag(tag)" />
-                        </template>
-                        {{ tag.name }}
-                      </v-chip>
-                    </v-chip-group>
+                    <div v-if="tags && tags.length > 0">
+                      <v-chip-group column>
+                        <v-chip class="me-2 mb-2" :to="{ name: 'tag-specific', params: { tagId: tag.id } }" closable v-for="tag in tags" :key="`tag-${tag.id}`">
+                          <template #close>
+                            <v-icon icon="mdi-close-circle" @click.prevent.stop="askRemoveTag(tag)" v-if="storeToken" />
+                          </template>
+                          {{ tag.name }}
+                        </v-chip>
+                      </v-chip-group>
+                    </div>
                     <span v-else>{{ $t('widgetTagsNoData') }}</span>
                   </v-card-text>
                 </v-card>
@@ -253,7 +264,7 @@ export default {
       console.log(tag)
       this.selectedTag = tag
 
-      this.$refs.confirmDialog.show()
+      this.$nextTick(() => this.$refs.confirmDialog.show())
     },
     deleteTag: function () {
       this.$refs.confirmDialog.hide()

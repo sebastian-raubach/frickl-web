@@ -1,7 +1,18 @@
 {
+  "alertTitleImportSuccessful": "Bildersuche abgeschlossen",
+  "alertTextImportSuccessful": "Die Bildersuche ist abgeschlossen. Keine Bilder importiert.|Die Bildersuche ist abgeschlossen. Ein Bild importiert.|Die Bildersuche ist abgeschlossen. {count} Bilder importiert.",
+  "alertTitleImportNoUpdate": "Bildersuche abgeschlossen",
+  "alertTextImportNoUpdate": "Die Bildersuche ist abgeschlossen. Keine Änderungen gefunden.",
+  "buttonLogin": "Anmelden",
+  "buttonClose": "Schließen",
   "buttonView": "Ansehen",
   "formLabelSortBy": "Sortieren nach",
   "formLabelPerPage": "Pro Seite",
+  "formLabelUsername": "Benutzername",
+  "formPlaceholderUsername": "Bitte Benutzernamen eingeben",
+  "formLabelPassword": "Passwort",
+  "formPlaceholderPassword": "Bitte Passwort eingeben",
+  "genericNoData": "Keine Daten gefunden",
   "menuImageStream": "Bildwand",
   "menuAlbums": "Alben",
   "menuFavorites": "Favoriten",
@@ -20,6 +31,13 @@
   "selectOptionSortIsPublic": "Ist öffentlich",
   "selectOptionSortIsFavorite": "Favorit",
   "selectOptionSortName": "Name",
+  "tooltipScanScanning": "Untersuche Bilder auf Veränderungen.",
+  "tooltipScanImporting": "Untersuche {total} Bilder auf Veränderungen. Bilder auf der Bearbeitungsschlange: {queue}.",
   "widgetChartHeatmapAxisTitleDay": "Tag",
-  "widgetChartHeatmapAxisTitleMonth": "Monat"
+  "widgetChartHeatmapAxisTitleMonth": "Monat",
+  "widgetLoginTitle": "Anmelden",
+  "widgetMapDateRange": "Datumsauswahl",
+  "widgetTagsTitle": "Schlagwörter",
+  "widgetTagsText": "Die folgenden Schlagwörter wurden mit diesem Element assoziiert. Klicke auf das Schlagwort um alle Bilder anzuzeigen die mit diesem Schlagwort assoziiert wurden. Klicke auf das x Symbol (falls vorhanden) um das Schlagwort zu entfernen.",
+  "widgetTagsNoData": "Kein Schlagwort gefunden"
 }

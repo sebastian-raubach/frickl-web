@@ -22,11 +22,12 @@
 
           <v-form @submit.prevent="login">
 
-            <div class="text-subtitle-1 text-medium-emphasis">Sign in</div>
+            <div class="text-subtitle-1 text-medium-emphasis">{{ $t('widgetLoginTitle') }}</div>
 
             <v-text-field
               density="compact"
-              label="Email address"
+              :label="$t('formLabelUsername')"
+              :placeholder="$t('formPlaceholderUsername')"
               prepend-inner-icon="mdi-email-outline"
               autofocus
               :readonly="loading"
@@ -35,8 +36,9 @@
             <v-text-field
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
-              label="compact"
-              placeholder="Enter your password"
+              density="compact"
+              :label="$t('formLabelPassword')"
+              :placeholder="$t('formPlaceholderPassword')"
               v-model="password"
               prepend-inner-icon="mdi-lock-outline"
               :readonly="loading"
@@ -59,7 +61,7 @@
               class="mb-8"
               color="primary"
               size="large">
-              Log In
+              {{ $t('buttonLogin') }}
             </v-btn>
           </v-form>
 
@@ -68,7 +70,7 @@
               color="secondary"
               variant="text"
               @click="dialog = false">
-              Close
+              {{ $t('buttonClose') }}
             </v-btn>
           </v-card-actions>
         </v-card>
