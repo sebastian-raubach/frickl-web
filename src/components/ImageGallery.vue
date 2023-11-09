@@ -20,15 +20,18 @@
         :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
-      <template v-if="storeToken">
-        <v-btn-group density="compact" class="me-3">
-          <v-btn
-            @click="showImageUpload"
-            variant="tonal">
-            <v-icon>mdi-image-plus</v-icon>
-          </v-btn>
-        </v-btn-group>
-      </template>
+      <v-btn-group density="compact" class="me-3">
+        <v-btn v-if="storeToken"
+          @click="showImageUpload"
+          variant="tonal">
+          <v-icon>mdi-image-plus</v-icon>
+        </v-btn>
+        <v-btn v-if="albumId"
+          @click="downloadAlbum"
+          variant="tonal">
+          <v-icon>mdi-download</v-icon>
+        </v-btn>
+      </v-btn-group>
       <v-btn-toggle
         v-model="ascending"
         density="compact"
@@ -104,7 +107,8 @@ import ImageCard from '@/components/ImageCard.vue'
 import MultiLocationMap from '@/components/MultiLocationMap.vue'
 import UploadDialog from '@/components/dialogs/UploadDialog.vue'
 import { mapGetters } from 'vuex'
-import { apiPatchImage } from '@/plugins/api'
+import { apiDownloadAlbum, apiPatchImage } from '@/plugins/api'
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -251,13 +255,18 @@ export default {
     }
   },
   methods: {
+    downloadAlbum: function () {
+      apiDownloadAlbum(this.albumId, job => {
+        this.$store.dispatch('addAlbumDownloadJob', job)
+      })
+    },
     showImageUpload: function () {
       this.$refs.imageUploadDialog.show()
     },
     toggleFavorite: function (index) {
       this.images[index].isFavorite = Math.abs(this.images[index].isFavorite - 1)
 
-      apiPatchImage(this.images[index])
+      apiPatchImage(this.images[index], () => emitter.emit('overview-counts-changed'))
     },
     togglePublic: function (index) {
       this.images[index].isPublic = Math.abs(this.images[index].isPublic - 1)

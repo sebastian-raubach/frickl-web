@@ -17,7 +17,8 @@ export default createStore({
     imagesPerPage: 24,
     albumsPerPage: 24,
     serverSettings: null,
-    cookiesAccepted: false
+    cookiesAccepted: false,
+    albumDownloadJobs: []
   },
   getters: {
     storeTheme: (state) => state.theme,
@@ -28,7 +29,8 @@ export default createStore({
     storeImagesPerPage: (state) => state.imagesPerPage,
     storeAlbumsPerPage: (state) => state.albumsPerPage,
     storeServerSettings: (state) => state.serverSettings,
-    storeCookiesAccepted: (state) => state.cookiesAccepted
+    storeCookiesAccepted: (state) => state.cookiesAccepted,
+    storeAlbumDownloadJobs: (state) => state.albumDownloadJobs
   },
   mutations: {
     THEME_CHANGED_MUTATION: (state, newTheme) => {
@@ -51,6 +53,13 @@ export default createStore({
     },
     ALBUMS_PER_PAGE_CHANGED_MUTATION: (state, newAlbumsPerPage) => {
       state.albumsPerPage = newAlbumsPerPage
+    },
+    ALBUM_DOWNLOAD_JOB_ADDED_MUTATION: (state, newAlbumDownloadJob) => {
+      if (!state.albumDownloadJobs) {
+        state.albumDownloadJobs = [newAlbumDownloadJob]
+      } else {
+        state.albumDownloadJobs.push(newAlbumDownloadJob)
+      }
     },
     SERVER_SETTINGS_CHANGED_MUTATION: (state, newServerSettings) => {
       state.serverSettings = newServerSettings
@@ -85,6 +94,9 @@ export default createStore({
     },
     setAlbumsPerPage: ({ commit }, albumsPerPage) => {
       commit('ALBUMS_PER_PAGE_CHANGED_MUTATION', albumsPerPage)
+    },
+    addAlbumDownloadJob: ({ commit }, albumDownloadJob) => {
+      commit('ALBUM_DOWNLOAD_JOB_ADDED_MUTATION', albumDownloadJob)
     },
     setServerSettings: ({ commit }, serverSettings) => {
       commit('SERVER_SETTINGS_CHANGED_MUTATION', serverSettings)

@@ -20,6 +20,15 @@
         :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
+      <template v-if="storeToken">
+        <v-btn-group density="compact" class="me-3">
+          <v-btn
+            @click="addAlbum"
+            variant="tonal">
+            <v-icon>mdi-folder-plus</v-icon>
+          </v-btn>
+        </v-btn-group>
+      </template>
       <v-btn-toggle
         v-model="ascending"
         density="compact"
@@ -84,26 +93,35 @@
         </v-btn>
       </v-btn-toggle>
     </v-toolbar>
+
+    <AddAlbumDialog :parentAlbumId="parentAlbumId" @album-added="update" ref="addAlbumDialog" />
   </div>
 </template>
 
 <script>
 import AlbumCard from '@/components/AlbumCard.vue'
+import AddAlbumDialog from '@/components/dialogs/AddAlbumDialog.vue'
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    AlbumCard
+    AlbumCard,
+    AddAlbumDialog
   },
   props: {
     getData: {
       type: Function,
       default: () => { return { count: 0, data: [] } }
+    },
+    parentAlbumId: {
+      type: Number,
+      default: null
     }
   },
   computed: {
     ...mapGetters([
-      'storeAlbumsPerPage'
+      'storeAlbumsPerPage',
+      'storeToken'
     ]),
     disabled: function () {
       return this.albumCount === 0
@@ -209,6 +227,9 @@ export default {
     }
   },
   methods: {
+    addAlbum: function () {
+      this.$refs.addAlbumDialog.show()
+    },
     textChanged: function () {
       this.search = this.tempSearch
     },

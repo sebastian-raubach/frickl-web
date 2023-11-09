@@ -114,24 +114,23 @@ export default {
         password: this.password
       }, result => {
         this.loading = false
-        console.log(result)
         this.$store.commit('TOKEN_CHANGED_MUTATION', result)
         emitter.emit('token-changed')
         this.$router.push({ name: 'home' })
+        this.username = null
+        this.password = null
+        this.error = null
         this.dialog = false
       }, {
-        codes: [401, 403, 404],
+        codes: [403, 503],
         callback: e => {
           this.loading = false
           switch (e.status) {
-            case 401:
-              this.error = '401'
-              break
             case 403:
-              this.error = '403'
+              this.error = this.$t('errorLoginFourOThree')
               break
-            case 404:
-              this.error = '404'
+            case 504:
+              this.error = this.$t('errorLoginFiveOThree')
               break
           }
         }

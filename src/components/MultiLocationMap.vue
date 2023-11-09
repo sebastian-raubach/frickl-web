@@ -2,6 +2,11 @@
   <div id="image-map" ref="imageMap" class="d-flex justify-center align-center" :style="{ height: `${heightPercent}vh` }">
     <p class="text-h5" v-if="images === null"><v-progress-circular indeterminate></v-progress-circular></p>
     <p class="text-h5" v-else-if="images.length < 1">{{ $t('errorNoGpsAvailable') }}</p>
+
+    <div ref="popupContent" v-if="selectedLocation">
+      <img :src="getImgUrl(selectedLocation.imageIndex, 'SMALL')" width="300"/>
+      <v-btn block color="primary" class="marker-button" :to="{ name: 'image-details', params: { imageId: selectedLocation.location.id } }">{{ $t('buttonView') }}</v-btn>
+    </div>
   </div>
 </template>
 
@@ -50,8 +55,8 @@ export default {
     }
   },
   methods: {
-    getImgUrl: function (index) {
-      let result = `${this.storeBaseUrl}image/${this.images[index].id}/img?size=TINY`
+    getImgUrl: function (index, size = 'TINY') {
+      let result = `${this.storeBaseUrl}image/${this.images[index].id}/img?size=${size}`
 
       if (this.storeToken && this.storeToken.imageToken) {
         result = `${result}&token=${this.storeToken.imageToken}`
@@ -72,7 +77,7 @@ export default {
             const markers = cluster.getAllChildMarkers().concat().sort((a, b) => b.viewCount - a.viewCount)
 
             const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(markers[0].imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(markers.length, 0)}</span> </div> </div>`
-            return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(60, 60), iconAnchor: [30, 30] });
+            return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
           }
         })
       }
@@ -80,11 +85,16 @@ export default {
       const latLngBounds = L.latLngBounds()
       if (this.images) {
         this.images.forEach((l, i) => {
-          const marker = L.marker([l.latitude, l.longitude]).bindPopup('')
+          const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(i)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> </div> </div>`
+          const icon = L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 0] });
+          const marker = L.marker([l.latitude, l.longitude], { icon: icon }).bindPopup('')
           marker.imageIndex = i
           marker.viewCount = l.viewCount
           marker.on('click', e => {
-            this.selectedLocation = l
+            this.selectedLocation = {
+              location: l,
+              imageIndex: i
+            }
 
             this.$nextTick(() => {
               const popup = e.target.getPopup()
@@ -187,8 +197,24 @@ export default {
 }
 
 #image-map .v-badge .v-badge__wrapper {
-  bottom: 15px;
-  right: 15px;
+  bottom: 10px;
+  right: 10px;
   position: absolute;
+}
+
+#image-map .leaflet-popup-content-wrapper {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+#image-map .leaflet-popup-content {
+  margin: 0;
+  width: 300px !important;
+}
+#image-map .leaflet-popup-content .v-btn {
+  border-radius: 0;
+}
+#image-map .leaflet-popup-tip {
+  background-color: rgb(var(--v-theme-primary));
 }
 </style>

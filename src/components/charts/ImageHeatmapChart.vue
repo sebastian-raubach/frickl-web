@@ -28,9 +28,15 @@ export default {
       } else {
         return []
       }
+    },
+    isHorizontal: function () {
+      return this.windowWidth < 720
     }
   },
   watch: {
+    isHorizontal: function () {
+      this.update()
+    },
     storeTheme: function () {
       this.update()
     },
@@ -40,9 +46,11 @@ export default {
   },
   methods: {
     update: function () {
+      const horizontal = window.innerWidth < 720
+
       Plotly.purge(this.$refs.chart)
 
-      const z = [
+      let z = [
         new Array(31).fill(0),
         new Array(30).fill(0),
         new Array(31).fill(0),
@@ -57,7 +65,7 @@ export default {
         new Array(31).fill(0)
       ]
 
-      const ids = [
+      let ids = [
         new Array(31).fill(null),
         new Array(30).fill(null),
         new Array(31).fill(null),
@@ -82,10 +90,18 @@ export default {
         max = Math.max(max, date.count)
       })
 
+      const x = Array.from(Array(31).keys()).map(i => i + 1)
+      const y = this.months
+
+      if (horizontal) {
+        z = z[0].map((col, i) => z.reverse().map(row => row[i]))
+        ids = ids[0].map((col, i) => ids.reverse().map(row => row[i]))
+      }
+
       const data = [{
         z: z,
-        x: Array.from(Array(31).keys()).map(i => i + 1),
-        y: this.months,
+        x: horizontal ? y.reverse() : x,
+        y: horizontal ? x : y,
         ids: ids,
         name: '',
         type: 'heatmap',
@@ -107,23 +123,32 @@ export default {
         hovertemplate: '%{x}. %{y}: %{z}'
       }]
 
+      console.log(data)
+
+      let xAxis = {
+        showgrid: false,
+        tickmode: 'array',
+        // nticks: 31,
+        tickvals: Array.from(Array(31).keys()).map(i => i + 1),
+        title: { text: this.$t('widgetChartHeatmapAxisTitleDay'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
+        tickfont: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' }
+      }
+      let yAxis = {
+        showgrid: false,
+        title: { text: this.$t('widgetChartHeatmapAxisTitleMonth'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
+        tickfont: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' }
+      }
+
+      if (horizontal) {
+        [xAxis, yAxis] = [yAxis, xAxis]
+      }
+
       const layout = {
-        height: 500,
+        height: horizontal ? 800 : 500,
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
-        xaxis: {
-          showgrid: false,
-          tickmode: 'array',
-          // nticks: 31,
-          tickvals: Array.from(Array(31).keys()).map(i => i + 1),
-          title: { text: this.$t('widgetChartHeatmapAxisTitleDay'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
-          tickfont: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' }
-        },
-        yaxis: {
-          showgrid: false,
-          title: { text: this.$t('widgetChartHeatmapAxisTitleMonth'), font: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' } },
-          tickfont: { color: this.storeTheme === 'fricklDark' ? 'white' : 'black' }
-        }
+        xaxis: xAxis,
+        yaxis: yAxis
       }
 
       const config = {

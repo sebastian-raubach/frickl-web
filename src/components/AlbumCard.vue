@@ -8,7 +8,7 @@
       gradient="to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, rgba(0,0,0,.8)"
       cover>
       <template v-slot:placeholder>
-        <div class="d-flex align-center justify-center fill-height">
+        <div class="d-flex align-center justify-center fill-height"  v-if="album.bannerImageId">
           <v-progress-circular
             color="grey-lighten-4"
             indeterminate
@@ -72,7 +72,7 @@ export default {
       this.imageSizes.forEach(s => {
         let result = null
 
-        if (this.album) {
+        if (this.album && this.album.bannerImageId) {
           result = `${this.storeBaseUrl}image/${this.album.bannerImageId}/${s === 'VIDEO' ? 'video/placeholder' : 'img'}?size=${s}`
 
           if (this.storeToken && this.storeToken.imageToken) {

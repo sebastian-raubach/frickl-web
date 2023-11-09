@@ -73,7 +73,7 @@
       <div class="example-footer">
         <div>
           <file-upload
-            class="v-btn v-btn--elevated v-theme--fricklDark bg-primary v-btn--density-default v-btn--size-default v-btn--variant-elevated my-3"
+            class="my-3"
             :post-action="postAction"
             :accept="accept"
             :multiple="multiple"
@@ -85,11 +85,9 @@
             @input-filter="inputFilter"
             @input-file="inputFile"
             ref="upload">
-            <span class="v-btn__overlay"></span>
-            <span class="v-btn__underlay"></span>
-            <span class="v-btn__content" data-no-activator="">
+            <v-btn color="primary">
               <v-icon icon="mdi-file-plus-outline" /> Add photos
-            </span>
+            </v-btn>
           </file-upload>
         </div>
 
@@ -131,14 +129,14 @@ export default {
       },
       uploadAuto: false,
       fields: [
-        { key: 'thumb', title: 'Thumb', sortable: false},
-        { key: 'name', title: 'Name', sortable: false},
-        { key: 'width', title: 'Width', sortable: false},
-        { key: 'height', title: 'Height', sortable: false},
-        { key: 'size', title: 'Size', sortable: false},
-        { key: 'speed', title: 'Speed', sortable: false},
-        { key: 'status', title: 'Status', sortable: false},
-        { key: 'actions', title: 'Actions', sortable: false }
+        { key: 'thumb', title: this.$t('tableColumnImageUploadThumb'), sortable: false},
+        { key: 'name', title: this.$t('tableColumnImageUploadName'), sortable: false},
+        { key: 'width', title: this.$t('tableColumnImageUploadWidth'), sortable: false},
+        { key: 'height', title: this.$t('tableColumnImageUploadHeight'), sortable: false},
+        { key: 'size', title: this.$t('tableColumnImageUploadSize'), sortable: false},
+        { key: 'speed', title: this.$t('tableColumnImageUploadSpeed'), sortable: false},
+        { key: 'status', title: this.$t('tableColumnImageUploadStatus'), sortable: false},
+        { key: 'actions', title: this.$t('tableColumnImageUploadActions'), sortable: false }
       ]
     }
   },

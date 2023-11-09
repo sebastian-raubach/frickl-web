@@ -19,6 +19,23 @@
           <span v-if="importStatus.status === 'SCANNING'">{{ $t('tooltipScanScanning') }}</span>
           <span v-if="importStatus.status === 'IMPORTING'">{{ $t('tooltipScanImporting', { total: importStatus.totalImages, queue: importStatus.queueSize }) }}</span>
         </v-tooltip>
+        <v-menu v-if="downloadJobs.length > 0" :close-on-content-click="false">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" icon="mdi-progress-download" />
+          </template>
+          <v-card min-width="300">
+            <v-list>
+              <v-list-item
+                :title="job.albumName"
+                :subtitle="new Date(job.createdOn).toLocaleString()"
+                v-for="job in downloadJobs" :key="`download-job-${job.token}`">
+                <template v-slot:prepend>
+                  <v-icon icon="mdi-folder-download" />
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
         <v-btn icon="mdi-theme-light-dark" @click.stop="toggleTheme"></v-btn>
         <v-menu>
           <template v-slot:activator="{ props }">
@@ -96,7 +113,7 @@
         <router-view :key="$route.path"/>
       </div>
 
-      <LoginDialog ref="loginDialog" />
+      <LoginDialog ref="loginDialog" v-if="!storeToken" />
 
     </v-main>
   </v-app>
@@ -142,8 +159,16 @@ export default {
     ...mapGetters([
       'storeTheme',
       'storeLocale',
-      'storeToken'
-    ])
+      'storeToken',
+      'storeAlbumDownloadJobs'
+    ]),
+    downloadJobs: function () {
+      if (this.storeAlbumDownloadJobs) {
+        return this.storeAlbumDownloadJobs.concat().sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
+      } else {
+        return []
+      }
+    }
   },
   watch: {
     storeTheme: {
@@ -225,6 +250,11 @@ export default {
   mounted: function () {
     this.checkImportStatus()
     this.updateCounts()
+
+    emitter.on('overview-counts-changed', this.updateCounts)
+  },
+  beforeDestroy: function () {
+    emitter.off('overview-counts-changed', this.updateCounts)
   },
   created: async function () {
     await apiGetSettings(result => {

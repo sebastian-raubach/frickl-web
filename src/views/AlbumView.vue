@@ -4,7 +4,7 @@
       Albums
     </h1>
     <v-divider class="mb-3" />
-    <AlbumGallery :getData="getAlbums" />
+    <AlbumGallery :getData="getAlbums" :parentAlbumId="parentAlbumId" />
 
     <h1 class="text-h4 mb-3 mt-6">
       Images
