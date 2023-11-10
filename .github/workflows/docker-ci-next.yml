@@ -1,4 +1,4 @@
-name: Docker CI Push
+name: Docker CI NEXT
 
 # Docker CI builds on master branch push.
 # Only builds AMD build to increase development speed.

@@ -23,9 +23,6 @@ RUN rm -f .env && \
     cp -a /opt/frickl/dist/. /opt/frickl-server/client/ && \
     echo "config.file=/data/frickl/config.properties" > /opt/frickl-server/config.properties
 
-# Copy a configuration for the server
-COPY build.properties /opt/frickl-server/build.properties
-
 # Download Gradle and build the server code
 RUN apk add --no-cache openjdk11 && \
     wget https://services.gradle.org/distributions/gradle-6.0.1-bin.zip -P /tmp/ && \
