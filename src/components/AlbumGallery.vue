@@ -181,6 +181,9 @@ export default {
       this.page = 1
       this.albumCount = -1
       this.update()
+    },
+    cardSize: function (newValue) {
+      this.$store.dispatch('setAlbumCardSize', newValue)
     }
   },
   data: function () {

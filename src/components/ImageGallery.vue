@@ -209,6 +209,9 @@ export default {
       this.page = 1
       this.imageCount = -1
       this.update()
+    },
+    cardSize: function (newValue) {
+      this.$store.dispatch('setImageCardSize', newValue)
     }
   },
   data: function () {
