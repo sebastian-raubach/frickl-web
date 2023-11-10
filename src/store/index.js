@@ -18,7 +18,9 @@ export default createStore({
     albumsPerPage: 24,
     serverSettings: null,
     cookiesAccepted: false,
-    albumDownloadJobs: []
+    albumDownloadJobs: [],
+    albumCardSize: 'md',
+    imageCardSize: 'md'
   },
   getters: {
     storeTheme: (state) => state.theme,
@@ -30,7 +32,9 @@ export default createStore({
     storeAlbumsPerPage: (state) => state.albumsPerPage,
     storeServerSettings: (state) => state.serverSettings,
     storeCookiesAccepted: (state) => state.cookiesAccepted,
-    storeAlbumDownloadJobs: (state) => state.albumDownloadJobs
+    storeAlbumDownloadJobs: (state) => state.albumDownloadJobs,
+    storeAlbumCardSize: (state) => state.albumCardSize,
+    storeImageCardSize: (state) => state.imageCardSize
   },
   mutations: {
     THEME_CHANGED_MUTATION: (state, newTheme) => {
@@ -60,6 +64,12 @@ export default createStore({
       } else {
         state.albumDownloadJobs.push(newAlbumDownloadJob)
       }
+    },
+    ALBUM_CARD_SIZE_CHANGED_MUTATION: (state, newAlbumCardSize) => {
+      state.albumCardSize = newAlbumCardSize
+    },
+    IMAGE_CARD_SIZE_CHANGED_MUTATION: (state, newImageCardSize) => {
+      state.imageCardSize = newImageCardSize
     },
     SERVER_SETTINGS_CHANGED_MUTATION: (state, newServerSettings) => {
       state.serverSettings = newServerSettings
@@ -100,6 +110,12 @@ export default createStore({
     },
     setServerSettings: ({ commit }, serverSettings) => {
       commit('SERVER_SETTINGS_CHANGED_MUTATION', serverSettings)
+    },
+    setAlbumCardSize: ({ commit }, albumCardSize) => {
+      commit('ALBUM_CARD_SIZE_CHANGED_MUTATION', albumCardSize)
+    },
+    setImageCardSize: ({ commit }, imageCardSize) => {
+      commit('IMAGE_CARD_SIZE_CHANGED_MUTATION', imageCardSize)
     }
   },
   modules: {

@@ -121,7 +121,8 @@ export default {
   computed: {
     ...mapGetters([
       'storeAlbumsPerPage',
-      'storeToken'
+      'storeToken',
+      'storeAlbumCardSize'
     ]),
     disabled: function () {
       return this.albumCount === 0
@@ -264,7 +265,8 @@ export default {
       this.page = +query.albumPage
     }
 
-    this.perPage = this.storealbumsPerPage
+    this.perPage = this.storeAlbumsPerPage
+    this.cardSize = this.storeAlbumCardSize
     this.update()
   }
 }

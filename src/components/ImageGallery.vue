@@ -129,7 +129,8 @@ export default {
   computed: {
     ...mapGetters([
       'storeImagesPerPage',
-      'storeToken'
+      'storeToken',
+      'storeImageCardSize'
     ]),
     imageLocations: function () {
       if (this.images) {
@@ -308,6 +309,7 @@ export default {
     }
 
     this.perPage = this.storeImagesPerPage
+    this.cardSize = this.storeImageCardSize
     this.update()
   }
 }
