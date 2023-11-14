@@ -9,6 +9,8 @@
   "buttonClose": "Close",
   "buttonRefresh": "Refresh",
   "buttonView": "View",
+  "buttonAccept": "Accept",
+  "buttonReject": "Reject",
   "cardTitleAddAlbum": "Add album",
   "cardTextAddAlbum": "To add a new album, please provide a name and an optional description.",
   "errorLoginFourOThree": "Invalid credentials. Please check username and password.",
@@ -59,5 +61,7 @@
   "widgetMapDateRange": "Date range",
   "widgetTagsTitle": "Tags",
   "widgetTagsText": "The following tags have been associated with this item. Click on a tag to see all images associated with this tag. Click on the x icon (if available) to remove  the tag.",
-  "widgetTagsNoData": "No tags found"
+  "widgetTagsNoData": "No tags found",
+  "widgetCookieBannerText": "Frickl uses cookies to facilitate user login and to remember user preferences.",
+  "widgetCookieBannerRejectTooltip": "Please be aware that rejecting cookies will disable certain features of Frickl."
 }

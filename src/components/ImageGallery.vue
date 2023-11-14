@@ -262,6 +262,8 @@ export default {
     downloadAlbum: function () {
       apiDownloadAlbum(this.albumId, job => {
         this.$store.dispatch('addAlbumDownloadJob', job)
+
+        emitter.emit('show-download-menu', true)
       })
     },
     showImageUpload: function () {

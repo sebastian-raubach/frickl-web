@@ -19,7 +19,7 @@
           <span v-if="importStatus.status === 'SCANNING'">{{ $t('tooltipScanScanning') }}</span>
           <span v-if="importStatus.status === 'IMPORTING'">{{ $t('tooltipScanImporting', { total: importStatus.totalImages, queue: importStatus.queueSize }) }}</span>
         </v-tooltip>
-        <v-menu v-if="downloadJobs.length > 0" :close-on-content-click="false">
+        <v-menu v-if="downloadJobs.length > 0" :close-on-content-click="false" v-model="downloadMenuShown">
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" icon="mdi-progress-download" />
           </template>
@@ -29,8 +29,14 @@
                 :title="job.albumName"
                 :subtitle="new Date(job.createdOn).toLocaleString()"
                 v-for="job in downloadJobs" :key="`download-job-${job.token}`">
+                <template v-slot:append>
+                  <!-- TODO -->
+                </template>
                 <template v-slot:prepend>
-                  <v-icon icon="mdi-folder-download" />
+                  <v-icon icon="mdi-timer-sand" v-if="job.status === 'RUNNING'" />
+                  <v-icon tag="a" class="text-decoration-none" href="#" icon="mdi-download" v-else-if="job.status === 'FINISHED'" />
+                  <v-icon icon="mdi-alert" v-else-if="job.status === 'EXPIRED'" />
+                  <v-icon icon="mdi-help-circle-outline" v-else />
                 </template>
               </v-list-item>
             </v-list>
@@ -101,9 +107,19 @@
       </v-navigation-drawer>
 
       <div>
-        <v-container v-if="showAlert">
+        <v-banner :text="$t('widgetCookieBannerText')" stacked v-if="storeCookiesAccepted === null">
+          <template v-slot:actions>
+            <v-tooltip :text="$t('widgetCookieBannerRejectTooltip')" location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn v-bind="props" @click="setCookies(false)" color="grey-darken-1">{{ $t('buttonReject') }}</v-btn>
+              </template>
+            </v-tooltip>
+            <v-btn @click="setCookies(true)" color="primary">{{ $t('buttonAccept') }}</v-btn>
+          </template>
+        </v-banner>
+        <v-container v-if="alertShown">
           <v-alert
-            v-model="showAlert"
+            v-model="alertShown"
             closable
             :icon="alert.icon"
             :title="alert.title"
@@ -122,10 +138,14 @@
 <script>
 import LoginDialog from '@/components/dialogs/LoginDialog.vue'
 import { mapGetters } from 'vuex'
-import { apiGetImportStatus, apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
+import { apiCheckAlbumDownloadStatus, apiGetImportStatus, apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
 import { getNumberWithSuffix } from '@/plugins/misc'
 
 import emitter from 'tiny-emitter/instance'
+
+import { getCurrentInstance } from 'vue'
+import { createPlausible } from 'v-plausible/vue'
+import VueGtag from 'vue-gtag'
 
 export default {
   name: 'App',
@@ -150,9 +170,11 @@ export default {
         tags: null 
       },
       importStatus: null,
-      timer: null,
-      showAlert: false,
-      alert: null
+      importStatusTimer: null,
+      exportJobTimer: null,
+      alertShown: false,
+      alert: null,
+      downloadMenuShown: false
     }
   },
   computed: {
@@ -160,7 +182,8 @@ export default {
       'storeTheme',
       'storeLocale',
       'storeToken',
-      'storeAlbumDownloadJobs'
+      'storeAlbumDownloadJobs',
+      'storeCookiesAccepted'
     ]),
     downloadJobs: function () {
       if (this.storeAlbumDownloadJobs) {
@@ -189,16 +212,44 @@ export default {
   },
   methods: {
     getNumberWithSuffix,
+    setCookies: function (value) {
+      this.$store.dispatch('setCookiesAccepted', value)
+    },
+    checkExportStatus: function () {
+      if (this.storeAlbumDownloadJobs) {
+        const toCheck = this.storeAlbumDownloadJobs
+        const keepChecking = toCheck.some(j => j.status === 'RUNNING')
+
+        if (toCheck.length > 0 && keepChecking) {
+          apiCheckAlbumDownloadStatus(toCheck.map(j => j.token), result => {
+            this.$store.dispatch('setAlbumDownloadJobs', result)
+
+            this.exportJobTimer = setTimeout(this.checkExportStatus, 10000)
+          })
+        } else {
+          this.clearExportJobTimer()
+        }
+      } else {
+        this.clearExportJobTimer()
+      }
+      apiCheckAlbumDownloadStatus()
+    },
+    clearExportJobTimer: function () {
+      if (this.exportJobTimer) {
+        clearInterval(this.exportJobTimer)
+        this.exportJobTimer = null
+      }
+    },
     checkImportStatus: function () {
       apiGetImportStatus(result => {
         if (result.status !== 'IDLE') {
           this.importStatus = result
-          this.timer = setTimeout(this.checkImportStatus, 10000)
+          this.importStatusTimer = setTimeout(this.checkImportStatus, 10000)
         } else {
           this.importStatus = null
 
-          if (this.timer) {
-            clearInterval(this.timer)
+          if (this.importStatusTimer) {
+            clearInterval(this.importStatusTimer)
             if (result.totalImages > 0) {
               this.alert = {
                 title: this.$t('alertTitleImportSuccessful'),
@@ -206,7 +257,7 @@ export default {
                 type: 'success',
                 icon: 'mdi-check-all'
               }
-              this.showAlert = true
+              this.alertShown = true
             } else {
               this.alert = {
                 title: this.$t('alertTitleImportNoUpdate'),
@@ -214,10 +265,10 @@ export default {
                 type: 'info',
                 icon: 'mdi-sync'
               }
-              this.showAlert = true
+              this.alertShown = true
             }
-            clearInterval(this.timer)
-            this.timer = null
+            clearInterval(this.importStatusTimer)
+            this.importStatusTimer = null
           }
         }
       })
@@ -231,7 +282,6 @@ export default {
       this.$refs.loginDialog.show()
     },
     changeLocale (locale) {
-      console.log(locale)
       this.$store.dispatch('setLocale', locale)
     },
     toggleTheme: function () {
@@ -245,46 +295,54 @@ export default {
       apiGetStatsCounts(result => {
         this.counts = result
       })
+    },
+    showDownloadMenu: function (value) {
+      this.downloadMenuShown = value
+
+      if (!this.exportJobTimer) {
+        this.checkExportStatus()
+      }
     }
   },
   mounted: function () {
     this.checkImportStatus()
+    this.checkExportStatus()
     this.updateCounts()
 
     emitter.on('overview-counts-changed', this.updateCounts)
+    emitter.on('show-download-menu', this.showDownloadMenu)
   },
   beforeDestroy: function () {
     emitter.off('overview-counts-changed', this.updateCounts)
+    emitter.off('show-download-menu', this.showDownloadMenu)
   },
   created: async function () {
     await apiGetSettings(result => {
-      // if (result) {
-      //   if (result.googleAnalyticsKey) {
-      //     Vue.use(VueAnalytics, {
-      //       id: result.googleAnalyticsKey,
-      //       router: this.$router,
-      //       autoTracking: {
-      //         exception: true,
-      //         exceptionLogs: false
-      //       }
-      //     })
-      //     // Disable initially, users have to opt-in
-      //     Vue.$ga.disable()
-      //   }
+      if (result) {
+        if (result.plausibleDomain) {
+          getCurrentInstance().use(createPlausible({
+            init: {
+              domain: result.plausibleDomain,
+              hashMode: result.plausibleHashMode || true,
+              apiHost: result.plausibleApiHost || 'https://plausible.io',
+              trackLocalhost: false
+            },
+            settings: {
+              enableAutoPageviews: true
+            }
+          }))
+        }
 
-      //   if (result.plausibleDomain) {
-      //     Vue.use(VuePlausible, {
-      //       domain: result.plausibleDomain,
-      //       hashMode: result.plausibleHashMode || true,
-      //       apiHost: result.plausibleApiHost || 'https://plausible.io',
-      //       trackLocalhost: false
-      //     })
-
-      //     this.$nextTick(() => {
-      //       this.$plausible.enableAutoPageviews()
-      //     })
-      //   }
-      // }
+        if (result.googleAnalyticsKey) {
+          getCurrentInstance().use(VueGtag, {
+            config: {
+              id: result.googleAnalyticsKey
+            },
+            // Disable initially, users have to opt-in
+            bootstrap: false
+          }, this.$router)
+        }
+      }
 
       this.$store.commit('SERVER_SETTINGS_CHANGED_MUTATION', result)
     })

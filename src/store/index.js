@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import { bootstrap } from 'vue-gtag'
 
 let name = process.env.VUE_APP_INSTANCE_NAME
 
@@ -7,9 +8,11 @@ if (!name) {
   name = 'frickl-next-' + window.location.pathname
 }
 
+const essentialKeys = ['token', 'baseUrl', 'serverSettings', 'cookiesAccepted']
+
 export default createStore({
   state: {
-    theme: 'fricklLight',
+    theme: 'fricklDark',
     accessToken: null,
     baseUrl: null,
     token: null,
@@ -17,7 +20,7 @@ export default createStore({
     imagesPerPage: 24,
     albumsPerPage: 24,
     serverSettings: null,
-    cookiesAccepted: false,
+    cookiesAccepted: null,
     albumDownloadJobs: [],
     albumCardSize: 'md',
     imageCardSize: 'md'
@@ -65,22 +68,40 @@ export default createStore({
         state.albumDownloadJobs.push(newAlbumDownloadJob)
       }
     },
+    ALBUM_DOWNLOAD_JOBS_CHANGED_MUTATION: (state, newAlbumDownloadJobs) => {
+      state.albumDownloadJobs = newAlbumDownloadJobs
+    },
     ALBUM_CARD_SIZE_CHANGED_MUTATION: (state, newAlbumCardSize) => {
       state.albumCardSize = newAlbumCardSize
     },
     IMAGE_CARD_SIZE_CHANGED_MUTATION: (state, newImageCardSize) => {
       state.imageCardSize = newImageCardSize
     },
+    COOKIES_ACCEPTED_CHANGED_MUTATION: function (state, newCookiesAccepted) {
+      state.cookiesAccepted = newCookiesAccepted
+
+      if (state.serverSettings && state.serverSettings.googleAnalyticsKey) {
+        if (newCookiesAccepted === true) {
+          bootstrap().then((gtag) => {
+            // all done!
+          })
+        } else {
+          // Do nothing here
+        }
+      }
+    },
     SERVER_SETTINGS_CHANGED_MUTATION: (state, newServerSettings) => {
       state.serverSettings = newServerSettings
 
-      // if (newServerSettings && newServerSettings.googleAnalyticsKey) {
-      //   if (state.cookiesAccepted === true) {
-      //     Vue.$ga.enable()
-      //   } else {
-      //     Vue.$ga.disable()
-      //   }
-      // }
+      if (newServerSettings && newServerSettings.googleAnalyticsKey) {
+        if (state.cookiesAccepted === true) {
+          bootstrap().then((gtag) => {
+            // all done!
+          })
+        } else {
+          //  Do nothing here
+        }
+      }
     },
   },
   actions: {
@@ -108,6 +129,9 @@ export default createStore({
     addAlbumDownloadJob: ({ commit }, albumDownloadJob) => {
       commit('ALBUM_DOWNLOAD_JOB_ADDED_MUTATION', albumDownloadJob)
     },
+    setAlbumDownloadJobs: ({ commit }, albumDownloadJobs) => {
+      commit('ALBUM_DOWNLOAD_JOBS_CHANGED_MUTATION', albumDownloadJobs)
+    },
     setServerSettings: ({ commit }, serverSettings) => {
       commit('SERVER_SETTINGS_CHANGED_MUTATION', serverSettings)
     },
@@ -116,13 +140,31 @@ export default createStore({
     },
     setImageCardSize: ({ commit }, imageCardSize) => {
       commit('IMAGE_CARD_SIZE_CHANGED_MUTATION', imageCardSize)
-    }
+    },
+    setCookiesAccepted: function ({ commit }, cookiesAccepted) {
+      commit('COOKIES_ACCEPTED_CHANGED_MUTATION', cookiesAccepted)
+    },
   },
   modules: {
   },
   plugins: [
     createPersistedState({
-      key: name
+      key: name,
+      reducer: (state, paths) => {
+        const result = JSON.parse(JSON.stringify(state))
+
+        if (result.cookiesAccepted !== true) {
+          Object.keys(result).forEach(k => {
+            if (essentialKeys.indexOf(k) === -1) {
+              delete result[k]
+            }
+          })
+        }
+
+        delete result.accessToken
+
+        return result
+      }
     })
   ]
 })

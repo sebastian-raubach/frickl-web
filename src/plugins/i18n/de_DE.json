@@ -9,6 +9,8 @@
   "buttonClose": "Schließen",
   "buttonRefresh": "Aktualisieren",
   "buttonView": "Ansehen",
+  "buttonAccept": "Akzeptieren",
+  "buttonReject": "Ablehnen",
   "cardTitleAddAlbum": "Album hinzufügen",
   "cardTextAddAlbum": "Um ein neues Album hinzuzufügen, bitte einen Namen und optional eine Beschreibung angeben.",
   "errorLoginFourOThree": "Ungültige Anmeldedaten. Bitte Benutzernamen und Passwort überprüfen.",
@@ -59,5 +61,7 @@
   "widgetMapDateRange": "Datumsauswahl",
   "widgetTagsTitle": "Schlagwörter",
   "widgetTagsText": "Die folgenden Schlagwörter wurden mit diesem Element assoziiert. Klicke auf das Schlagwort um alle Bilder anzuzeigen die mit diesem Schlagwort assoziiert wurden. Klicke auf das x Symbol (falls vorhanden) um das Schlagwort zu entfernen.",
-  "widgetTagsNoData": "Kein Schlagwort gefunden"
+  "widgetTagsNoData": "Kein Schlagwort gefunden",
+  "widgetCookieBannerText": "Frickl nutzt Cookies um das Anmelden und Benutzereinstellungen zu speichern.",
+  "widgetCookieBannerRejectTooltip": "Bitte beachten, dass das Ablehnen von Cookies bestimmte Funktionen von Frickl deaktiviert."
 }
