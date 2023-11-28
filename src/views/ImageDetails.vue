@@ -2,8 +2,12 @@
   <div v-if="image && album">
     <v-toolbar color="secondary">
       <v-breadcrumbs>
-        <v-breadcrumbs-item :title="album.name" />
-        <v-breadcrumbs-divider />
+        <template v-if="hierarchy && hierarchy.length > 0">
+          <template v-for="h in hierarchy" :key="`hierarchy-item-${h.id}`">
+            <v-breadcrumbs-item :title="h.name" :to="{ name: 'albums-for-parent', params: { parentAlbumId: h.id } }" />
+            <v-breadcrumbs-divider />
+          </template>
+        </template>
         <v-breadcrumbs-item :title="image.name" />
       </v-breadcrumbs>
 
@@ -171,7 +175,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { apiGetImageById, apiPostAlbumById, apiPatchImage, apiGetImageTags, apiDeleteImageTag } from '@/plugins/api'
+import { apiGetImageById, apiPostAlbumById, apiPatchImage, apiGetImageTags, apiDeleteImageTag, apiGetImageAlbumHierarchy } from '@/plugins/api'
 import SingleLocationMap from '@/components/SingleLocationMap.vue'
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue'
 import AmbientVideoPlayer from '@/components/AmbientVideoPlayer.vue'
@@ -190,7 +194,8 @@ export default {
       imageSizes: ['TINY', 'SMALL', 'MEDIUM', 'ORIGINAL', 'VIDEO'],
       overlay: false,
       tags: [],
-      selectedTag: null
+      selectedTag: null,
+      hierarchy: []
     }
   },
   computed: {
@@ -290,6 +295,10 @@ export default {
             this.album = result.data[0]
           }
         })
+      })
+
+      apiGetImageAlbumHierarchy(this.imageId, result => {
+        this.hierarchy = result
       })
 
       this.updateTags()

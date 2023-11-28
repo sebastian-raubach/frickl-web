@@ -156,26 +156,15 @@ export default {
     },
     page: function (newValue) {
       this.update()
-      let query = {}
-
-      const current = this.$router.currentRoute.value
-
-      if (current.query) {
-        query = JSON.parse(JSON.stringify(current.query))
-      }
-
-      query.albumPage = newValue
-
-      this.$router.replace({
-        path: current.path,
-        query: query
-      })
+      this.setQuery('albumPage', newValue)
     },
-    orderBy: function () {
+    orderBy: function (newValue) {
       this.update()
+      this.setQuery('albumOrderBy', newValue)
     },
-    ascending: function () {
+    ascending: function (newValue) {
       this.update()
+      this.setQuery('albumAscending', newValue)
     },
     search: function () {
       this.page = 1
@@ -231,6 +220,22 @@ export default {
     }
   },
   methods: {
+    setQuery: function (param, value) {
+      let query = {}
+
+      const current = this.$router.currentRoute.value
+
+      if (current.query) {
+        query = JSON.parse(JSON.stringify(current.query))
+      }
+
+      query[param] = value
+
+      this.$router.replace({
+        path: current.path,
+        query: query
+      })
+    },
     addAlbum: function () {
       this.$refs.addAlbumDialog.show()
     },
@@ -264,8 +269,16 @@ export default {
   mounted: function () {
     const query = this.$route.query
 
-    if (query && query.albumPage) {
-      this.page = +query.albumPage
+    if (query) {
+      if (query.albumPage) {
+        this.page = +query.albumPage
+      }
+      if (query.albumOrderBy) {
+        this.orderBy = query.albumOrderBy
+      }
+      if (query.albumAscending !== undefined && query.albumAscending !== null) {
+        this.ascending = +query.albumAscending
+      }
     }
 
     this.perPage = this.storeAlbumsPerPage

@@ -28,6 +28,7 @@
         </v-btn>
         <v-btn v-if="albumId"
           @click="downloadAlbum"
+          :loading="downloadInProgress"
           variant="tonal">
           <v-icon>mdi-download</v-icon>
         </v-btn>
@@ -184,26 +185,15 @@ export default {
     },
     page: function (newValue) {
       this.update()
-      let query = {}
-
-      const current = this.$router.currentRoute.value
-
-      if (current.query) {
-        query = JSON.parse(JSON.stringify(current.query))
-      }
-
-      query.imagePage = newValue
-
-      this.$router.replace({
-        path: current.path,
-        query: query
-      })
+      this.setQuery('imagePage', newValue)
     },
-    orderBy: function () {
+    orderBy: function (newValue) {
       this.update()
+      this.setQuery('imageOrderBy', newValue)
     },
-    ascending: function () {
+    ascending: function (newValue) {
       this.update()
+      this.setQuery('imageAscending', newValue)
     },
     search: function () {
       this.page = 1
@@ -225,6 +215,7 @@ export default {
       orderBy: 'createdOn',
       ascending: 0,
       cardSize: 'md',
+      downloadInProgress: false,
       heights: {
         lg: 300,
         md: 250,
@@ -259,11 +250,30 @@ export default {
     }
   },
   methods: {
+    setQuery: function (param, value) {
+      let query = {}
+
+      const current = this.$router.currentRoute.value
+
+      if (current.query) {
+        query = JSON.parse(JSON.stringify(current.query))
+      }
+
+      query[param] = value
+
+      this.$router.replace({
+        path: current.path,
+        query: query
+      })
+    },
     downloadAlbum: function () {
+      this.downloadInProgress = true
       apiDownloadAlbum(this.albumId, job => {
         this.$store.dispatch('addAlbumDownloadJob', job)
 
         emitter.emit('show-download-menu', true)
+
+        this.downloadInProgress = false
       })
     },
     showImageUpload: function () {
@@ -309,9 +319,18 @@ export default {
   mounted: function () {
     const query = this.$route.query
 
-    if (query && query.imagePage) {
-      this.page = +query.imagePage
+    if (query) {
+      if (query.imagePage) {
+        this.page = +query.imagePage
+      }
+      if (query.imageOrderBy) {
+        this.orderBy = query.imageOrderBy
+      }
+      if (query.imageAscending !== undefined && query.imageAscending !== null) {
+        this.ascending = +query.imageAscending
+      }
     }
+    
 
     this.perPage = this.storeImagesPerPage
     this.cardSize = this.storeImageCardSize

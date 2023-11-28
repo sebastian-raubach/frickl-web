@@ -34,7 +34,7 @@
                 </template>
                 <template v-slot:prepend>
                   <v-icon icon="mdi-timer-sand" v-if="job.status === 'RUNNING'" />
-                  <v-icon tag="a" class="text-decoration-none" href="#" icon="mdi-download" v-else-if="job.status === 'FINISHED'" />
+                  <v-icon tag="a" class="text-decoration-none" :href="`${storeBaseUrl}album/download/${job.token}`" @click="checkExportStatus(true)" icon="mdi-download" v-else-if="job.status === 'FINISHED'" />
                   <v-icon icon="mdi-alert" v-else-if="job.status === 'EXPIRED'" />
                   <v-icon icon="mdi-help-circle-outline" v-else />
                 </template>
@@ -103,6 +103,7 @@
           </v-list-item>
           <v-list-item prepend-icon="mdi-map-legend" :title="$t('menuMap')" :to="{ name: 'map' }" />
           <v-list-item prepend-icon="mdi-chart-bar-stacked" :title="$t('menuStatistics')" :to="{ name: 'statistics' }" />
+          <v-list-item prepend-icon="mdi-information" :title="$t('menuAbout')" :to="{ name: 'about' }" />
         </v-list>
       </v-navigation-drawer>
 
@@ -179,6 +180,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'storeBaseUrl',
       'storeTheme',
       'storeLocale',
       'storeToken',
@@ -208,6 +210,13 @@ export default {
       handler: function (newValue) {
         this.$vuetify.locale.current = newValue
       }
+    },
+    downloadMenuShown: function (newValue) {
+      if (newValue) {
+        this.checkExportStatus()
+      } else {
+        this.clearExportJobTimer()
+      }
     }
   },
   methods: {
@@ -215,16 +224,21 @@ export default {
     setCookies: function (value) {
       this.$store.dispatch('setCookiesAccepted', value)
     },
-    checkExportStatus: function () {
+    checkExportStatus: function (firstRun = false) {
+      this.clearExportJobTimer()
+
       if (this.storeAlbumDownloadJobs) {
         const toCheck = this.storeAlbumDownloadJobs
-        const keepChecking = toCheck.some(j => j.status === 'RUNNING')
+        // const keepChecking = toCheck.some(j => j.status === 'RUNNING')
 
-        if (toCheck.length > 0 && keepChecking) {
+        if (firstRun || toCheck.length > 0) {
           apiCheckAlbumDownloadStatus(toCheck.map(j => j.token), result => {
-            this.$store.dispatch('setAlbumDownloadJobs', result)
+            console.log('checking jobs', result)
+            this.$store.dispatch('setAlbumDownloadJobs', result.filter(j => j.status !== 'EXPIRED'))
 
-            this.exportJobTimer = setTimeout(this.checkExportStatus, 10000)
+            if (!this.exportJobTimer) {
+              this.exportJobTimer = setTimeout(this.checkExportStatus, 10000)
+            }
           })
         } else {
           this.clearExportJobTimer()
@@ -298,15 +312,11 @@ export default {
     },
     showDownloadMenu: function (value) {
       this.downloadMenuShown = value
-
-      if (!this.exportJobTimer) {
-        this.checkExportStatus()
-      }
     }
   },
   mounted: function () {
     this.checkImportStatus()
-    this.checkExportStatus()
+    this.checkExportStatus(true)
     this.updateCounts()
 
     emitter.on('overview-counts-changed', this.updateCounts)
@@ -361,5 +371,10 @@ export default {
 .v-card-actions {
   flex-wrap: wrap;
   justify-content: end;
+}
+
+.v-application p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
 }
 </style>

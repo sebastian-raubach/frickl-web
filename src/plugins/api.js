@@ -178,6 +178,8 @@ const apiDownloadAlbum = (albumId, onSuccess, onError) => apiAxios({ url: `album
 
 const apiCheckAlbumDownloadStatus = (uuids, onSuccess, onError) => apiAxios({ url: 'album/download/status', method: 'POST', data: uuids, success: onSuccess, error: onError })
 
+const apiGetImageAlbumHierarchy = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/hierarchy`, success: onSuccess, error: onError })
+
 export {
   getToken,
   apiAxios,
@@ -199,5 +201,6 @@ export {
   apiGetImportStatus,
   apiPutAlbum,
   apiDownloadAlbum,
-  apiCheckAlbumDownloadStatus
+  apiCheckAlbumDownloadStatus,
+  apiGetImageAlbumHierarchy
 }

@@ -1,4 +1,4 @@
-FROM node:16-alpine AS builder
+FROM node:20.0-alpine3.17 AS builder
 
 LABEL maintainer="bazraubach@gmail.com"
 
