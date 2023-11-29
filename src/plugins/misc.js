@@ -1,5 +1,9 @@
 import store from '@/store'
 
+const userHasPermission = (toCheck, required) => {
+  return (toCheck & required) === required
+}
+
 /**
  * Formats the given value into a human-readable number (e.g. 1.000 -> 1K, 1.000.000 -> 1G)
  * @param {Number} value The value to format
@@ -43,5 +47,6 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
 }
 
 export {
+  userHasPermission,
   getNumberWithSuffix
 }
