@@ -20,7 +20,7 @@
         :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
-      <template v-if="storeToken">
+      <template v-if="storeUserPermissions && storeUserPermissions['ALBUM_CREATE']">
         <v-btn-group density="compact" class="me-3">
           <v-btn
             @click="addAlbum"
@@ -121,7 +121,7 @@ export default {
   computed: {
     ...mapGetters([
       'storeAlbumsPerPage',
-      'storeToken',
+      'storeUserPermissions',
       'storeAlbumCardSize'
     ]),
     disabled: function () {

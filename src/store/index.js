@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import { bootstrap } from 'vue-gtag'
+import { userHasPermission } from '@/plugins/misc'
 
 let name = process.env.VUE_APP_INSTANCE_NAME
 
@@ -30,6 +31,17 @@ export default createStore({
     storeAccessToken: (state) => state.accessToken,
     storeBaseUrl: (state) => state.baseUrl,
     storeToken: (state) => state.token,
+    storeUserPermissions: (state) => {
+      const result = {}
+
+      if (state.token && state.token.allPermissions && state.token.permissions) {
+        state.token.allPermissions.forEach(p => {
+          result[p.name] = userHasPermission(state.token.permissions, p.code)
+        })
+      }
+      
+      return result
+    },
     storeLocale: (state) => state.locale,
     storeImagesPerPage: (state) => state.imagesPerPage,
     storeAlbumsPerPage: (state) => state.albumsPerPage,

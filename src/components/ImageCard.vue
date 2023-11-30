@@ -35,14 +35,16 @@
       </v-list-item>
     </v-img>
 
+    <slot></slot>
+
     <v-card-actions>
       <v-btn color="primary" variant="text" :to="{ name: 'image-details', params: { imageId: image.id } }">{{ $t('buttonView') }}</v-btn>
       <v-spacer></v-spacer>
-      <v-btn size="small" :disabled="!storeToken" color="red" variant="text" icon="mdi-heart" @click.stop.prevent="$emit('onFavoriteChanged')" v-if="image.isFavorite === 1"></v-btn>
-      <v-btn size="small" :disabled="!storeToken" :color="null" variant="text" icon="mdi-heart-outline" @click.stop.prevent="$emit('onFavoriteChanged')" v-else></v-btn>
+      <v-btn size="small" :disabled="!canEdit" color="red" variant="text" icon="mdi-heart" @click.stop.prevent="$emit('onFavoriteChanged')" v-if="image.isFavorite === 1"></v-btn>
+      <v-btn size="small" :disabled="!canEdit" :color="null" variant="text" icon="mdi-heart-outline" @click.stop.prevent="$emit('onFavoriteChanged')" v-else></v-btn>
 
-      <v-btn size="small" :disabled="!storeToken" color="blue" variant="text" icon="mdi-lock-open-variant" @click.stop.prevent="$emit('onPublicChanged')" v-if="image.isPublic === 1"></v-btn>
-      <v-btn size="small" :disabled="!storeToken" :color="null" variant="text" icon="mdi-lock" @click.stop.prevent="$emit('onPublicChanged')" v-else></v-btn>
+      <v-btn size="small" :disabled="!canEdit" color="blue" variant="text" icon="mdi-lock-open-variant" @click.stop.prevent="$emit('onPublicChanged')" v-if="image.isPublic === 1"></v-btn>
+      <v-btn size="small" :disabled="!canEdit" :color="null" variant="text" icon="mdi-lock" @click.stop.prevent="$emit('onPublicChanged')" v-else></v-btn>
 
       <v-btn size="small" :color="null" variant="text" :icon="image.dataType === 'video' ? 'mdi-play' : 'mdi-magnify-plus'" @click.stop.prevent="overlay = true"></v-btn>
 
@@ -80,8 +82,12 @@ export default {
     ...mapGetters([
       'storeBaseUrl',
       'storeToken',
+      'storeUserPermissions',
       'storeAccessToken'
     ]),
+    canEdit: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['IMAGE_EDIT']
+    },
     creationDate: function () {
       let result = null
 

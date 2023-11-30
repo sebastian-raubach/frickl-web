@@ -377,4 +377,8 @@ export default {
   margin-bottom: 1rem;
   line-height: 1.8;
 }
+
+.position-relative {
+  position: relative;
+}
 </style>

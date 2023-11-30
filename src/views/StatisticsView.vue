@@ -6,7 +6,7 @@
     <v-divider class="mb-3" />
 
     <v-chip-group v-model="selectedYear" column selected-class="text-primary">
-      <v-chip v-for="year in years" :key="`year-${year.year}`" filter>{{ year.year }} <v-badge :content="year.count" inline /></v-chip>
+      <v-chip label v-for="year in years" :key="`year-${year.year}`" filter>{{ year.year }} <v-badge :content="year.count" inline /></v-chip>
     </v-chip-group>
     
     <ImageHeatmapChart :chartData="chartData" v-if="chartData && chartData.length > 0" @date-selected="setDate" />

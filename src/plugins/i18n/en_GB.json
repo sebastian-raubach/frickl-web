@@ -75,5 +75,6 @@
   "widgetTagsText": "The following tags have been associated with this item. Click on a tag to see all images associated with this tag. Click on the x icon (if available) to remove  the tag.",
   "widgetTagsNoData": "No tags found",
   "widgetCookieBannerText": "Frickl uses cookies to facilitate user login and to remember user preferences.",
-  "widgetCookieBannerRejectTooltip": "Please be aware that rejecting cookies will disable certain features of Frickl."
+  "widgetCookieBannerRejectTooltip": "Please be aware that rejecting cookies will disable certain features of Frickl.",
+  "widgetGallerySelectionCount": "One selected|One selected|{count} selected"
 }

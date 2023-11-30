@@ -21,10 +21,16 @@
         density="compact" />
       <v-spacer></v-spacer>
       <v-btn-group density="compact" class="me-3">
-        <v-btn v-if="storeToken"
+        <v-btn v-if="canUpload"
           @click="showImageUpload"
           variant="tonal">
           <v-icon>mdi-image-plus</v-icon>
+        </v-btn>
+        <v-btn v-if="canAddTag || canDelete"
+          :active="hasItemsSelected"
+          :color="hasItemsSelected ? 'primary' : null"
+          variant="tonal">
+          <v-icon>mdi-checkbox-multiple-marked-outline</v-icon> <span v-if="hasItemsSelected">{{ $t('widgetGallerySelectionCount', selectedItemCount) }}</span>
         </v-btn>
         <v-btn v-if="albumId"
           @click="downloadAlbum"
@@ -56,7 +62,9 @@
       </v-col>
 
       <v-col :cols="widths[cardSize].cols" :sm="widths[cardSize].sm" :md="widths[cardSize].md" :lg="widths[cardSize].lg" :xl="widths[cardSize].xl" :xxl="widths[cardSize].xxl" v-for="(image, index) in images" :key="`image-card-${image.id}`" v-else>
-        <ImageCard :height="heights[cardSize]" :image="image" @onPublicChanged="togglePublic(index)" @onFavoriteChanged="toggleFavorite(index)" />
+        <ImageCard :height="selectedItems[image.id] ? heightsSelected[cardSize] : heights[cardSize]" :image="image" @onPublicChanged="togglePublic(index)" @onFavoriteChanged="toggleFavorite(index)" :class="`position-relative image-card ${selectedItems[image.id] ? 'ma-2 selected' : null}`">
+          <v-checkbox v-model="selectedItems[image.id]" class="card-selection-button ma-2" v-if="canAddTag || canDelete" />
+        </ImageCard>
       </v-col>
     </v-row>
 
@@ -130,9 +138,24 @@ export default {
   computed: {
     ...mapGetters([
       'storeImagesPerPage',
-      'storeToken',
+      'storeUserPermissions',
       'storeImageCardSize'
     ]),
+    hasItemsSelected: function () {
+      return Object.values(this.selectedItems).some(k => k)
+    },
+    selectedItemCount: function () {
+      return Object.values(this.selectedItems).filter(k => k).length
+    },
+    canUpload: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['IMAGE_UPLOAD']
+    },
+    canDelete: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['IMAGE_DELETE']
+    },
+    canAddTag: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['TAG_ADD']
+    },
     imageLocations: function () {
       if (this.images) {
         return this.images.filter(i => i.exif && i.exif.gpsLatitude && i.exif.gpsLongitude).map(i => {
@@ -216,10 +239,16 @@ export default {
       ascending: 0,
       cardSize: 'md',
       downloadInProgress: false,
+      selectedItems: {},
       heights: {
         lg: 300,
         md: 250,
         sm: 200
+      },
+      heightsSelected: {
+        lg: 280,
+        md: 230,
+        sm: 180
       },
       widths: {
         lg: {
@@ -250,6 +279,13 @@ export default {
     }
   },
   methods: {
+    toggle: function (imageId) {
+      if (this.selectedItems[imageId]) {
+        delete this.selectedItems[imageId]
+      } else {
+        this.selectedItems[imageId] = true
+      }
+    },
     setQuery: function (param, value) {
       let query = {}
 
@@ -298,6 +334,10 @@ export default {
       this.update()
     },
     update: function () {
+      const temp = {}
+      Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => { temp[k] = true })
+      this.selectedItems = temp
+
       this.getData({
         page: this.page - 1,
         limit: this.perPage,
@@ -338,3 +378,23 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.card-selection-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.image-card .card-selection-button {
+  visibility: hidden;
+}
+
+.image-card:hover .card-selection-button {
+  visibility: initial;
+}
+
+.image-card.selected .card-selection-button {
+  visibility: initial;
+}
+</style>
