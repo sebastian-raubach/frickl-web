@@ -3,17 +3,21 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
 
-import en from '@/plugins/i18n/en_GB.json'
-import de from '@/plugins/i18n/de_DE.json'
+import enGB from '@/plugins/i18n/en_GB.json'
+import deDE from '@/plugins/i18n/de_DE.json'
 
 import { createI18n, useI18n } from 'vue-i18n'
+import { en, de } from 'vuetify/locale'
+
+enGB.$vuetify = en
+deDE.$vuetify = de
 
 const i18n = createI18n({
   locale: 'en',
   fallbackLocale: 'en',
   messages: {
-    en,
-    de
+    en: enGB,
+    de: deDE
   },
   legacy: false,
   globalInjection: true
@@ -21,14 +25,8 @@ const i18n = createI18n({
 
 // Vuetify
 import { createVuetify } from 'vuetify'
-import {
-  VDataTable
-} from 'vuetify/labs/VDataTable'
 
 const vuetify = createVuetify({
-  components: {
-    VDataTable
-  },
   theme: {
     defaultTheme: 'fricklDark',
     themes: {

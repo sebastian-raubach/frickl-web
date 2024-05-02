@@ -10,14 +10,14 @@
       Images
     </h1>
     <v-divider class="mb-3" />
-    <ImageGallery :getData="getImages" :albumId="parentAlbumId" />
+    <ImageGallery :getData="getImages" :getIds="getIds" :albumId="parentAlbumId" />
   </v-container>
 </template>
 
 <script>
 import AlbumGallery from '@/components/AlbumGallery.vue'
 import ImageGallery from '@/components/ImageGallery.vue'
-import { apiPostAlbums, apiPostImages } from '@/plugins/api'
+import { apiPostAlbums, apiPostImages, apiPostImageIds } from '@/plugins/api'
 
 export default {
   components: {
@@ -37,6 +37,10 @@ export default {
     getImages: function (params) {
       const adjusted = Object.assign({}, params, { albumId: this.parentAlbumId })
       return apiPostImages(adjusted)
+    },
+    getIds: function (params) {
+      const adjusted = Object.assign({}, params, { albumId: this.parentAlbumId })
+      return apiPostImageIds(adjusted)
     }
   },
   created: function () {

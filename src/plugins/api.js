@@ -150,9 +150,19 @@ const apiGetLocations = (onSuccess, onError) => apiAxios({ url: 'location', succ
 
 const apiPostImages = (data, onSuccess, onError) => apiAxios({ url: 'image', method: 'POST', data: data, success: onSuccess, error: onError })
 
+const apiPostImageIds = (data, onSuccess, onError) => apiAxios({ url: 'image/ids', method: 'POST', data: data, success: onSuccess, error: onError })
+
 const apiPostAlbums = (data, onSuccess, onError) => apiAxios({ url: 'album', method: 'POST', data: data, success: onSuccess, error: onError })
 
 const apiGetImageTags = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/tag`, success: onSuccess, error: onError })
+
+const apiDeleteAlbum = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}`, method: 'DELETE', success: onSuccess, error: onError })
+
+const apiDeleteAlbums = (albumIds, onSuccess, onError) => apiAxios({ url: 'album', method: 'DELETE', data: albumIds, success: onSuccess, error: onError })
+
+const apiDeleteImage = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}`, method: 'DELETE', success: onSuccess, error: onError })
+
+const apiDeleteImages = (imageIds, onSuccess, onError) => apiAxios({ url: 'image', method: 'DELETE', data: imageIds, success: onSuccess, error: onError })
 
 const apiDeleteImageTag = (imageId, tagId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/tag/${tagId}`, method: 'DELETE', success: onSuccess, error: onError })
 
@@ -174,11 +184,21 @@ const apiGetImportStatus = (onSuccess, onError) => apiAxios({ url: 'status', suc
 
 const apiPutAlbum = (album, onSuccess, onError) => apiAxios({ url: 'album', method: 'PUT', data: album, success: onSuccess, error: onError })
 
-const apiDownloadAlbum = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}/download`, success: onSuccess, error: onError })
+const apiGetDownloadAlbum = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}/download`, success: onSuccess, error: onError })
 
-const apiCheckAlbumDownloadStatus = (uuids, onSuccess, onError) => apiAxios({ url: 'album/download/status', method: 'POST', data: uuids, success: onSuccess, error: onError })
+const apiPostDownloadImages = (imageIds, onSuccess, onError) => apiAxios({ url: 'image/download', method: 'POST', data: imageIds, success: onSuccess, error: onError })
+
+const apiCheckDownloadStatus = (uuids, onSuccess, onError) => apiAxios({ url: 'download/status', method: 'POST', data: uuids, success: onSuccess, error: onError })
 
 const apiGetImageAlbumHierarchy = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/hierarchy`, success: onSuccess, error: onError })
+
+const apiPostUsers = (data, onSuccess, onError) => apiAxios({ url: 'user', method: 'POST', data: data, success: onSuccess, error: onError })
+
+const apiPutUsers = (data, onSuccess, onError) => apiAxios({ url: 'user', method: 'PUT', data: data, success: onSuccess, error: onError })
+
+const apiDeleteUser = (userId, onSuccess, onError) => apiAxios({ url: `user/${userId}`, method: 'DELETE', success: onSuccess, error: onError })
+
+const apiPatchUser = (userId, data, onSuccess, onError) => apiAxios({ url: `user/${userId}`, method: 'PATCH', data: data, success: onSuccess, error: onError })
 
 export {
   getToken,
@@ -189,6 +209,7 @@ export {
   apiPatchImage,
   apiGetLocations,
   apiPostImages,
+  apiPostImageIds,
   apiPostToken,
   apiGetStatsCounts,
   apiGetImageTags,
@@ -200,7 +221,16 @@ export {
   apiScanAlbum,
   apiGetImportStatus,
   apiPutAlbum,
-  apiDownloadAlbum,
-  apiCheckAlbumDownloadStatus,
-  apiGetImageAlbumHierarchy
+  apiGetDownloadAlbum,
+  apiPostDownloadImages,
+  apiCheckDownloadStatus,
+  apiGetImageAlbumHierarchy,
+  apiDeleteAlbum,
+  apiDeleteAlbums,
+  apiDeleteImage,
+  apiDeleteImages,
+  apiPostUsers,
+  apiPutUsers,
+  apiDeleteUser,
+  apiPatchUser
 }

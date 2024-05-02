@@ -5,7 +5,7 @@
       :lazy-src="imgSrc['TINY']"
       class="align-end"
       :height="height"
-      gradient="to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, rgba(0,0,0,.8)"
+      gradient="to bottom, rgba(0,0,0,.6) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,.6)"
       cover>
       <template v-slot:placeholder>
         <div class="d-flex align-center justify-center fill-height"  v-if="album.bannerImageId">
@@ -38,6 +38,8 @@
         </template>
       </v-list-item>
     </v-img>
+
+    <slot></slot>
 
     <v-card-actions>
       <v-btn color="primary" variant="text" :to="{ name: 'albums-for-parent', params: { parentAlbumId: album.id } }">{{ $t('buttonView') }}</v-btn>

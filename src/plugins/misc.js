@@ -1,5 +1,7 @@
 import store from '@/store'
 
+const MAX_JAVA_INTEGER = 2147483647
+
 const userHasPermission = (toCheck, required) => {
   return (toCheck & required) === required
 }
@@ -48,5 +50,6 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
 
 export {
   userHasPermission,
-  getNumberWithSuffix
+  getNumberWithSuffix,
+  MAX_JAVA_INTEGER
 }

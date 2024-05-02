@@ -34,7 +34,7 @@
                 </template>
                 <template v-slot:prepend>
                   <v-icon icon="mdi-timer-sand" v-if="job.status === 'RUNNING'" />
-                  <v-icon tag="a" class="text-decoration-none" :href="`${storeBaseUrl}album/download/${job.token}`" @click="checkExportStatus(true)" icon="mdi-download" v-else-if="job.status === 'FINISHED'" />
+                  <v-icon tag="a" class="text-decoration-none" :href="`${storeBaseUrl}download/${job.token}`" @click="checkExportStatus(true)" icon="mdi-download" v-else-if="job.status === 'FINISHED'" />
                   <v-icon icon="mdi-alert" v-else-if="job.status === 'EXPIRED'" />
                   <v-icon icon="mdi-help-circle-outline" v-else />
                 </template>
@@ -68,7 +68,7 @@
         <v-list>
           <v-list-item
             :title="$t(storeToken ? 'menuUserInfoType' : 'menuUserNotLoggedIn')"
-            :subtitle="$t(storeToken ? 'menuUserInfoExplanation' : 'menuUserNotLoggedInExplanation')">
+            :subtitle="storeToken ? storeToken.username : $t('menuUserNotLoggedInExplanation')">
             <template v-slot:prepend>
               <v-avatar color="secondary">
                 <v-icon color="black" v-if="storeToken">mdi-account</v-icon>
@@ -139,7 +139,7 @@
 <script>
 import LoginDialog from '@/components/dialogs/LoginDialog.vue'
 import { mapGetters } from 'vuex'
-import { apiCheckAlbumDownloadStatus, apiGetImportStatus, apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
+import { apiCheckDownloadStatus, apiGetImportStatus, apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
 import { getNumberWithSuffix } from '@/plugins/misc'
 
 import emitter from 'tiny-emitter/instance'
@@ -184,12 +184,12 @@ export default {
       'storeTheme',
       'storeLocale',
       'storeToken',
-      'storeAlbumDownloadJobs',
+      'storeDownloadJobs',
       'storeCookiesAccepted'
     ]),
     downloadJobs: function () {
-      if (this.storeAlbumDownloadJobs) {
-        return this.storeAlbumDownloadJobs.concat().sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
+      if (this.storeDownloadJobs) {
+        return this.storeDownloadJobs.concat().sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
       } else {
         return []
       }
@@ -227,14 +227,14 @@ export default {
     checkExportStatus: function (firstRun = false) {
       this.clearExportJobTimer()
 
-      if (this.storeAlbumDownloadJobs) {
-        const toCheck = this.storeAlbumDownloadJobs
+      if (this.storeDownloadJobs) {
+        const toCheck = this.storeDownloadJobs
         // const keepChecking = toCheck.some(j => j.status === 'RUNNING')
 
         if (firstRun || toCheck.length > 0) {
-          apiCheckAlbumDownloadStatus(toCheck.map(j => j.token), result => {
+          apiCheckDownloadStatus(toCheck.map(j => j.token), result => {
             console.log('checking jobs', result)
-            this.$store.dispatch('setAlbumDownloadJobs', result.filter(j => j.status !== 'EXPIRED'))
+            this.$store.dispatch('setDownloadJobs', result.filter(j => j.status !== 'EXPIRED'))
 
             if (!this.exportJobTimer) {
               this.exportJobTimer = setTimeout(this.checkExportStatus, 10000)
@@ -246,7 +246,7 @@ export default {
       } else {
         this.clearExportJobTimer()
       }
-      apiCheckAlbumDownloadStatus()
+      apiCheckDownloadStatus()
     },
     clearExportJobTimer: function () {
       if (this.exportJobTimer) {

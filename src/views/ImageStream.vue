@@ -4,13 +4,13 @@
       Image stream
     </h1>
     <v-divider class="mb-3" />
-    <ImageGallery :getData="getImages" />
+    <ImageGallery :getData="getImages" :getIds="getIds" />
   </v-container>
 </template>
 
 <script>
 import ImageGallery from '@/components/ImageGallery.vue'
-import { apiPostImages } from '@/plugins/api'
+import { apiPostImageIds, apiPostImages } from '@/plugins/api'
 
 export default {
   components: {
@@ -20,6 +20,10 @@ export default {
     getImages: function (params) {
       const adjusted = Object.assign({}, params, { albumId: -1 })
       return apiPostImages(adjusted)
+    },
+    getIds: function (params) {
+      const adjusted = Object.assign({}, params, { albumId: -1 })
+      return apiPostImageIds(adjusted)
     }
   }
 }

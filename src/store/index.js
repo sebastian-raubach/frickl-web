@@ -22,7 +22,7 @@ export default createStore({
     albumsPerPage: 24,
     serverSettings: null,
     cookiesAccepted: null,
-    albumDownloadJobs: [],
+    downloadJobs: [],
     albumCardSize: 'md',
     imageCardSize: 'md'
   },
@@ -47,7 +47,7 @@ export default createStore({
     storeAlbumsPerPage: (state) => state.albumsPerPage,
     storeServerSettings: (state) => state.serverSettings,
     storeCookiesAccepted: (state) => state.cookiesAccepted,
-    storeAlbumDownloadJobs: (state) => state.albumDownloadJobs,
+    storeDownloadJobs: (state) => state.downloadJobs,
     storeAlbumCardSize: (state) => state.albumCardSize,
     storeImageCardSize: (state) => state.imageCardSize
   },
@@ -73,15 +73,15 @@ export default createStore({
     ALBUMS_PER_PAGE_CHANGED_MUTATION: (state, newAlbumsPerPage) => {
       state.albumsPerPage = newAlbumsPerPage
     },
-    ALBUM_DOWNLOAD_JOB_ADDED_MUTATION: (state, newAlbumDownloadJob) => {
-      if (!state.albumDownloadJobs) {
-        state.albumDownloadJobs = [newAlbumDownloadJob]
+    DOWNLOAD_JOB_ADDED_MUTATION: (state, newDownloadJob) => {
+      if (!state.downloadJobs) {
+        state.downloadJobs = [newDownloadJob]
       } else {
-        state.albumDownloadJobs.push(newAlbumDownloadJob)
+        state.downloadJobs.push(newDownloadJob)
       }
     },
-    ALBUM_DOWNLOAD_JOBS_CHANGED_MUTATION: (state, newAlbumDownloadJobs) => {
-      state.albumDownloadJobs = newAlbumDownloadJobs
+    DOWNLOAD_JOBS_CHANGED_MUTATION: (state, newDownloadJobs) => {
+      state.downloadJobs = newDownloadJobs
     },
     ALBUM_CARD_SIZE_CHANGED_MUTATION: (state, newAlbumCardSize) => {
       state.albumCardSize = newAlbumCardSize
@@ -138,11 +138,11 @@ export default createStore({
     setAlbumsPerPage: ({ commit }, albumsPerPage) => {
       commit('ALBUMS_PER_PAGE_CHANGED_MUTATION', albumsPerPage)
     },
-    addAlbumDownloadJob: ({ commit }, albumDownloadJob) => {
-      commit('ALBUM_DOWNLOAD_JOB_ADDED_MUTATION', albumDownloadJob)
+    addDownloadJob: ({ commit }, downloadJob) => {
+      commit('DOWNLOAD_JOB_ADDED_MUTATION', downloadJob)
     },
-    setAlbumDownloadJobs: ({ commit }, albumDownloadJobs) => {
-      commit('ALBUM_DOWNLOAD_JOBS_CHANGED_MUTATION', albumDownloadJobs)
+    setDownloadJobs: ({ commit }, downloadJobs) => {
+      commit('DOWNLOAD_JOBS_CHANGED_MUTATION', downloadJobs)
     },
     setServerSettings: ({ commit }, serverSettings) => {
       commit('SERVER_SETTINGS_CHANGED_MUTATION', serverSettings)

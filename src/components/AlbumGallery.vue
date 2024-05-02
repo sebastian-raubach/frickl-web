@@ -20,15 +20,26 @@
         :label="$t('formLabelSortBy')"
         density="compact" />
       <v-spacer></v-spacer>
-      <template v-if="storeUserPermissions && storeUserPermissions['ALBUM_CREATE']">
-        <v-btn-group density="compact" class="me-3">
-          <v-btn
-            @click="addAlbum"
-            variant="tonal">
-            <v-icon>mdi-folder-plus</v-icon>
-          </v-btn>
-        </v-btn-group>
-      </template>
+      <v-btn-group density="compact" class="me-3">
+        <v-btn
+          v-if="canCreate"
+          @click="addAlbum"
+          variant="tonal">
+          <v-icon>mdi-folder-plus</v-icon>
+        </v-btn>
+        <v-btn v-if="hasItemsSelected && (canAddTag || canDelete)"
+          active
+          color="primary"
+          variant="tonal">
+          <v-icon>mdi-checkbox-multiple-marked-outline</v-icon> <span v-if="hasItemsSelected">{{ $t('widgetGallerySelectionCount', selectedItemCount) }}</span>
+          <v-menu activator="parent" v-if="hasItemsSelected">
+            <v-list>
+              <v-list-item href="#" @click.prevent="onAddTagClicked" :disabled="!canAddTag">{{ $t('buttonAddTag') }}</v-list-item>
+              <v-list-item href="#" @click.prevent="onDeleteClicked" :disabled="!canDelete">{{ $t('buttonDelete') }}</v-list-item>
+            </v-list>
+          </v-menu>
+        </v-btn>
+      </v-btn-group>
       <v-btn-toggle
         v-model="ascending"
         density="compact"
@@ -52,7 +63,9 @@
       </v-col>
 
       <v-col :cols="widths[cardSize].cols" :sm="widths[cardSize].sm" :md="widths[cardSize].md" :lg="widths[cardSize].lg" :xl="widths[cardSize].xl" :xxl="widths[cardSize].xxl" v-for="album in albums" :key="`album-card-${album.id}`" v-else>
-        <AlbumCard :height="heights[cardSize]" :album="album" />
+        <AlbumCard :height="selectedItems[album.id] ? heightsSelected[cardSize] : heights[cardSize]" :album="album" :class="`position-relative image-card ${selectedItems[album.id] ? 'ma-2 selected' : null}`">
+          <v-checkbox v-model="selectedItems[album.id]" class="card-selection-button ma-2" v-if="canAddTag || canDelete" />
+        </AlbumCard>
       </v-col>
     </v-row>
 
@@ -102,6 +115,7 @@
 import AlbumCard from '@/components/AlbumCard.vue'
 import AddAlbumDialog from '@/components/dialogs/AddAlbumDialog.vue'
 import { mapGetters } from 'vuex'
+import { apiDeleteAlbums } from '@/plugins/api'
 
 export default {
   components: {
@@ -124,6 +138,21 @@ export default {
       'storeUserPermissions',
       'storeAlbumCardSize'
     ]),
+    hasItemsSelected: function () {
+      return Object.values(this.selectedItems).some(k => k)
+    },
+    selectedItemCount: function () {
+      return Object.values(this.selectedItems).filter(k => k).length
+    },
+    canDelete: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['ALBUM_DELETE']
+    },
+    canAddTag: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['TAG_ADD']
+    },
+    canCreate: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['ALBUM_CREATE']
+    },
     disabled: function () {
       return this.albumCount === 0
     },
@@ -186,10 +215,16 @@ export default {
       orderBy: 'createdOn',
       ascending: 0,
       cardSize: 'md',
+      selectedItems: {},
       heights: {
         lg: 300,
         md: 250,
         sm: 200
+      },
+      heightsSelected: {
+        lg: 280,
+        md: 230,
+        sm: 180
       },
       widths: {
         lg: {
@@ -220,6 +255,20 @@ export default {
     }
   },
   methods: {
+    onDeleteClicked: function () {
+      const ids = Object.keys(this.selectedItems).filter(k => this.selectedItems[k])
+
+      apiDeleteAlbums(ids, result => {
+        this.reset()
+      })
+    },
+    toggle: function (albumId) {
+      if (this.selectedItems[albumId]) {
+        delete this.selectedItems[albumId]
+      } else {
+        this.selectedItems[albumId] = true
+      }
+    },
     setQuery: function (param, value) {
       let query = {}
 
@@ -243,11 +292,16 @@ export default {
       this.search = this.tempSearch
     },
     reset: function () {
+      this.selectedItems = {}
       this.page = 1
       this.albumCount = -1
       this.update()
     },
     update: function () {
+      const temp = {}
+      Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => { temp[k] = true })
+      this.selectedItems = temp
+
       this.getData({
         page: this.page - 1,
         limit: this.perPage,
@@ -287,3 +341,25 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.card-selection-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  mix-blend-mode: color-dodge;
+  color: #ccc;
+}
+
+.image-card .card-selection-button {
+  visibility: hidden;
+}
+
+.image-card:hover .card-selection-button {
+  visibility: initial;
+}
+
+.image-card.selected .card-selection-button {
+  visibility: initial;
+}
+</style>

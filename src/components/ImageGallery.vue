@@ -26,11 +26,30 @@
           variant="tonal">
           <v-icon>mdi-image-plus</v-icon>
         </v-btn>
-        <v-btn v-if="canAddTag || canDelete"
-          :active="hasItemsSelected"
-          :color="hasItemsSelected ? 'primary' : null"
+        <v-btn v-if="hasItemsSelected && (canAddTag || canDelete)"
+          active
+          color="primary"
           variant="tonal">
           <v-icon>mdi-checkbox-multiple-marked-outline</v-icon> <span v-if="hasItemsSelected">{{ $t('widgetGallerySelectionCount', selectedItemCount) }}</span>
+          <v-menu activator="parent" v-if="hasItemsSelected">
+            <v-list>
+              <v-list-item href="#" @click.prevent="downloadSelectedImages" :disabled="downloadInProgress"><v-icon>mdi-download</v-icon> {{ $t('buttonDownload') }}</v-list-item>
+              <v-list-item href="#" @click.prevent="onAddTagClicked" :disabled="!canAddTag"><v-icon>mdi-tag-plus</v-icon> {{ $t('buttonAddTag') }}</v-list-item>
+              <v-list-item href="#" @click.prevent="onDeleteClicked" :disabled="!canDelete"><v-icon>mdi-delete</v-icon> {{ $t('buttonDelete') }}</v-list-item>
+              <v-list-item>
+                <v-btn-group density="compact">
+                  <v-btn @click="markIds(true)"
+                    variant="tonal">
+                    <v-icon>mdi-checkbox-multiple-marked-outline</v-icon> {{ $t('buttonAll') }}
+                  </v-btn>
+                  <v-btn @click="markIds(false)"
+                    variant="tonal">
+                    <v-icon>mdi-checkbox-multiple-blank-outline</v-icon> {{ $t('buttonNone') }}
+                  </v-btn>
+                </v-btn-group>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-btn>
         <v-btn v-if="albumId"
           @click="downloadAlbum"
@@ -116,8 +135,9 @@ import ImageCard from '@/components/ImageCard.vue'
 import MultiLocationMap from '@/components/MultiLocationMap.vue'
 import UploadDialog from '@/components/dialogs/UploadDialog.vue'
 import { mapGetters } from 'vuex'
-import { apiDownloadAlbum, apiPatchImage } from '@/plugins/api'
+import { apiDeleteImages, apiGetDownloadAlbum, apiPatchImage, apiPostDownloadImages } from '@/plugins/api'
 import emitter from 'tiny-emitter/instance'
+import { MAX_JAVA_INTEGER } from '@/plugins/misc'
 
 export default {
   components: {
@@ -133,6 +153,10 @@ export default {
     getData: {
       type: Function,
       default: () => { return { count: 0, data: [] } }
+    },
+    getIds: {
+      type: Function,
+      default: () => { return [] }
     }
   },
   computed: {
@@ -279,6 +303,14 @@ export default {
     }
   },
   methods: {
+    onDeleteClicked: function () {
+      const ids = Object.keys(this.selectedItems).map(Number)
+
+      apiDeleteImages(ids, () => {
+        this.selectedItems = {}
+        this.update()
+      })
+    },
     toggle: function (imageId) {
       if (this.selectedItems[imageId]) {
         delete this.selectedItems[imageId]
@@ -302,10 +334,22 @@ export default {
         query: query
       })
     },
+    downloadSelectedImages: function () {
+      this.downloadInProgress = true
+      const imageIds = []
+      Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => { imageIds.push(+k) })
+      apiPostDownloadImages(imageIds, job => {
+        this.$store.dispatch('addDownloadJob', job)
+
+        emitter.emit('show-download-menu', true)
+
+        this.downloadInProgress = false
+      })
+    },
     downloadAlbum: function () {
       this.downloadInProgress = true
-      apiDownloadAlbum(this.albumId, job => {
-        this.$store.dispatch('addAlbumDownloadJob', job)
+      apiGetDownloadAlbum(this.albumId, job => {
+        this.$store.dispatch('addDownloadJob', job)
 
         emitter.emit('show-download-menu', true)
 
@@ -329,11 +373,31 @@ export default {
       this.search = this.tempSearch
     },
     reset: function () {
+      this.selectedItems = {}
       this.page = 1
       this.imageCount = -1
       this.update()
     },
+    markIds: function (mark) {
+      if (mark) {
+        this.getIds({
+          page: 0,
+          limit: MAX_JAVA_INTEGER,
+          searchTerm: this.search
+        }).then(result => {
+          if (result && result.data) {
+            const temp = {}
+            Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => { temp[k] = true })
+            result.data.forEach(r => { temp[r] = true })          
+            this.selectedItems = temp
+          }
+        })
+      } else {
+        this.selectedItems = {}
+      }
+    },
     update: function () {
+      // Make sure to remove all `false` entries from the map
       const temp = {}
       Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => { temp[k] = true })
       this.selectedItems = temp
@@ -384,6 +448,8 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+  mix-blend-mode: color-dodge;
+  color: #ccc;
 }
 
 .image-card .card-selection-button {

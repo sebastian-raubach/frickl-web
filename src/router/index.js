@@ -8,12 +8,30 @@ import ImageMap from '@/views/ImageMap.vue'
 import Tags from '@/views/Tags.vue'
 import Statistics from '@/views/StatisticsView.vue'
 import AlbumView from '@/views/AlbumView.vue'
+import UsersView from '@/views/UsersView.vue'
+import Page403 from '@/components/error/Page403.vue'
+import store from '@/store'
+
+function requireAdmin(to, from, next) {
+  const userPermissions = store.getters.storeUserPermissions
+
+  if (userPermissions && userPermissions['IS_ADMIN']) {
+    next()
+  } else {
+    next({ name: '403' })
+  }
+}
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/403',
+    name: '403',
+    component: Page403
   },
   {
     path: '/image-stream',
@@ -59,6 +77,12 @@ const routes = [
     path: '/statistics',
     name: 'statistics',
     component: Statistics
+  },
+  {
+    path: '/user',
+    name: 'users',
+    component: UsersView,
+    beforeEnter: requireAdmin
   },
   {
     path: '/about',
