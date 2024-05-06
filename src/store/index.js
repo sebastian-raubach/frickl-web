@@ -3,7 +3,7 @@ import createPersistedState from 'vuex-persistedstate'
 import { bootstrap } from 'vue-gtag'
 import { userHasPermission } from '@/plugins/misc'
 
-let name = process.env.VUE_APP_INSTANCE_NAME
+let name = import.meta.env.VUE_APP_INSTANCE_NAME
 
 if (!name) {
   name = 'frickl-next-' + window.location.pathname
