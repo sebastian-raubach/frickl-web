@@ -95,7 +95,6 @@ export default {
       return userHasPermission(value, permission.code)
     },
     update: function ({ page, itemsPerPage, sortBy }) {
-      console.log(sortBy)
       this.loading = true
       apiPostUsers({
         page: page - 1,

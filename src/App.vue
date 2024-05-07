@@ -233,7 +233,6 @@ export default {
 
         if (firstRun || toCheck.length > 0) {
           apiCheckDownloadStatus(toCheck.map(j => j.token), result => {
-            console.log('checking jobs', result)
             this.$store.dispatch('setDownloadJobs', result.filter(j => j.status !== 'EXPIRED'))
 
             if (!this.exportJobTimer) {

@@ -30,7 +30,6 @@ export default {
       this.video.addEventListener('ended', this.drawPause, false)
     },
     draw: function () {
-      console.log('draw')
       this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height)
     },
     drawLoop: function () {

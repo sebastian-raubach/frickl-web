@@ -123,8 +123,6 @@ export default {
         hovertemplate: '%{x}. %{y}: %{z}'
       }]
 
-      console.log(data)
-
       let xAxis = {
         showgrid: false,
         tickmode: 'array',

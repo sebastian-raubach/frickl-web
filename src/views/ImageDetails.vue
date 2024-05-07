@@ -277,7 +277,6 @@ export default {
   },
   methods: {
     askRemoveTag: function (tag) {
-      console.log(tag)
       this.selectedTag = tag
 
       this.$nextTick(() => this.$refs.confirmDialog.show())
