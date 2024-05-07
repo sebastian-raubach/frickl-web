@@ -8,8 +8,6 @@ import { loadFonts } from '@/plugins/webfontloader'
 // Set base URL based on environment
 let baseUrl = 'http://localhost:8180/frickl/v1/api/'
 
-console.log(import.meta.env.VITE_BASE_URL)
-
 if (import.meta.env.VITE_BASE_URL) {
   baseUrl = import.meta.env.VITE_BASE_URL
 }
