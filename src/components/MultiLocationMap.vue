@@ -131,7 +131,7 @@ export default {
 
             // If you want list of markers inside the cluster
             // (you must enable the option using PruneCluster.Cluster.ENABLE_MARKERS_LIST = true)
-            const markers = cluster.GetClusterMarkers() 
+            const markers = cluster.GetClusterMarkers().concat().sort((a, b) => b.data.viewCount - a.data.viewCount)
 
             const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(markers[0].data.imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(population, 0)}</span> </div> </div>`
             return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
