@@ -110,8 +110,8 @@ export default {
           //listeners can be applied to markers in this function
           leafletMarker.on('click', () => {
             this.selectedLocation = {
-              location: leafletMarker.data.location,
-              imageIndex: leafletMarker.data.imageIndex
+              location: data.location,
+              imageIndex: data.imageIndex
             }
 
             this.$nextTick(() => {
