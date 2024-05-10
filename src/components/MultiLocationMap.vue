@@ -17,9 +17,6 @@ import { getNumberWithSuffix } from '@/plugins/misc'
 
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import 'leaflet.markercluster'
-import 'leaflet.markercluster/dist/MarkerCluster.css'
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 export default {
   props: {
@@ -42,19 +39,39 @@ export default {
   },
   data: function () {
     return {
-      selectedLocation: null
+      selectedLocation: null,
+      isInitializing: false
     }
   },
   watch: {
     images: function () {
-      this.initMap()
-      this.update()
+      this.init()
     },
     storeTheme: function () {
       this.updateThemeLayer()
     }
   },
   methods: {
+    init: function () {
+      if (this.isInitializing) {
+        return
+      }
+      this.isInitializing = true
+
+      if (!this.pruneClusterScript) {
+        const pruneClusterScript = document.createElement('script')
+        pruneClusterScript.setAttribute('src', '/js/PruneCluster.js')
+        pruneClusterScript.addEventListener('load', () => {
+          console.log('load', window.PruneCluster)
+          this.pruneClusterScript = pruneClusterScript
+          this.initMap()
+        })
+        document.head.appendChild(pruneClusterScript)
+      } else {
+        console.log('already-loaded')
+        this.initMap()
+      }
+    },
     getImgUrl: function (index, size = 'TINY') {
       let result = `${this.storeBaseUrl}image/${this.images[index].id}/img?size=${size}`
 
@@ -68,18 +85,57 @@ export default {
       return result
     },
     update: function () {
-      if (this.clusterer) {
-        this.clusterer.clearLayers()
-      } else {
-        this.clusterer = L.markerClusterGroup({
-          chunkedLoading: true,
-          iconCreateFunction: (cluster) => {
-            const markers = cluster.getAllChildMarkers().concat().sort((a, b) => b.viewCount - a.viewCount)
+      console.log('update')
 
-            const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(markers[0].imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(markers.length, 0)}</span> </div> </div>`
+      let needsAdding = false
+      
+      if (this.clusterer) {
+        this.clusterer.RemoveMarkers()
+        // this.clusterer.clearLayers()
+      } else {
+        needsAdding = true
+        window.PruneCluster.Cluster.ENABLE_MARKERS_LIST = true
+        this.clusterer = new window.PruneClusterForLeaflet()
+        // this.clusterer = L.markerClusterGroup({
+        //   chunkedLoading: true,
+        //   iconCreateFunction: (cluster) => {
+        //     const markers = cluster.getAllChildMarkers().concat().sort((a, b) => b.viewCount - a.viewCount)
+
+        //     const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(markers[0].imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(markers.length, 0)}</span> </div> </div>`
+        //     return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
+        //   }
+        // })
+
+        this.clusterer.PrepareLeafletMarker = (leafletMarker, data) => {
+          //listeners can be applied to markers in this function
+          leafletMarker.on('click', () => {
+            this.selectedLocation = {
+              location: leafletMarker.data.location,
+              imageIndex: leafletMarker.data.imageIndex
+            }
+
+            this.$nextTick(() => {
+              // A popup can already be attached to the marker
+              // bindPopup can override it, but it's faster to update the content instead
+              if (leafletMarker.getPopup()) {
+                  leafletMarker.setPopupContent(this.$refs.popupContent)
+              } else {
+                  leafletMarker.bindPopup(this.$refs.popupContent)
+              }
+            })
+          })
+        }
+
+        this.clusterer.BuildLeafletClusterIcon = (cluster) => {
+            const population = cluster.population
+
+            // If you want list of markers inside the cluster
+            // (you must enable the option using PruneCluster.Cluster.ENABLE_MARKERS_LIST = true)
+            const markers = cluster.GetClusterMarkers() 
+
+            const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(markers[0].data.imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(population, 0)}</span> </div> </div>`
             return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
-          }
-        })
+        }
       }
 
       const latLngBounds = L.latLngBounds()
@@ -87,27 +143,38 @@ export default {
         this.images.forEach((l, i) => {
           const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(i)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> </div> </div>`
           const icon = L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 0] });
-          const marker = L.marker([l.latitude, l.longitude], { icon: icon }).bindPopup('')
-          marker.imageIndex = i
-          marker.viewCount = l.viewCount
-          marker.on('click', e => {
-            this.selectedLocation = {
-              location: l,
-              imageIndex: i
-            }
+          const marker = new window.PruneCluster.Marker(l.latitude, l.longitude)
 
-            this.$nextTick(() => {
-              const popup = e.target.getPopup()
-              popup.setContent(this.$refs.popupContent)
-            })
-          })
-          this.clusterer.addLayer(marker)
-          l.location = L.latLng(l.latitude, l.longitude)
-          latLngBounds.extend(l.location)
+          marker.data.viewCount = l.viewCount
+          marker.data.imageIndex = i
+          marker.data.location = l
+          marker.icon = icon
+          marker.popup = ''
+
+          this.clusterer.RegisterMarker(marker)
+          
+          // marker.imageIndex = i
+          // marker.viewCount = l.viewCount
+          // marker.on('click', e => {
+          //   this.selectedLocation = {
+          //     location: l,
+          //     imageIndex: i
+          //   }
+
+          //   this.$nextTick(() => {
+          //     const popup = e.target.getPopup()
+          //     popup.setContent(this.$refs.popupContent)
+          //   })
+          // })
+          // this.clusterer.addLayer(marker)
+          // l.location = L.latLng(l.latitude, l.longitude)
+          // latLngBounds.extend(l.location)
         })
       }
 
-      this.map.addLayer(this.clusterer)
+      if (needsAdding) {
+        this.map.addLayer(this.clusterer)
+      }
 
       if (this.images) {
         if (this.images.length === 1) {
@@ -156,11 +223,20 @@ export default {
       }
 
       L.control.layers(baseMaps).addTo(this.map)
+
+      this.map.whenReady(() => {
+        this.isInitializing = false
+        this.update()
+      })
+    }
+  },
+  beforeUnmount: function () {
+    if (this.pruneClusterScript) {
+      this.pruneClusterScript.remove()
     }
   },
   mounted: function () {
-    this.initMap()
-    this.update()
+    this.init()
   }
 }
 </script>
