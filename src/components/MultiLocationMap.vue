@@ -130,7 +130,7 @@ export default {
       this.map = L.map(this.$refs.imageMap)
 
       const center = [32, 32]
-      this.map.setView(center, 5)
+      this.map.setView(center, 1)
 
       // Add OSM as the default
       this.themeLayer = L.tileLayer(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeTheme === 'fricklDark' ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`, {
