@@ -183,6 +183,8 @@ export default {
           this.map.fitBounds(latLngBounds.pad(0.1))
         }
       }
+
+      this.isInitializing = false
     },
     updateThemeLayer: function () {
       if (this.themeLayer) {
@@ -225,7 +227,6 @@ export default {
       L.control.layers(baseMaps).addTo(this.map)
 
       this.map.whenReady(() => {
-        this.isInitializing = false
         this.update()
       })
     }
