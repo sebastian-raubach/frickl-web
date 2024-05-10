@@ -133,7 +133,7 @@ export default {
             // (you must enable the option using PruneCluster.Cluster.ENABLE_MARKERS_LIST = true)
             const markers = cluster.GetClusterMarkers().concat().sort((a, b) => b.data.viewCount - a.data.viewCount)
 
-            const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(markers[0].data.imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(population, 0)}</span> </div> </div>`
+            const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img marker-image v-img__img--cover" src="${this.getImgUrl(markers[0].data.imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(population, 0)}</span> </div> </div>`
             return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
         }
       }
@@ -141,7 +141,7 @@ export default {
       const latLngBounds = L.latLngBounds()
       if (this.images) {
         this.images.forEach((l, i) => {
-          const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img v-img__img--contain" src="${this.getImgUrl(i)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> </div> </div>`
+          const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img marker-image v-img__img--cover" src="${this.getImgUrl(i)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> </div> </div>`
           const icon = L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 0] });
           const marker = new window.PruneCluster.Marker(l.latitude, l.longitude)
 
@@ -294,5 +294,9 @@ export default {
 }
 #image-map .leaflet-popup-tip {
   background-color: rgb(var(--v-theme-primary));
+}
+
+.leaflet-container .leaflet-marker-pane img.marker-image {
+  width: inherit;
 }
 </style>
