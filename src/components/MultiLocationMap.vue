@@ -193,6 +193,7 @@ export default {
     },
     initMap: function () {
       if (this.map) {
+        this.update()
         return
       }
 
