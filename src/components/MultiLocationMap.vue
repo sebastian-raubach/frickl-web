@@ -184,6 +184,8 @@ export default {
         }
       }
 
+      this.clusterer.ProcessView()
+
       this.isInitializing = false
     },
     updateThemeLayer: function () {
