@@ -54,6 +54,7 @@
   "pageAboutCardDockerText": "Want to run Frickl yourself? Pull the Docker image from Docker Hub.",
   "pageAboutCardSponsorTitle": "Sponsor",
   "pageAboutCardSponsorText": "Has Frickl been useful to you? Please consider sponsoring Sebastian so he can continue the development of Frickl.",
+  "selectOptionSortNewestImage": "Newest image",
   "selectOptionSortCreatedOn": "Created on",
   "selectOptionSortViewCount": "View count",
   "selectOptionSortIsPublic": "Is public",

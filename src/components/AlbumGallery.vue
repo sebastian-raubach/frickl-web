@@ -161,7 +161,7 @@ export default {
     },
     sortByKeys: function () {
       return [
-        { title: this.$t('selectOptionSortCreatedOn'), value: 'createdOn' },
+        { title: this.$t('selectOptionSortNewestImage'), value: 'newestImage' },
         { title: this.$t('selectOptionSortViewCount'), value: 'imageViewCount' },
         { title: this.$t('selectOptionSortImageCount'), value: 'imageCount' },
         { title: this.$t('selectOptionSortName'), value: 'name' }
@@ -212,7 +212,7 @@ export default {
       albumCount: -1,
       tempSearch: null,
       search: null,
-      orderBy: 'createdOn',
+      orderBy: 'newestImage',
       ascending: 0,
       cardSize: 'md',
       selectedItems: {},
