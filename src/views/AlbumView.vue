@@ -1,13 +1,12 @@
 <template>
-  <v-container v-if="currentAlbum">
+  <v-container>
     <v-breadcrumbs>
       <template v-if="albumHierarchy && albumHierarchy.length > 0">
         <template v-for="h in albumHierarchy" :key="`hierarchy-item-${h.id}`">
-          <v-breadcrumbs-item :title="h.name" :to="{ name: 'albums-for-parent', params: { parentAlbumId: h.id } }" />
           <v-breadcrumbs-divider />
+          <v-breadcrumbs-item :title="h.name" :to="{ name: 'albums-for-parent', params: { parentAlbumId: h.id } }" />
         </template>
       </template>
-      <v-breadcrumbs-item :title="currentAlbum.name" />
     </v-breadcrumbs>
 
     <h1 class="text-h4 mb-3">
@@ -27,7 +26,7 @@
 <script>
 import AlbumGallery from '@/components/AlbumGallery.vue'
 import ImageGallery from '@/components/ImageGallery.vue'
-import { apiPostAlbums, apiPostImages, apiPostImageIds, apiGetAlbumAlbumHierarchy, apiGetAlbumById } from '@/plugins/api'
+import { apiPostAlbums, apiPostImages, apiPostImageIds, apiGetAlbumAlbumHierarchy } from '@/plugins/api'
 
 export default {
   components: {
@@ -37,8 +36,7 @@ export default {
   data: function () {
     return {
       parentAlbumId: null,
-      albumHierarchy: null,
-      currentAlbum: null
+      albumHierarchy: null
     }
   },
   methods: {
@@ -58,10 +56,6 @@ export default {
   created: function () {
     if (this.$route.params && this.$route.params.parentAlbumId) {
       this.parentAlbumId = parseInt(this.$route.params.parentAlbumId)
-
-      apiGetAlbumById(this.parentAlbumId, result => {
-        this.currentAlbum = result
-      })
 
       apiGetAlbumAlbumHierarchy(this.parentAlbumId, result => {
         this.albumHierarchy = result
