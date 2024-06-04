@@ -1,10 +1,13 @@
 <template>
   <div>
-    <v-toolbar color="secondary" v-if="albumHierarchy && albumHierarchy.length > 0">
+    <v-toolbar color="secondary">
       <v-breadcrumbs>
-        <template v-for="(h, index) in albumHierarchy" :key="`hierarchy-item-${h.id}`">
-          <v-breadcrumbs-divider  v-if="index > 0" />
-          <v-breadcrumbs-item :title="h.name" :to="{ name: 'albums-for-parent', params: { parentAlbumId: h.id } }" />
+        <v-breadcrumbs-item title="Home" :to="{ name: 'albums' }" />
+        <template v-if="albumHierarchy && albumHierarchy.length > 0">
+          <template v-for="h in albumHierarchy" :key="`hierarchy-item-${h.id}`">
+            <v-breadcrumbs-divider />
+            <v-breadcrumbs-item :title="h.name" :to="{ name: 'albums-for-parent', params: { parentAlbumId: h.id } }" />
+          </template>
         </template>
       </v-breadcrumbs>
     </v-toolbar>
