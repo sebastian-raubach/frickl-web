@@ -1,26 +1,27 @@
 <template>
-  <v-container>
-    <v-breadcrumbs>
-      <template v-if="albumHierarchy && albumHierarchy.length > 0">
-        <template v-for="h in albumHierarchy" :key="`hierarchy-item-${h.id}`">
-          <v-breadcrumbs-divider />
+  <div>
+    <v-toolbar color="secondary" v-if="albumHierarchy && albumHierarchy.length > 0">
+      <v-breadcrumbs>
+        <template v-for="(h, index) in albumHierarchy" :key="`hierarchy-item-${h.id}`">
+          <v-breadcrumbs-divider  v-if="index > 0" />
           <v-breadcrumbs-item :title="h.name" :to="{ name: 'albums-for-parent', params: { parentAlbumId: h.id } }" />
         </template>
-      </template>
-    </v-breadcrumbs>
+      </v-breadcrumbs>
+    </v-toolbar>
+    <v-container>
+      <h1 class="text-h4 mb-3">
+        Albums
+      </h1>
+      <v-divider class="mb-3" />
+      <AlbumGallery :getData="getAlbums" :parentAlbumId="parentAlbumId" />
 
-    <h1 class="text-h4 mb-3">
-      Albums
-    </h1>
-    <v-divider class="mb-3" />
-    <AlbumGallery :getData="getAlbums" :parentAlbumId="parentAlbumId" />
-
-    <h1 class="text-h4 mb-3 mt-6">
-      Images
-    </h1>
-    <v-divider class="mb-3" />
-    <ImageGallery :getData="getImages" :getIds="getIds" :albumId="parentAlbumId" />
-  </v-container>
+      <h1 class="text-h4 mb-3 mt-6">
+        Images
+      </h1>
+      <v-divider class="mb-3" />
+      <ImageGallery :getData="getImages" :getIds="getIds" :albumId="parentAlbumId" />
+    </v-container>
+  </div>
 </template>
 
 <script>
