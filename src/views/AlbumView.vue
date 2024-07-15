@@ -39,7 +39,7 @@ export default {
   },
   data: function () {
     return {
-      parentAlbumId: null,
+      parentAlbumId: -1,
       albumHierarchy: null
     }
   },
