@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-app-bar color="grey-darken-4">
+      <v-app-bar color="grey-darken-4" :extension-height="60">
         <v-img
           class="ms-4"
           src="img/frickl.svg"
@@ -12,6 +12,28 @@
         <v-app-bar-title style="cursor: pointer" @click="$router.push({ name: 'home' })">Frickl</v-app-bar-title>
 
         <v-spacer></v-spacer>
+
+        <template #extension v-if="searchVisible">
+          <v-container>
+            <v-row justify="end">
+              <v-col cols="12">
+                <v-text-field
+                  autofocus
+                  name="name"
+                  v-model="searchTerm"
+                  :label="$t('formPlaceholderSearch')"
+                  density="compact"
+                  type="search"
+                  hide-details
+                  single-line
+                  append-inner-icon="mdi-magnify"
+                  @keyup.exact.enter="runSearch"
+                  @click:append-inner="runSearch" />
+              </v-col>
+            </v-row>
+          </v-container>
+        </template>
+
         <v-tooltip location="top" v-if="importStatus">
           <template #activator="{ props }">
             <v-progress-circular v-bind="props" color="primary" class="mx-3" indeterminate />
@@ -42,6 +64,7 @@
             </v-list>
           </v-card>
         </v-menu>
+        <v-btn icon="mdi-magnify" @click="searchVisible = !searchVisible"></v-btn>
         <v-btn icon="mdi-theme-light-dark" @click.stop="toggleTheme"></v-btn>
         <v-menu>
           <template v-slot:activator="{ props }">
@@ -175,7 +198,9 @@ export default {
       exportJobTimer: null,
       alertShown: false,
       alert: null,
-      downloadMenuShown: false
+      downloadMenuShown: false,
+      searchVisible: false,
+      searchTerm: ''
     }
   },
   computed: {
@@ -221,6 +246,11 @@ export default {
   },
   methods: {
     getNumberWithSuffix,
+    runSearch: function () {
+      this.$router.push({ name: 'search', params: { searchTerm: this.searchTerm } })
+      this.searchTerm = ''
+      this.searchVisible = false
+    },
     setCookies: function (value) {
       this.$store.dispatch('setCookiesAccepted', value)
     },

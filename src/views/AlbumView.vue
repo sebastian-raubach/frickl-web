@@ -13,13 +13,13 @@
     </v-toolbar>
     <v-container>
       <h1 class="text-h4 mb-3">
-        Albums
+        {{ $t('pageAlbumsTitle') }}
       </h1>
       <v-divider class="mb-3" />
       <AlbumGallery :getData="getAlbums" :parentAlbumId="parentAlbumId" />
 
       <h1 class="text-h4 mb-3 mt-6">
-        Images
+        {{ $t('pageImagesTitle') }}
       </h1>
       <v-divider class="mb-3" />
       <ImageGallery :getData="getImages" :getIds="getIds" :albumId="parentAlbumId" />

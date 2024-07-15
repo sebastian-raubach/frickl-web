@@ -9,6 +9,7 @@ import Tags from '@/views/Tags.vue'
 import Statistics from '@/views/StatisticsView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 import UsersView from '@/views/UsersView.vue'
+import SearchView from '@/views/SearchView.vue'
 import Page403 from '@/components/error/Page403.vue'
 import store from '@/store'
 
@@ -52,6 +53,11 @@ const routes = [
     path: '/image/:imageId',
     name: 'image-details',
     component: ImageDetails
+  },
+  {
+    path: '/search/:searchTerm',
+    name: 'search',
+    component: SearchView
   },
   {
     path: '/favorites',
