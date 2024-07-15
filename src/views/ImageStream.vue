@@ -18,11 +18,11 @@ export default {
   },
   methods: {
     getImages: function (params) {
-      const adjusted = Object.assign({}, params, { albumId: -1 })
+      const adjusted = Object.assign({}, params, {})
       return apiPostImages(adjusted)
     },
     getIds: function (params) {
-      const adjusted = Object.assign({}, params, { albumId: -1 })
+      const adjusted = Object.assign({}, params, {})
       return apiPostImageIds(adjusted)
     }
   }

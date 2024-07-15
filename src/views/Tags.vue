@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     getImages: function (params) {
-      const p = Object.assign({}, params, { tagId: this.tags[this.selectedTag].tag.id, albumId: -1 })
+      const p = Object.assign({}, params, { tagId: this.tags[this.selectedTag].tag.id })
       return apiPostImages(p)
     }
   },

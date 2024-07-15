@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     getImages: function (params) {
-      const p = Object.assign({}, params, { isFav: true, albumId: -1 })
+      const p = Object.assign({}, params, { isFav: true })
       return apiPostImages(p)
     }
   }

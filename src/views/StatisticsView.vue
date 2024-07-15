@@ -40,7 +40,7 @@ export default {
     }
   },
   watch: {
-    selectedYear: function (){
+    selectedYear: function () {
       this.getImageCounts()
     }
   },
@@ -58,7 +58,7 @@ export default {
       })
     },
     getImages: function (params) {
-      const adjusted = this.selectedDate ? Object.assign({}, params, { albumId: -1, date: this.selectedDate.toISOString().substring(0, 10) }) : params
+      const adjusted = this.selectedDate ? Object.assign({}, params, { date: this.selectedDate.toISOString().substring(0, 10) }) : params
       return apiPostImages(adjusted)
     }
   },
