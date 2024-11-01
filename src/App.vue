@@ -356,10 +356,12 @@ export default {
     emitter.off('show-download-menu', this.showDownloadMenu)
   },
   created: async function () {
+    const instance = getCurrentInstance()
+
     await apiGetSettings(result => {
       if (result) {
         if (result.plausibleDomain) {
-          getCurrentInstance().use(createPlausible({
+          instance.use(createPlausible({
             init: {
               domain: result.plausibleDomain,
               hashMode: result.plausibleHashMode || true,
@@ -373,7 +375,7 @@ export default {
         }
 
         if (result.googleAnalyticsKey) {
-          getCurrentInstance().use(VueGtag, {
+          instance.use(VueGtag, {
             config: {
               id: result.googleAnalyticsKey
             },
