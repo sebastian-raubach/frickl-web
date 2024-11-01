@@ -297,12 +297,12 @@ export default {
       apiPatchImage(this.image)
     },
     update: function () {
-      apiGetImageById(this.imageId, result => {
-        this.image = result
+      apiGetImageById(this.imageId, imageResult => {
+        this.image = imageResult
 
-        apiPostAlbumById(result.albumId, null, result => {
-          if (result && result.data && result.data.length > 0) {
-            this.album = result.data[0]
+        apiPostAlbumById(imageResult.albumId, null, albumResult => {
+          if (albumResult && albumResult.data && albumResult.data.length > 0) {
+            this.album = albumResult.data[0]
           }
         })
       })
