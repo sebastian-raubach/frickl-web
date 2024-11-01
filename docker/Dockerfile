@@ -25,9 +25,9 @@ RUN rm -f .env && \
 
 # Download Gradle and build the server code
 RUN apk add --no-cache openjdk11 && \
-    wget https://services.gradle.org/distributions/gradle-6.0.1-bin.zip -P /tmp/ && \
-    unzip /tmp/gradle-6.0.1-bin.zip -d /opt/ && \
-    /opt/gradle-6.0.1/bin/gradle -p /opt/frickl-server war
+    wget https://services.gradle.org/distributions/gradle-8.8-bin.zip -P /tmp/ && \
+    unzip /tmp/gradle-8.8-bin.zip -d /opt/ && \
+    /opt/gradle-8.8/bin/gradle -p /opt/frickl-server war
 
 
 FROM tomcat:10.1-jdk21
