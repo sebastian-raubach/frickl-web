@@ -2,8 +2,8 @@
   <v-container fluid>
     <h1 class="text-h4 mb-3">{{ $t('pageSearchTitle') }}</h1>
     <v-divider class="mb-3" />
-    <div v-html="$t('pageSearchText')" />
-    
+    <div v-html="$t('pageSearchText', { value: searchTerm })" />
+
     <template v-if="searchTerm">
       <h1 class="text-h4 mb-3">
         {{ $t('pageAlbumsTitle') }}

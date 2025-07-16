@@ -4,7 +4,7 @@
       {{ $t('pageTagsTitle') }}
     </h1>
     <v-divider class="mb-3" />
-    
+
     <v-chip-group v-model="selectedTag" column selected-class="text-primary">
       <v-chip label v-for="tag in tags" :key="`tag-${tag.id}`" filter>{{ tag.tag.name }} <v-badge :content="tag.count" inline /></v-chip>
     </v-chip-group>

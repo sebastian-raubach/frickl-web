@@ -168,6 +168,8 @@ const apiDeleteImages = (imageIds, onSuccess, onError) => apiAxios({ url: 'image
 
 const apiDeleteImageTag = (imageId, tagId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/tag/${tagId}`, method: 'DELETE', success: onSuccess, error: onError })
 
+const apiPostImageTags = (imageId, tags, onSuccess, onError) => apiAxios({ url: `image/${imageId}/tag`, method: 'POST', data: tags, success: onSuccess, error: onError })
+
 const apiGetTags = (onSuccess, onError) => apiAxios({ url: 'tag', success: onSuccess, error: onError })
 
 const apiPostToken = (data, onSuccess, onError) => apiAxios({ url: 'token', method: 'POST', data: data, success: onSuccess, error: onError })
@@ -219,6 +221,7 @@ export {
   apiGetStatsCounts,
   apiGetImageTags,
   apiDeleteImageTag,
+  apiPostImageTags,
   apiGetTags,
   apiGetStatsYears,
   apiGetStatsYearData,

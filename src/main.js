@@ -6,11 +6,12 @@ import { vuetify, i18n } from '@/plugins/vuetify'
 import { loadFonts } from '@/plugins/webfontloader'
 
 // Set base URL based on environment
-let baseUrl = 'http://localhost:8180/frickl/v1/api/'
-
+let baseUrl = './api/'
 if (import.meta.env.VITE_BASE_URL) {
   baseUrl = import.meta.env.VITE_BASE_URL
 }
+
+console.log(baseUrl)
 
 store.commit('BASE_URL_CHANGED_MUTATION', baseUrl)
 

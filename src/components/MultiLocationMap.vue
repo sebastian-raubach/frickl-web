@@ -107,7 +107,7 @@ export default {
         // })
 
         this.clusterer.PrepareLeafletMarker = (leafletMarker, data) => {
-          //listeners can be applied to markers in this function
+          // listeners can be applied to markers in this function
           leafletMarker.on('click', () => {
             this.selectedLocation = {
               location: data.location,
@@ -118,23 +118,23 @@ export default {
               // A popup can already be attached to the marker
               // bindPopup can override it, but it's faster to update the content instead
               if (leafletMarker.getPopup()) {
-                  leafletMarker.setPopupContent(this.$refs.popupContent)
+                leafletMarker.setPopupContent(this.$refs.popupContent)
               } else {
-                  leafletMarker.bindPopup(this.$refs.popupContent)
+                leafletMarker.bindPopup(this.$refs.popupContent)
               }
             })
           })
         }
 
         this.clusterer.BuildLeafletClusterIcon = (cluster) => {
-            const population = cluster.population
+          const population = cluster.population
 
-            // If you want list of markers inside the cluster
-            // (you must enable the option using PruneCluster.Cluster.ENABLE_MARKERS_LIST = true)
-            const markers = cluster.GetClusterMarkers().concat().sort((a, b) => b.data.viewCount - a.data.viewCount)
+          // If you want list of markers inside the cluster
+          // (you must enable the option using PruneCluster.Cluster.ENABLE_MARKERS_LIST = true)
+          const markers = cluster.GetClusterMarkers().concat().sort((a, b) => b.data.viewCount - a.data.viewCount)
 
-            const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img marker-image v-img__img--cover" src="${this.getImgUrl(markers[0].data.imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(population, 0)}</span> </div> </div>`
-            return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
+          const html = `<div class="v-badge"> <div class="v-avatar v-avatar--density-default bg-surface-variant v-avatar--size-x-large v-avatar--variant-flat"><div class="v-responsive v-img" role="img"><div class="v-responsive__sizer" style="padding-bottom: 100%;"></div><img class="v-img__img marker-image v-img__img--cover" src="${this.getImgUrl(markers[0].data.imageIndex)}" style=""></div><span class="v-avatar__underlay"></span></div> <div class="v-badge__wrapper"> <span class="v-badge__badge v-theme--light bg-info" role="status" style="bottom: calc(100% - 12px); left: calc(100% - 12px);">${getNumberWithSuffix(population, 0)}</span> </div> </div>`
+          return L.divIcon({ html: html, className: 'mycluster', iconSize: L.point(56, 56), iconAnchor: [28, 28] });
         }
       }
 

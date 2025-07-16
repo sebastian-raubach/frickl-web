@@ -153,6 +153,8 @@
                       </v-chip-group>
                     </div>
                     <span v-else>{{ $t('widgetTagsNoData') }}</span>
+
+                    <v-btn id="add-tag-button" class="d-block mt-3" size="small" color="secondary" @click="showTagModal" icon="mdi-plus" v-if="canAddTags" />
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -171,12 +173,45 @@
       </div>
     </v-container>
     <ConfirmDialog :message="$t('modalTextConfirmDeleteTag')" @yes="deleteTag" @no="$refs.confirmDialog.hide()" ref="confirmDialog" />
+
+    <v-dialog
+      activator="#add-tag-button"
+      width="400"
+    >
+      <template v-slot:default="{ isActive }">
+        <v-card
+          prepend-icon="mdi-tag-plus"
+          :title="$t('modalTitleAddTag')"
+        >
+          <v-card-text>
+            <v-combobox
+              chips
+              multiple
+              :hint="$t('formDescriptionTags')"
+              :label="$t('formLabelTags')"
+              v-model="newTags"
+            >
+              <template v-slot:message="{ message }">
+                <span v-html="message"></span>
+              </template>
+            </v-combobox>
+          </v-card-text>
+          <template v-slot:actions>
+            <v-btn
+              class="ml-auto"
+              :text="$t('buttonSave')"
+              @click="saveTags(isActive)"
+            ></v-btn>
+          </template>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { apiGetImageById, apiPostAlbumById, apiPatchImage, apiGetImageTags, apiDeleteImageTag, apiGetImageAlbumHierarchy } from '@/plugins/api'
+import { apiGetImageById, apiPostAlbumById, apiPatchImage, apiGetImageTags, apiDeleteImageTag, apiGetImageAlbumHierarchy, apiPostImageTags } from '@/plugins/api'
 import SingleLocationMap from '@/components/SingleLocationMap.vue'
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue'
 import AmbientVideoPlayer from '@/components/AmbientVideoPlayer.vue'
@@ -196,7 +231,8 @@ export default {
       overlay: false,
       tags: [],
       selectedTag: null,
-      hierarchy: []
+      hierarchy: [],
+      newTags: []
     }
   },
   computed: {
@@ -208,13 +244,13 @@ export default {
       'storeUserPermissions'
     ]),
     canEditImage: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['IMAGE_EDIT']
+      return this.storeUserPermissions && this.storeUserPermissions.IMAGE_EDIT
     },
     canDeleteTags: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['TAG_DELETE']
+      return this.storeUserPermissions && this.storeUserPermissions.TAG_DELETE
     },
     canAddTags: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['TAG_ADD']
+      return this.storeUserPermissions && this.storeUserPermissions.TAG_ADD
     },
     date: function () {
       if (this.image) {
@@ -316,6 +352,14 @@ export default {
     updateTags: function () {
       apiGetImageTags(this.imageId, tags => {
         this.tags = tags || []
+      })
+    },
+    saveTags: function (active) {
+      active.value = false
+
+      apiPostImageTags(this.imageId, this.newTags, () => {
+        this.newTags = []
+        this.updateTags()
       })
     }
   },
