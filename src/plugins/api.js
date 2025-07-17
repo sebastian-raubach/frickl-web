@@ -188,6 +188,10 @@ const apiGetImportStatus = (onSuccess, onError) => apiAxios({ url: 'status', suc
 
 const apiPutAlbum = (album, onSuccess, onError) => apiAxios({ url: 'album', method: 'PUT', data: album, success: onSuccess, error: onError })
 
+const apiPostAlbumUsers = (albumId, userIds, onSuccess, onError) => apiAxios({ url: `album/${albumId}/user`, method: 'POST', data: userIds, success: onSuccess, error: onError })
+
+const apiGetAlbumUsers = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}/user`, success: onSuccess, error: onError })
+
 const apiGetDownloadAlbum = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}/download`, success: onSuccess, error: onError })
 
 const apiPostDownloadImages = (imageIds, onSuccess, onError) => apiAxios({ url: 'image/download', method: 'POST', data: imageIds, success: onSuccess, error: onError })
@@ -228,6 +232,8 @@ export {
   apiGetSettings,
   apiScanAlbum,
   apiGetImportStatus,
+  apiPostAlbumUsers,
+  apiGetAlbumUsers,
   apiPutAlbum,
   apiGetDownloadAlbum,
   apiPostDownloadImages,

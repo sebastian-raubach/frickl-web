@@ -80,6 +80,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-btn icon="mdi-account-multiple" :to="{ name: 'users' }" v-if="storeToken && userHasAdminPermission"></v-btn>
         <v-btn icon="mdi-login" @click.stop="showLogin" v-if="!storeToken"></v-btn>
         <v-btn icon="mdi-logout" @click.stop="logout" v-else></v-btn>
       </v-app-bar>
@@ -210,7 +211,8 @@ export default {
       'storeLocale',
       'storeToken',
       'storeDownloadJobs',
-      'storeCookiesAccepted'
+      'storeCookiesAccepted',
+      'storeUserPermissions'
     ]),
     downloadJobs: function () {
       if (this.storeDownloadJobs) {
@@ -218,6 +220,9 @@ export default {
       } else {
         return []
       }
+    },
+    userHasAdminPermission: function () {
+      return this.storeToken && this.storeUserPermissions && this.storeUserPermissions.IS_ADMIN
     }
   },
   watch: {

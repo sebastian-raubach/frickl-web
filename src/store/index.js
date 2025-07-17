@@ -39,7 +39,7 @@ export default createStore({
           result[p.name] = userHasPermission(state.token.permissions, p.code)
         })
       }
-      
+
       return result
     },
     storeLocale: (state) => state.locale,

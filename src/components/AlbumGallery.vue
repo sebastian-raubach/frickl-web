@@ -22,6 +22,12 @@
       <v-spacer></v-spacer>
       <v-btn-group density="compact" class="me-3">
         <v-btn
+          v-if="canAddUsers && parentAlbumId !== -1"
+          @click="addUser"
+          variant="tonal">
+          <v-icon>mdi-account-plus</v-icon>
+        </v-btn>
+        <v-btn
           v-if="canCreate"
           @click="addAlbum"
           variant="tonal">
@@ -108,19 +114,22 @@
     </v-toolbar>
 
     <AddAlbumDialog :parentAlbumId="parentAlbumId" @album-added="update" ref="addAlbumDialog" />
+    <AddUserDialog :parentAlbumId="parentAlbumId" ref="addUserDialog" />
   </div>
 </template>
 
 <script>
 import AlbumCard from '@/components/AlbumCard.vue'
 import AddAlbumDialog from '@/components/dialogs/AddAlbumDialog.vue'
+import AddUserDialog from '@/components/dialogs/AddUserDialog.vue'
 import { mapGetters } from 'vuex'
 import { apiDeleteAlbums } from '@/plugins/api'
 
 export default {
   components: {
     AlbumCard,
-    AddAlbumDialog
+    AddAlbumDialog,
+    AddUserDialog
   },
   props: {
     getData: {
@@ -152,6 +161,9 @@ export default {
     },
     canCreate: function () {
       return this.storeUserPermissions && this.storeUserPermissions['ALBUM_CREATE']
+    },
+    canAddUsers: function () {
+      return this.storeUserPermissions && this.storeUserPermissions['SETTINGS_CHANGE']
     },
     disabled: function () {
       return this.albumCount === 0
@@ -287,6 +299,9 @@ export default {
     },
     addAlbum: function () {
       this.$refs.addAlbumDialog.show()
+    },
+    addUser: function () {
+      this.$refs.addUserDialog.show()
     },
     textChanged: function () {
       this.search = this.tempSearch
