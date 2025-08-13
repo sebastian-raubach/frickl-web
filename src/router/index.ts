@@ -8,6 +8,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
+import emitter from 'tiny-emitter/instance'
 
 const router = createRouter({
   // history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,11 @@ const router = createRouter({
       return { left: 0, top: 0 }
     }
   },
+})
+
+router.beforeEach((to, from, next) => {
+  emitter.emit('show-loading', false)
+  next()
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
