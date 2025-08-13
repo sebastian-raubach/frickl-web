@@ -10,37 +10,38 @@
         :items="files"
         hover
         no-data-text="Drag and drop files to upload"
-        class="elevation-1">
+        class="elevation-1"
+      >
         <template #bottom />
-        <template v-slot:item.thumb="{ item }">
+        <template #item.thumb="{ item }">
           <v-img :src="item.thumb" v-if="item.thumb" />
           <span v-else>No Image</span>
         </template>
-        <template v-slot:item.name="{ item }">
+        <template #item.name="{ item }">
           <div class="filename">{{ item.name }}</div>
           <v-progress-linear :model-value="+item.progress" v-if="item.active || item.progress !== '0.00'" :color="item.error ? 'error' : (item.success ? 'green' : 'primary')" :striped="item.active" />
         </template>
-        <template v-slot:item.width="{ value }">
-          {{value || 'N/A'}}
+        <template #item.width="{ value }">
+          {{ value || 'N/A' }}
         </template>
-        <template v-slot:item.height="{ value }">
-          {{value || 'N/A'}}
+        <template #item.height="{ value }">
+          {{ value || 'N/A' }}
         </template>
-        <template v-slot:item.size="{ value }">
-          {{formatSize(value)}}
+        <template #item.size="{ value }">
+          {{ formatSize(value) }}
         </template>
-        <template v-slot:item.speed="{ value }">
-          <span v-if="value">{{formatSize(value)}}/s</span>
+        <template #item.speed="{ value }">
+          <span v-if="value">{{ formatSize(value) }}/s</span>
         </template>
-        <template v-slot:item.status="{ item }">
-          <v-chip color="error" v-if="item.error">{{item.error}}</v-chip>
+        <template #item.status="{ item }">
+          <v-chip color="error" v-if="item.error">{{ item.error }}</v-chip>
           <v-chip color="green" v-else-if="item.success">success</v-chip>
           <v-chip color="primary" v-else-if="item.active">active</v-chip>
-          <span v-else></span>
+          <span v-else />
         </template>
-        <template v-slot:item.actions="{ item }">
+        <template #item.actions="{ item }">
           <v-menu>
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-btn
                 color="secondary"
                 v-bind="props"
@@ -84,7 +85,8 @@
             v-model="files"
             @input-filter="inputFilter"
             @input-file="inputFile"
-            ref="upload">
+            ref="upload"
+          >
             <v-btn color="primary">
               <v-icon icon="mdi-file-plus-outline" /> Add photos
             </v-btn>
@@ -101,149 +103,136 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import FileUpload from 'vue-upload-component'
-import { getToken } from '@/plugins/api'
+  import { mapState, mapStores } from 'pinia'
+  import { coreStore } from '@/stores/app'
+  import FileUpload from 'vue-upload-component'
+  import { getToken } from '@/plugins/api'
 
-export default {
-  components: {
-    FileUpload
-  },
-  props: {
-    albumId: {
-      type: Number,
-      default: null
-    }
-  },
-  data () {
-    return {
-      files: [],
-      accept: 'image/png,image/gif,image/jpeg,image/webp,video/*',
-      multiple: true,
-      drop: true,
-      thread: 3,
-      perPage: -1,
-      name: 'imageFile',
-      headers: {
-        Authorization: 'Bearer ' + getToken()
+  export default {
+    components: {
+      FileUpload,
+    },
+    props: {
+      albumId: {
+        type: Number,
+        default: null,
       },
-      uploadAuto: false,
-      fields: [
-        { key: 'thumb', title: this.$t('tableColumnImageUploadThumb'), sortable: false},
-        { key: 'name', title: this.$t('tableColumnImageUploadName'), sortable: false},
-        { key: 'width', title: this.$t('tableColumnImageUploadWidth'), sortable: false},
-        { key: 'height', title: this.$t('tableColumnImageUploadHeight'), sortable: false},
-        { key: 'size', title: this.$t('tableColumnImageUploadSize'), sortable: false},
-        { key: 'speed', title: this.$t('tableColumnImageUploadSpeed'), sortable: false},
-        { key: 'status', title: this.$t('tableColumnImageUploadStatus'), sortable: false},
-        { key: 'actions', title: this.$t('tableColumnImageUploadActions'), sortable: false }
-      ]
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'storeBaseUrl'
-    ]),
-    postAction: function () {
-      return `${this.storeBaseUrl}album/${this.albumId}/upload/image`
-    }
-  },
-  methods: {
-    clear: function () {
-      this.$refs.upload.clear()
     },
-    formatSize: function (size) {
-      if (size > 1024 * 1024 * 1024 * 1024) {
-        return (size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
-      } else if (size > 1024 * 1024 * 1024) {
-        return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
-      } else if (size > 1024 * 1024) {
-        return (size / 1024 / 1024).toFixed(2) + ' MB'
-      } else if (size > 1024) {
-        return (size / 1024).toFixed(2) + ' KB'
-      }
-      return size.toString() + ' B'
-    },
-    inputFilter (newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        // Before adding a file
-        // Filter system files or hide files
-        if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
-          return prevent()
-        }
-        // Filter php html js file
-        if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
-          return prevent()
-        }
-      }
-      if (newFile && newFile.error === '' && newFile.file && (!oldFile || newFile.file !== oldFile.file)) {
-        // Create a blob field
-        newFile.blob = ''
-        const URL = (window.URL || window.webkitURL)
-        if (URL) {
-          newFile.blob = URL.createObjectURL(newFile.file)
-        }
-        // Thumbnails
-        newFile.thumb = ''
-        if (newFile.blob && newFile.type.substr(0, 6) === 'image/') {
-          newFile.thumb = newFile.blob
-        }
-      }
-      // image size
-      if (newFile && newFile.error === '' && newFile.type.substr(0, 6) === 'image/' && newFile.blob && (!oldFile || newFile.blob !== oldFile.blob)) {
-        newFile.error = 'image parsing'
-        const img = new Image()
-        img.onload = () => {
-          this.$refs.upload.update(newFile, { error: '', height: img.height, width: img.width })
-        }
-        img.οnerrοr = (e) => {
-          this.$refs.upload.update(newFile, { error: 'parsing image size' })
-        }
-        img.src = newFile.blob
+    data () {
+      return {
+        files: [],
+        accept: 'image/png,image/gif,image/jpeg,image/webp,video/*',
+        multiple: true,
+        drop: true,
+        thread: 3,
+        perPage: -1,
+        name: 'imageFile',
+        headers: {
+          Authorization: 'Bearer ' + getToken(),
+        },
+        uploadAuto: false,
+        fields: [
+          { key: 'thumb', title: this.$t('tableColumnImageUploadThumb'), sortable: false },
+          { key: 'name', title: this.$t('tableColumnImageUploadName'), sortable: false },
+          { key: 'width', title: this.$t('tableColumnImageUploadWidth'), sortable: false },
+          { key: 'height', title: this.$t('tableColumnImageUploadHeight'), sortable: false },
+          { key: 'size', title: this.$t('tableColumnImageUploadSize'), sortable: false },
+          { key: 'speed', title: this.$t('tableColumnImageUploadSpeed'), sortable: false },
+          { key: 'status', title: this.$t('tableColumnImageUploadStatus'), sortable: false },
+          { key: 'actions', title: this.$t('tableColumnImageUploadActions'), sortable: false },
+        ],
       }
     },
-    // add, update, remove File Event
-    inputFile (newFile, oldFile) {
-      if (newFile && oldFile) {
-        // update
-        if (newFile.active && !oldFile.active) {
-          // beforeSend
-          // min size
-          if (newFile.size >= 0 && this.minSize > 0 && newFile.size < this.minSize) {
-            this.$refs.upload.update(newFile, { error: 'size' })
+    computed: {
+      ...mapStores(coreStore),
+      ...mapState(coreStore, [
+        'storeBaseUrl',
+      ]),
+      postAction: function () {
+        return `${this.storeBaseUrl}album/${this.albumId}/upload/image`
+      },
+    },
+    methods: {
+      clear: function () {
+        this.$refs.upload.clear()
+      },
+      formatSize: function (size) {
+        if (size > 1024 * 1024 * 1024 * 1024) {
+          return (size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
+        } else if (size > 1024 * 1024 * 1024) {
+          return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
+        } else if (size > 1024 * 1024) {
+          return (size / 1024 / 1024).toFixed(2) + ' MB'
+        } else if (size > 1024) {
+          return (size / 1024).toFixed(2) + ' KB'
+        }
+        return size.toString() + ' B'
+      },
+      inputFilter (newFile, oldFile, prevent) {
+        if (newFile && !oldFile) {
+          // Before adding a file
+          // Filter system files or hide files
+          if (/(\/|^)(Thumbs\.db|desktop\.ini|\..+)$/.test(newFile.name)) {
+            return prevent()
+          }
+          // Filter php html js file
+          if (/\.(php5?|html?|jsx?)$/i.test(newFile.name)) {
+            return prevent()
           }
         }
-        if (newFile.progress !== oldFile.progress) {
-          // progress
+        if (newFile && newFile.error === '' && newFile.file && (!oldFile || newFile.file !== oldFile.file)) {
+          // Create a blob field
+          newFile.blob = ''
+          const URL = (window.URL || window.webkitURL)
+          if (URL) {
+            newFile.blob = URL.createObjectURL(newFile.file)
+          }
+          // Thumbnails
+          newFile.thumb = ''
+          if (newFile.blob && newFile.type.slice(0, 6) === 'image/') {
+            newFile.thumb = newFile.blob
+          }
         }
-        if (newFile.error && !oldFile.error) {
-          // error
+        // image size
+        if (newFile && newFile.error === '' && newFile.type.slice(0, 6) === 'image/' && newFile.blob && (!oldFile || newFile.blob !== oldFile.blob)) {
+          newFile.error = 'image parsing'
+          const img = new Image()
+          img.addEventListener('load', () => {
+            this.$refs.upload.update(newFile, { error: '', height: img.height, width: img.width })
+          })
+          img.οnerrοr = () => {
+            this.$refs.upload.update(newFile, { error: 'parsing image size' })
+          }
+          img.src = newFile.blob
         }
-        if (newFile.success && !oldFile.success) {
-          // success
+      },
+      // add, update, remove File Event
+      inputFile (newFile, oldFile) {
+        if (newFile && oldFile) {
+          // update
+          if (newFile.active && !oldFile.active && newFile.size >= 0 && this.minSize > 0 && newFile.size < this.minSize) {
+            this.$refs.upload.update(newFile, { error: 'size' })
+          }
+          if (newFile.progress !== oldFile.progress) {
+            // progress
+          }
+          if (newFile.error && !oldFile.error) {
+            // error
+          }
+          if (newFile.success && !oldFile.success) {
+            // success
+          }
         }
-      }
-      if (!newFile && oldFile) {
-        // remove
-        if (oldFile.success && oldFile.response.id) {
-          // $.ajax({
-          //   type: 'DELETE',
-          //   url: '/upload/delete?id=' + oldFile.response.id,
-          // })
-        }
-      }
-      // Automatically activate upload
-      if (Boolean(newFile) !== Boolean(oldFile) || oldFile.error !== newFile.error) {
-        if (this.uploadAuto && !this.$refs.upload.active) {
+        // Automatically activate upload
+        if ((Boolean(newFile) !== Boolean(oldFile) || oldFile.error !== newFile.error) && this.uploadAuto && !this.$refs.upload.active) {
           this.$refs.upload.active = true
         }
-      }
+      },
+      alert (message) {
+        alert(message)
+      },
     },
-    alert (message) {
-      alert(message)
-    }
   }
-}
 </script>
 
 <style>

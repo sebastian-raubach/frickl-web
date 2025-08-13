@@ -3,13 +3,13 @@
     <v-alert
       type="error"
       :title="$t('pageTitleForbidden')"
-      :text="$t('pageTextForbidden')" />
+      :text="$t('pageTextForbidden')"
+    />
   </v-container>
 </template>
 
 <script>
-export default {
-}
+  export default {}
 </script>
 
 <style scoped>

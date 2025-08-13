@@ -1,6 +1,6 @@
-import store from '@/store'
+import { coreStore } from '@/stores/app'
 
-const MAX_JAVA_INTEGER = 2147483647
+const MAX_JAVA_INTEGER = 2_147_483_647
 
 const userHasPermission = (toCheck, required) => {
   return (toCheck & required) === required
@@ -14,13 +14,14 @@ const userHasPermission = (toCheck, required) => {
  * @param {String} separator The separator between the number and the letter
  */
 const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
+  const store = coreStore()
   if (value === undefined || value === null || value === 0) {
     return '0'
   }
 
   // Check if advanced number formatting is available
   if ('Intl' in window && Intl.NumberFormat) {
-    const locale = (store.getters.storeLocale || 'en_GB').replace('_', '-')
+    const locale = (store.locale || 'en_GB').replace('_', '-')
     let formatter
     if (k === 1024) {
       // Handle byte values
@@ -40,16 +41,16 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
 
     return formatter.format(value)
   } else {
-    const dm = decimals < 0 ? 0 : decimals
+    const dm = Math.max(decimals, 0)
     const sizes = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     const i = Math.floor(Math.log(value) / Math.log(k))
 
-    return parseFloat((value / Math.pow(k, i)).toFixed(dm)) + separator + sizes[i]
+    return Number.parseFloat((value / Math.pow(k, i)).toFixed(dm)) + separator + sizes[i]
   }
 }
 
 export {
   userHasPermission,
   getNumberWithSuffix,
-  MAX_JAVA_INTEGER
+  MAX_JAVA_INTEGER,
 }

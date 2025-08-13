@@ -25,9 +25,9 @@
       >
         <span>{{ user.username }}</span>
 
-        <template v-slot:prepend="{ isSelected, select }">
+        <template #prepend="{ isSelected, select }">
           <v-list-item-action start>
-            <v-checkbox-btn :model-value="isSelected" @update:model-value="select"></v-checkbox-btn>
+            <v-checkbox-btn :model-value="isSelected" @update:model-value="select" />
           </v-list-item-action>
         </template>
       </v-list-item>
@@ -36,57 +36,59 @@
 </template>
 
 <script>
-import { apiPostUsers } from '@/plugins/api'
-import { mapGetters } from 'vuex'
-import { MAX_JAVA_INTEGER, userHasPermission } from '@/plugins/misc'
+  import { apiPostUsers } from '@/plugins/api'
+  import { mapState, mapStores } from 'pinia'
+  import { coreStore } from '@/stores/app'
+  import { MAX_JAVA_INTEGER, userHasPermission } from '@/plugins/misc'
 
-export default {
-  props: {
-    selected: {
-      type: Array,
-      default: () => []
-    }
-  },
-  data: function () {
-    return {
-      users: [],
-      search: null,
-      selectedUsers: []
-    }
-  },
-  emits: ['user-selected'],
-  computed: {
-    ...mapGetters([
-      'storeToken'
-    ]),
-    filteredUsers: function () {
-      if (!this.search || this.search.trim().length < 1) {
-        return this.users
-      } else {
-        const lower = this.search.toLowerCase()
-        return this.users.filter(u => u.username.includes(lower))
+  export default {
+    props: {
+      selected: {
+        type: Array,
+        default: () => [],
+      },
+    },
+    data: function () {
+      return {
+        users: [],
+        search: null,
+        selectedUsers: [],
       }
-    }
-  },
-  watch: {
-    selectedUsers: function (newValue) {
-      this.$emit('user-selected', newValue)
-    }
-  },
-  methods: {
-    userHasPermission
-  },
-  mounted: function () {
-    apiPostUsers({
-      page: 0,
-      limit: MAX_JAVA_INTEGER
-    }, result => {
-      this.users = result.data
+    },
+    emits: ['user-selected'],
+    computed: {
+      ...mapStores(coreStore),
+      ...mapState(coreStore, [
+        'storeToken',
+      ]),
+      filteredUsers: function () {
+        if (!this.search || this.search.trim().length === 0) {
+          return this.users
+        } else {
+          const lower = this.search.toLowerCase()
+          return this.users.filter(u => u.username.includes(lower))
+        }
+      },
+    },
+    watch: {
+      selectedUsers: function (newValue) {
+        this.$emit('user-selected', newValue)
+      },
+    },
+    methods: {
+      userHasPermission,
+    },
+    mounted: function () {
+      apiPostUsers({
+        page: 0,
+        limit: MAX_JAVA_INTEGER,
+      }, result => {
+        this.users = result.data
 
-      if (this.selected) {
-        this.selectedUsers = this.users.filter(u => this.selected.some(ou => ou.id === u.id)) 
-      }
-    })
+        if (this.selected) {
+          this.selectedUsers = this.users.filter(u => this.selected.some(ou => ou.id === u.id))
+        }
+      })
+    },
   }
-}
 </script>

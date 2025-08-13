@@ -7,54 +7,54 @@
 </template>
 
 <script>
-export default {
-  props: {
-    src: {
-      type: String,
-      default: ''
+  export default {
+    props: {
+      src: {
+        type: String,
+        default: '',
+      },
+      poster: {
+        type: String,
+        default: '',
+      },
     },
-    poster: {
-      type: String,
-      default: ''
-    }
-  },
-  methods: {
-    init: function () {
-      this.ctx = this.canvas.getContext('2d')
-      this.ctx.filter = 'blur(1px)';
+    methods: {
+      init: function () {
+        this.ctx = this.canvas.getContext('2d')
+        this.ctx.filter = 'blur(1px)';
 
-      this.video.addEventListener('loadeddata', this.draw, false)
-      this.video.addEventListener('seeked', this.draw, false)
-      this.video.addEventListener('play', this.drawLoop, false)
-      this.video.addEventListener('pause', this.drawPause, false)
-      this.video.addEventListener('ended', this.drawPause, false)
+        this.video.addEventListener('loadeddata', this.draw, false)
+        this.video.addEventListener('seeked', this.draw, false)
+        this.video.addEventListener('play', this.drawLoop, false)
+        this.video.addEventListener('pause', this.drawPause, false)
+        this.video.addEventListener('ended', this.drawPause, false)
+      },
+      draw: function () {
+        this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height)
+      },
+      drawLoop: function () {
+        this.draw()
+        this.step = window.requestAnimationFrame(this.drawLoop)
+      },
+      drawPause: function () {
+        window.cancelAnimationFrame(this.step)
+        this.step = undefined
+      },
     },
-    draw: function () {
-      this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height)
-    },
-    drawLoop: function () {
-      this.draw()
-      this.step = window.requestAnimationFrame(this.drawLoop)
-    },
-    drawPause: function () {
-      window.cancelAnimationFrame(this.step)
-      this.step = undefined
-    }
-  },
-  mounted: function () {
-    this.video = this.$refs.video
-    this.canvas = this.$refs.canvas
+    mounted: function () {
+      this.video = this.$refs.video
+      this.canvas = this.$refs.canvas
 
-    this.init()
-  },
-  beforeDestroy: function () {
-    this.video.removeEventListener('loadeddata', this.draw)
-    this.video.removeEventListener('seeked', this.draw)
-    this.video.removeEventListener('play', this.drawLoop)
-    this.video.removeEventListener('pause', this.drawPause)
-    this.video.removeEventListener('ended', this.drawPause)
+      this.init()
+    },
+    beforeUnmount: function () {
+      this.video.removeEventListener('loadeddata', this.draw)
+      this.video.removeEventListener('seeked', this.draw)
+      this.video.removeEventListener('play', this.drawLoop)
+      this.video.removeEventListener('pause', this.drawPause)
+      this.video.removeEventListener('ended', this.drawPause)
+    },
   }
-}
 </script>
 
 <style scoped>

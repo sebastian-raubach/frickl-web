@@ -1,31 +1,33 @@
-import store from '@/store'
-import router from '@/router'
-
 import axios from 'axios'
 import emitter from 'tiny-emitter/instance'
+import router from '@/router'
+import { coreStore } from '@/stores/app'
 
 /**
  * Returns the current authentication token
  */
 const getToken = () => {
-  let t = store.getters.storeToken
+  const store = coreStore()
+  let t = store.token
 
   // Check if the token is still valid
-  if (t && ((new Date().getTime() - new Date(t.createdOn).getTime()) > t.lifetime)) {
+  if (t && ((Date.now() - new Date(t.createdOn).getTime()) > t.lifetime)) {
     t = null
-    store.dispatch('setToken', t)
+    store.setToken(t)
   }
 
   return t ? t.token : null
 }
 
-const handleError = (error) => {
+const handleError = error => {
+  const store = coreStore()
   switch (error.status) {
     case 401:
-    case 403:
-      store.dispatch('setToken', null)
-      router.push({ name: 'home' })
+    case 403: {
+      store.setToken(undefined)
+      router.push('/')
       break
+    }
   }
 }
 
@@ -34,15 +36,16 @@ const handleError = (error) => {
  * @param {Object} param0 `{ url: String, method: String, data: Object, formData: Object, dataType: String, contentType: String, success: Callback, error: { codes: [], callback: Callback } }`
  */
 const apiAxios = ({ url = null, method = 'GET', data = null, formData = null, dataType = 'json', contentType = 'application/json; charset=utf-8', success = null, error = { codes: [], callback: handleError } }) => {
+  const store = coreStore()
   let requestData = null
   let requestParams = null
 
-  if (store.getters.storeAccessToken) {
+  if (store.accessToken) {
     if (data === null || data === undefined) {
       data = {}
     }
 
-    data.accesstoken = store.getters.storeAccessToken
+    data.accesstoken = store.accessToken
   }
 
   // Stringify the data object for non-GET requests
@@ -55,28 +58,28 @@ const apiAxios = ({ url = null, method = 'GET', data = null, formData = null, da
   }
 
   const promise = axios({
-    baseURL: store.getters.storeBaseUrl,
-    url: url,
-    method: method,
+    baseURL: store.baseUrl,
+    url,
+    method,
     data: requestData,
-    formData: formData,
+    formData,
     params: requestParams,
     crossDomain: true,
     responseType: dataType,
     withCredentials: true,
     headers: {
+      'Authorization': `Bearer ${getToken()}`,
       'Content-Type': contentType,
-      Authorization: `Bearer ${getToken()}`
-    }
+    },
   })
 
   promise.then(result => {
-    const t = store.getters.storeToken
+    const t = store.token
 
     // Check if the token is still valid. Renew it if so.
-    if (t && ((new Date().getTime() - new Date(t.createdOn).getTime()) <= t.lifetime)) {
-      t.createdOn = new Date().getTime()
-      store.dispatch('setToken', t)
+    if (t && ((Date.now() - new Date(t.createdOn).getTime()) <= t.lifetime)) {
+      t.createdOn = Date.now()
+      store.setToken(t)
     }
 
     if (success) {
@@ -96,51 +99,47 @@ const apiAxios = ({ url = null, method = 'GET', data = null, formData = null, da
     }
   })
 
-  promise.catch(err => {
-    if (err.response) {
+  promise.catch(error_ => {
+    if (error_.response) {
       // The request was made and the server responded with a status code that falls out of the range of 2xx
       // Log the user out if the result is forbidden and no error method has been provided
       // Otherwise, we assume that the calling method takes care of the error
       if (!error) {
-        if (err.response.status === 401 || err.response.status === 403) {
-          store.dispatch('setToken', null)
+        if (error_.response.status === 401 || error_.response.status === 403) {
+          store.setToken(undefined)
         } else if (process.env.NODE_ENV === 'development') {
-          console.error(err)
+          console.error(error_)
         }
       } else if (error && error.callback) {
-        if (error.codes.length === 0 || error.codes.includes(err.response.status)) {
-          return error.callback(err.response)
-        } else {
-          return handleError(err.response)
-        }
+        return error.codes.length === 0 || error.codes.includes(error_.response.status) ? error.callback(error_.response) : handleError(error_.response)
       } else if (process.env.NODE_ENV === 'development') {
-        console.error(err)
+        console.error(error_)
       }
-    } else if (err.request) {
+    } else if (error_.request) {
       // The request was made but no response was received `err.request` is an instance of XMLHttpRequest in the browser
-      if (err.request.textStatus === 'timeout') {
+      if (error_.request.textStatus === 'timeout') {
         emitter.emit('toast', {
           message: 'Request to the server timed out.',
           title: 'Error',
           variant: 'danger',
           autoHideDelay: 5000,
-          appendToast: true
+          appendToast: true,
         })
       }
     } else {
       // Something happened in setting up the request that triggered an Error
       if (process.env.NODE_ENV === 'development') {
-        console.error(err)
+        console.error(error_)
       }
     }
 
-    throw err
+    throw error_
   })
 
   return promise
 }
 
-const apiPostAlbumById = (albumId, data, onSuccess, onError) => apiAxios({ url: `album/${albumId}`, method: 'POST', data: data, success: onSuccess, error: onError })
+const apiPostAlbumById = (albumId, data, onSuccess, onError) => apiAxios({ url: `album/${albumId}`, method: 'POST', data, success: onSuccess, error: onError })
 
 const apiGetImageById = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}`, success: onSuccess, error: onError })
 
@@ -150,11 +149,11 @@ const apiPatchImage = (image, onSuccess, onError) => apiAxios({ url: `image/${im
 
 const apiGetLocations = (onSuccess, onError) => apiAxios({ url: 'location', success: onSuccess, error: onError })
 
-const apiPostImages = (data, onSuccess, onError) => apiAxios({ url: 'image', method: 'POST', data: data, success: onSuccess, error: onError })
+const apiPostImages = (data, onSuccess, onError) => apiAxios({ url: 'image', method: 'POST', data, success: onSuccess, error: onError })
 
-const apiPostImageIds = (data, onSuccess, onError) => apiAxios({ url: 'image/ids', method: 'POST', data: data, success: onSuccess, error: onError })
+const apiPostImageIds = (data, onSuccess, onError) => apiAxios({ url: 'image/ids', method: 'POST', data, success: onSuccess, error: onError })
 
-const apiPostAlbums = (data, onSuccess, onError) => apiAxios({ url: 'album', method: 'POST', data: data, success: onSuccess, error: onError })
+const apiPostAlbums = (data, onSuccess, onError) => apiAxios({ url: 'album', method: 'POST', data, success: onSuccess, error: onError })
 
 const apiGetImageTags = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/tag`, success: onSuccess, error: onError })
 
@@ -172,7 +171,7 @@ const apiPostImageTags = (imageId, tags, onSuccess, onError) => apiAxios({ url: 
 
 const apiGetTags = (onSuccess, onError) => apiAxios({ url: 'tag', success: onSuccess, error: onError })
 
-const apiPostToken = (data, onSuccess, onError) => apiAxios({ url: 'token', method: 'POST', data: data, success: onSuccess, error: onError })
+const apiPostToken = (data, onSuccess, onError) => apiAxios({ url: 'token', method: 'POST', data, success: onSuccess, error: onError })
 
 const apiGetStatsCounts = (onSuccess, onError) => apiAxios({ url: 'stats/count', success: onSuccess, error: onError })
 
@@ -198,17 +197,19 @@ const apiPostDownloadImages = (imageIds, onSuccess, onError) => apiAxios({ url: 
 
 const apiCheckDownloadStatus = (uuids, onSuccess, onError) => apiAxios({ url: 'download/status', method: 'POST', data: uuids, success: onSuccess, error: onError })
 
+const apiDeleteDownloadJobs = (uuids, onSuccess, onError) => apiAxios({ url: 'download', method: 'DELETE', data: uuids, success: onSuccess, error: onError })
+
 const apiGetImageAlbumHierarchy = (imageId, onSuccess, onError) => apiAxios({ url: `image/${imageId}/hierarchy`, success: onSuccess, error: onError })
 
 const apiGetAlbumAlbumHierarchy = (albumId, onSuccess, onError) => apiAxios({ url: `album/${albumId}/hierarchy`, success: onSuccess, error: onError })
 
-const apiPostUsers = (data, onSuccess, onError) => apiAxios({ url: 'user', method: 'POST', data: data, success: onSuccess, error: onError })
+const apiPostUsers = (data, onSuccess, onError) => apiAxios({ url: 'user', method: 'POST', data, success: onSuccess, error: onError })
 
-const apiPutUsers = (data, onSuccess, onError) => apiAxios({ url: 'user', method: 'PUT', data: data, success: onSuccess, error: onError })
+const apiPutUsers = (data, onSuccess, onError) => apiAxios({ url: 'user', method: 'PUT', data, success: onSuccess, error: onError })
 
 const apiDeleteUser = (userId, onSuccess, onError) => apiAxios({ url: `user/${userId}`, method: 'DELETE', success: onSuccess, error: onError })
 
-const apiPatchUser = (userId, data, onSuccess, onError) => apiAxios({ url: `user/${userId}`, method: 'PATCH', data: data, success: onSuccess, error: onError })
+const apiPatchUser = (userId, data, onSuccess, onError) => apiAxios({ url: `user/${userId}`, method: 'PATCH', data, success: onSuccess, error: onError })
 
 export {
   getToken,
@@ -238,6 +239,7 @@ export {
   apiGetDownloadAlbum,
   apiPostDownloadImages,
   apiCheckDownloadStatus,
+  apiDeleteDownloadJobs,
   apiGetImageAlbumHierarchy,
   apiGetAlbumAlbumHierarchy,
   apiDeleteAlbum,
@@ -247,5 +249,5 @@ export {
   apiPostUsers,
   apiPutUsers,
   apiDeleteUser,
-  apiPatchUser
+  apiPatchUser,
 }

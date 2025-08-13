@@ -10,7 +10,8 @@
         prepend-inner-icon="mdi-magnify"
         placeholder="Search"
         variant="solo"
-        density="compact" />
+        density="compact"
+      />
       <v-spacer />
       <v-select
         v-model="orderBy"
@@ -18,30 +19,35 @@
         :items="sortByKeys"
         prepend-inner-icon="mdi-sort"
         :label="$t('formLabelSortBy')"
-        density="compact" />
-      <v-spacer></v-spacer>
+        density="compact"
+      />
+      <v-spacer />
       <v-btn-group density="compact" class="me-3">
         <v-btn
           v-if="canAddUsers && parentAlbumId !== -1"
           @click="addUser"
-          variant="tonal">
+          variant="tonal"
+        >
           <v-icon>mdi-account-plus</v-icon>
         </v-btn>
         <v-btn
           v-if="canCreate"
           @click="addAlbum"
-          variant="tonal">
+          variant="tonal"
+        >
           <v-icon>mdi-folder-plus</v-icon>
         </v-btn>
-        <v-btn v-if="hasItemsSelected && (canAddTag || canDelete)"
+        <v-btn
+          v-if="hasItemsSelected && (canAddTag || canDelete)"
           active
           color="primary"
-          variant="tonal">
+          variant="tonal"
+        >
           <v-icon>mdi-checkbox-multiple-marked-outline</v-icon> <span v-if="hasItemsSelected">{{ $t('widgetGallerySelectionCount', selectedItemCount) }}</span>
           <v-menu activator="parent" v-if="hasItemsSelected">
             <v-list>
-              <v-list-item href="#" @click.prevent="onAddTagClicked" :disabled="!canAddTag">{{ $t('buttonAddTag') }}</v-list-item>
-              <v-list-item href="#" @click.prevent="onDeleteClicked" :disabled="!canDelete">{{ $t('buttonDelete') }}</v-list-item>
+              <!-- <v-list-item href="#" @click.prevent="onAddTagClicked" :disabled="!canAddTag">{{ $t('buttonAddTag') }}</v-list-item> -->
+              <v-list-item href="#" @click.prevent="askDeleteAlbums" :disabled="!canDelete"><v-icon>mdi-delete</v-icon> {{ $t('buttonDelete') }}</v-list-item>
             </v-list>
           </v-menu>
         </v-btn>
@@ -49,15 +55,18 @@
       <v-btn-toggle
         v-model="ascending"
         density="compact"
-        mandatory>
+        mandatory
+      >
         <v-btn
           color="primary-darken-1"
-          :value="1">
+          :value="1"
+        >
           <v-icon>mdi-arrow-up</v-icon>
         </v-btn>
         <v-btn
           color="primary-darken-1"
-          :value="0">
+          :value="0"
+        >
           <v-icon>mdi-arrow-down</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -82,279 +91,300 @@
         :items="perPageKeys"
         prepend-inner-icon="mdi-book-open-page-variant"
         :label="$t('formLabelPerPage')"
-        density="compact" />
+        density="compact"
+      />
       <v-spacer />
       <v-pagination
         v-model="page"
         :total-visible="3"
         :show-first-last-page="pageCount > 3"
         density="compact"
-        :length="pageCount" />
+        :length="pageCount"
+      />
       <v-spacer />
       <v-btn-toggle
         v-model="cardSize"
         density="compact"
-        mandatory>
+        mandatory
+      >
         <v-btn
           color="primary-darken-1"
-          value="sm">
+          value="sm"
+        >
           <v-icon>mdi-size-s</v-icon>
         </v-btn>
         <v-btn
           color="primary-darken-1"
-          value="md">
+          value="md"
+        >
           <v-icon>mdi-size-m</v-icon>
         </v-btn>
         <v-btn
           color="primary-darken-1"
-          value="lg">
+          value="lg"
+        >
           <v-icon>mdi-size-l</v-icon>
         </v-btn>
       </v-btn-toggle>
     </v-toolbar>
 
-    <AddAlbumDialog :parentAlbumId="parentAlbumId" @album-added="update" ref="addAlbumDialog" />
-    <AddUserDialog :parentAlbumId="parentAlbumId" ref="addUserDialog" />
+    <AddAlbumDialog :parent-album-id="parentAlbumId" @album-added="update(true)" ref="addAlbumDialog" />
+    <AddUserDialog :parent-album-id="parentAlbumId" ref="addUserDialog" />
+
+    <ConfirmDialog :message="$t('modalTextConfirmDeleteAlbum')" @yes="onDeleteClicked" @no="$refs.confirmDialog.hide()" ref="confirmDialog" />
   </div>
 </template>
 
 <script>
-import AlbumCard from '@/components/AlbumCard.vue'
-import AddAlbumDialog from '@/components/dialogs/AddAlbumDialog.vue'
-import AddUserDialog from '@/components/dialogs/AddUserDialog.vue'
-import { mapGetters } from 'vuex'
-import { apiDeleteAlbums } from '@/plugins/api'
+  import AlbumCard from '@/components/AlbumCard.vue'
+  import AddAlbumDialog from '@/components/dialogs/AddAlbumDialog.vue'
+  import AddUserDialog from '@/components/dialogs/AddUserDialog.vue'
+  import { mapState, mapStores } from 'pinia'
+  import { coreStore } from '@/stores/app'
+  import { apiDeleteAlbums } from '@/plugins/api'
 
-export default {
-  components: {
-    AlbumCard,
-    AddAlbumDialog,
-    AddUserDialog
-  },
-  props: {
-    getData: {
-      type: Function,
-      default: () => { return { count: 0, data: [] } }
+  export default {
+    components: {
+      AlbumCard,
+      AddAlbumDialog,
+      AddUserDialog,
     },
-    parentAlbumId: {
-      type: Number,
-      default: null
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'storeAlbumsPerPage',
-      'storeUserPermissions',
-      'storeAlbumCardSize'
-    ]),
-    hasItemsSelected: function () {
-      return Object.values(this.selectedItems).some(k => k)
-    },
-    selectedItemCount: function () {
-      return Object.values(this.selectedItems).filter(k => k).length
-    },
-    canDelete: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['ALBUM_DELETE']
-    },
-    canAddTag: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['TAG_ADD']
-    },
-    canCreate: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['ALBUM_CREATE']
-    },
-    canAddUsers: function () {
-      return this.storeUserPermissions && this.storeUserPermissions['SETTINGS_CHANGE']
-    },
-    disabled: function () {
-      return this.albumCount === 0
-    },
-    pageCount: function () {
-      return Math.ceil(this.albumCount / this.perPage)
-    },
-    sortByKeys: function () {
-      return [
-        { title: this.$t('selectOptionSortNewestImage'), value: 'newestImage' },
-        { title: this.$t('selectOptionSortViewCount'), value: 'imageViewCount' },
-        { title: this.$t('selectOptionSortImageCount'), value: 'imageCount' },
-        { title: this.$t('selectOptionSortName'), value: 'name' }
-      ]
-    },
-    perPageKeys: function () {
-      return [
-        { title: '12', value: 12 },
-        { title: '24', value: 24 },
-        { title: '48', value: 48 },
-        { title: '96', value: 96 }
-      ]
-    }
-  },
-  watch: {
-    perPage: function (newValue) {
-      this.$store.dispatch('setAlbumsPerPage', newValue)
-      this.page = 1
-      this.albumCount = -1
-      this.update()
-    },
-    page: function (newValue) {
-      this.update()
-      this.setQuery('albumPage', newValue)
-    },
-    orderBy: function (newValue) {
-      this.update()
-      this.setQuery('albumOrderBy', newValue)
-    },
-    ascending: function (newValue) {
-      this.update()
-      this.setQuery('albumAscending', newValue)
-    },
-    search: function () {
-      this.page = 1
-      this.albumCount = -1
-      this.update()
-    },
-    cardSize: function (newValue) {
-      this.$store.dispatch('setAlbumCardSize', newValue)
-    }
-  },
-  data: function () {
-    return {
-      albums: [],
-      perPage: 24,
-      page: 1,
-      albumCount: -1,
-      tempSearch: null,
-      search: null,
-      orderBy: 'newestImage',
-      ascending: 0,
-      cardSize: 'md',
-      selectedItems: {},
-      heights: {
-        lg: 300,
-        md: 250,
-        sm: 200
-      },
-      heightsSelected: {
-        lg: 280,
-        md: 230,
-        sm: 180
-      },
-      widths: {
-        lg: {
-          xxl: 3,
-          xl: 4,
-          lg: 6,
-          md: 6,
-          sm: 12,
-          cols: 12
+    props: {
+      getData: {
+        type: Function,
+        default: () => {
+          return { count: 0, data: [] }
         },
-        md: {
-          xxl: 2,
-          xl: 3,
-          lg: 4,
-          md: 6,
-          sm: 12,
-          cols: 12
+      },
+      parentAlbumId: {
+        type: Number,
+        default: null,
+      },
+    },
+    computed: {
+      ...mapStores(coreStore),
+      ...mapState(coreStore, [
+        'storeAlbumsPerPage',
+        'storeUserPermissions',
+        'storeAlbumCardSize',
+      ]),
+      hasItemsSelected: function () {
+        return Object.values(this.selectedItems).some(Boolean)
+      },
+      selectedItemCount: function () {
+        return Object.values(this.selectedItems).filter(Boolean).length
+      },
+      canDelete: function () {
+        return this.storeUserPermissions && this.storeUserPermissions.ALBUM_DELETE
+      },
+      canAddTag: function () {
+        return this.storeUserPermissions && this.storeUserPermissions.TAG_ADD
+      },
+      canCreate: function () {
+        return this.storeUserPermissions && this.storeUserPermissions.ALBUM_CREATE
+      },
+      canAddUsers: function () {
+        return this.storeUserPermissions && this.storeUserPermissions.SETTINGS_CHANGE
+      },
+      disabled: function () {
+        return this.albumCount === 0
+      },
+      pageCount: function () {
+        return Math.ceil(this.albumCount / this.perPage)
+      },
+      sortByKeys: function () {
+        return [
+          { title: this.$t('selectOptionSortNewestImage'), value: 'newestImage' },
+          { title: this.$t('selectOptionSortViewCount'), value: 'imageViewCount' },
+          { title: this.$t('selectOptionSortImageCount'), value: 'imageCount' },
+          { title: this.$t('selectOptionSortName'), value: 'name' },
+        ]
+      },
+      perPageKeys: function () {
+        return [
+          { title: '12', value: 12 },
+          { title: '24', value: 24 },
+          { title: '48', value: 48 },
+          { title: '96', value: 96 },
+        ]
+      },
+    },
+    watch: {
+      perPage: function (newValue) {
+        this.fricklStore.setAlbumsPerPage(newValue)
+        this.update(true)
+      },
+      page: function (newValue) {
+        this.update()
+        this.setQuery('albumPage', newValue)
+      },
+      orderBy: function (newValue) {
+        this.update()
+        this.setQuery('albumOrderBy', newValue)
+      },
+      ascending: function (newValue) {
+        this.update()
+        this.setQuery('albumAscending', newValue)
+      },
+      search: function () {
+        this.update(true)
+      },
+      cardSize: function (newValue) {
+        this.fricklStore.setAlbumCardSize(newValue)
+      },
+    },
+    data: function () {
+      return {
+        albums: [],
+        perPage: 24,
+        page: 1,
+        albumCount: -1,
+        tempSearch: null,
+        search: null,
+        orderBy: 'newestImage',
+        ascending: 0,
+        cardSize: 'md',
+        selectedItems: {},
+        heights: {
+          lg: 300,
+          md: 250,
+          sm: 200,
         },
-        sm: {
-          xxl: 2,
-          xl: 3,
-          lg: 3,
-          md: 4,
-          sm: 6,
-          cols: 12
+        heightsSelected: {
+          lg: 280,
+          md: 230,
+          sm: 180,
+        },
+        widths: {
+          lg: {
+            xxl: 3,
+            xl: 4,
+            lg: 6,
+            md: 6,
+            sm: 12,
+            cols: 12,
+          },
+          md: {
+            xxl: 2,
+            xl: 3,
+            lg: 4,
+            md: 6,
+            sm: 12,
+            cols: 12,
+          },
+          sm: {
+            xxl: 2,
+            xl: 3,
+            lg: 3,
+            md: 4,
+            sm: 6,
+            cols: 12,
+          },
+        },
+      }
+    },
+    methods: {
+      askDeleteAlbums: function () {
+        this.$nextTick(() => this.$refs.confirmDialog.show())
+      },
+      onDeleteClicked: function () {
+        if (this.$refs.confirmDialog) {
+          this.$refs.confirmDialog.hide()
         }
-      }
-    }
-  },
-  methods: {
-    onDeleteClicked: function () {
-      const ids = Object.keys(this.selectedItems).filter(k => this.selectedItems[k])
 
-      apiDeleteAlbums(ids, result => {
-        this.reset()
-      })
-    },
-    toggle: function (albumId) {
-      if (this.selectedItems[albumId]) {
-        delete this.selectedItems[albumId]
-      } else {
-        this.selectedItems[albumId] = true
-      }
-    },
-    setQuery: function (param, value) {
-      let query = {}
+        const ids = Object.keys(this.selectedItems).filter(k => this.selectedItems[k])
 
-      const current = this.$router.currentRoute.value
-
-      if (current.query) {
-        query = JSON.parse(JSON.stringify(current.query))
-      }
-
-      query[param] = value
-
-      this.$router.replace({
-        path: current.path,
-        query: query
-      })
-    },
-    addAlbum: function () {
-      this.$refs.addAlbumDialog.show()
-    },
-    addUser: function () {
-      this.$refs.addUserDialog.show()
-    },
-    textChanged: function () {
-      this.search = this.tempSearch
-    },
-    reset: function () {
-      this.selectedItems = {}
-      this.page = 1
-      this.albumCount = -1
-      this.update()
-    },
-    update: function () {
-      const temp = {}
-      Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => { temp[k] = true })
-      this.selectedItems = temp
-
-      this.getData({
-        page: this.page - 1,
-        limit: this.perPage,
-        prevCount: this.albumCount,
-        orderBy: this.orderBy,
-        searchTerm: this.search,
-        ascending: this.ascending
-      }).then(result => {
-        if (result && result.data) {
-          this.albums = result.data.data
-          this.albumCount = result.data.count
+        apiDeleteAlbums(ids, () => {
+          this.reset()
+        })
+      },
+      toggle: function (albumId) {
+        if (this.selectedItems[albumId]) {
+          delete this.selectedItems[albumId]
         } else {
-          this.albums = []
-          this.albumCount = 0
+          this.selectedItems[albumId] = true
         }
-      })
-    }
-  },
-  mounted: function () {
-    const query = this.$route.query
+      },
+      setQuery: function (param, value) {
+        let query = {}
 
-    if (query) {
-      if (query.albumPage) {
-        this.page = +query.albumPage
-      }
-      if (query.albumOrderBy) {
-        this.orderBy = query.albumOrderBy
-      }
-      if (query.albumAscending !== undefined && query.albumAscending !== null) {
-        this.ascending = +query.albumAscending
-      }
-    }
+        const current = this.$router.currentRoute.value
 
-    this.perPage = this.storeAlbumsPerPage
-    this.cardSize = this.storeAlbumCardSize
-    this.update()
+        if (current.query) {
+          query = JSON.parse(JSON.stringify(current.query))
+        }
+
+        query[param] = value
+
+        this.$router.replace({
+          path: current.path,
+          query: query,
+        })
+      },
+      addAlbum: function () {
+        this.$refs.addAlbumDialog.show()
+      },
+      addUser: function () {
+        this.$refs.addUserDialog.show()
+      },
+      textChanged: function () {
+        this.search = this.tempSearch
+      },
+      reset: function () {
+        this.selectedItems = {}
+
+        this.update(true)
+      },
+      update: function (resetPagination = false) {
+        if (resetPagination) {
+          this.page = 1
+          this.albumCount = -1
+        }
+
+        const temp = {}
+        Object.keys(this.selectedItems).filter(k => this.selectedItems[k]).forEach(k => {
+          temp[k] = true
+        })
+        this.selectedItems = temp
+
+        this.getData({
+          page: this.page - 1,
+          limit: this.perPage,
+          prevCount: this.albumCount,
+          orderBy: this.orderBy,
+          searchTerm: this.search,
+          ascending: this.ascending,
+        }).then(result => {
+          if (result && result.data) {
+            this.albums = result.data.data
+            this.albumCount = result.data.count
+          } else {
+            this.albums = []
+            this.albumCount = 0
+          }
+        })
+      },
+    },
+    mounted: function () {
+      const query = this.$route.query
+
+      if (query) {
+        if (query.albumPage) {
+          this.page = +query.albumPage
+        }
+        if (query.albumOrderBy) {
+          this.orderBy = query.albumOrderBy
+        }
+        if (query.albumAscending !== undefined && query.albumAscending !== null) {
+          this.ascending = +query.albumAscending
+        }
+      }
+
+      this.perPage = this.storeAlbumsPerPage
+      this.cardSize = this.storeAlbumCardSize
+      this.update()
+    },
   }
-}
 </script>
 
 <style scoped>
