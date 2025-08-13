@@ -4,7 +4,7 @@
       Image stream
     </h1>
     <v-divider class="mb-3" />
-    <ImageGallery :get-data="getImages" :get-ids="getIds" />
+    <ImageGallery :get-data="getImages" :get-ids="getIds" :allow-upload="false" />
   </v-container>
 </template>
 

@@ -2571,6 +2571,10 @@ input, select, textarea {
 				font-size: 1.5em;
 			}
 
+			ul.icons li .icon img {
+					height: 1.15em;
+			}
+
 /* Major Icons */
 
 	ul.major-icons {

@@ -13,6 +13,14 @@ const router = createRouter({
   // history: createWebHistory(import.meta.env.BASE_URL),
   history: createWebHashHistory(),
   routes: setupLayouts(routes),
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition || (from && to && from.path === to.path)) {
+      return savedPosition
+    } else {
+      window.scrollTo(0, 0)
+      return { left: 0, top: 0 }
+    }
+  },
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

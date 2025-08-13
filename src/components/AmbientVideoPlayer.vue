@@ -2,7 +2,7 @@
   <section :class="`wrapper wrapper-${$vuetify.display.name}`">
     <canvas width="20" height="12" aria-hidden="true" class="canvas" ref="canvas" />
     <div class="shadow" />
-    <video controls class="video" preload="metadata" :src="src" :poster="poster" ref="video" />
+    <video controls autoplay class="video" preload="metadata" :src="src" :poster="poster" ref="video" />
   </section>
 </template>
 
@@ -107,5 +107,11 @@
 .wrapper-xl .video,
 .wrapper-xxl .video {
   padding: 6rem;
+}
+
+@media all and (display-mode: fullscreen) {
+  .video {
+    padding: 0 !important;
+  }
 }
 </style>

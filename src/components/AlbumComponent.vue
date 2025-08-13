@@ -2,7 +2,7 @@
   <div>
     <v-toolbar color="secondary">
       <v-breadcrumbs>
-        <v-breadcrumbs-item title="Home" to="album" />
+        <v-breadcrumbs-item title="Home" to="/album" />
         <template v-if="albumHierarchy && albumHierarchy.length > 0">
           <template v-for="h in albumHierarchy" :key="`hierarchy-item-${h.id}`">
             <v-breadcrumbs-divider />

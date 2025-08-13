@@ -24,7 +24,7 @@
       <v-spacer />
       <v-btn-group density="compact" class="me-3">
         <v-btn
-          v-if="canUpload"
+          v-if="canUpload && allowUpload"
           @click="showImageUpload"
           variant="tonal"
         >
@@ -174,6 +174,10 @@
       albumId: {
         type: Number,
         default: null,
+      },
+      allowUpload: {
+        type: Boolean,
+        default: true,
       },
       getData: {
         type: Function,

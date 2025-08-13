@@ -57,7 +57,7 @@
       class="align-center justify-center image-wrapper"
     >
       <v-img v-if="image.dataType === 'image'" :src="imgSrc['ORIGINAL']" @click="overlay = false" />
-      <video class="frickl-video" controls :poster="imgSrc['MEDIUM']" :src="imgSrc['VIDEO']" v-else-if="image.dataType === 'video'" />
+      <video controls autoplay :poster="imgSrc['MEDIUM']" :src="imgSrc['VIDEO']" v-else-if="image.dataType === 'video'" />
     </v-overlay>
   </v-card>
 </template>
@@ -152,7 +152,7 @@
   width: 100%;
   height: auto;
 }
-.image-wrapper img {
+.image-wrapper img, .image-wrapper video {
   max-height: 100vh;
   max-width: 100vw;
   position: relative;
