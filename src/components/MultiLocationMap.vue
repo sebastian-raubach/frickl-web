@@ -1,7 +1,6 @@
 <template>
   <div id="image-map" ref="imageMap" class="d-flex justify-center align-center" :style="{ height: `${heightPercent}vh` }">
-    <p class="text-h5" v-if="images === null"><v-progress-circular indeterminate></v-progress-circular></p>
-    <p class="text-h5" v-else-if="images.length === 0">{{ $t('errorNoGpsAvailable') }}</p>
+    <p class="text-h5" v-if="images && images.length === 0">{{ $t('errorNoGpsAvailable') }}</p>
 
     <div ref="popupContent" v-if="selectedLocation">
       <img :src="getImgUrl(selectedLocation.imageIndex, 'SMALL')" width="300">
@@ -22,6 +21,7 @@
   import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
   import iconUrl from 'leaflet/dist/images/marker-icon.png'
   import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+  import emitter from 'tiny-emitter/instance'
 
   // Set the leaflet marker icon
   delete L.Icon.Default.prototype._getIconUrl
@@ -60,6 +60,7 @@
     },
     watch: {
       images: function () {
+        emitter.emit('show-loading', false)
         this.init()
       },
       storeTheme: function () {
@@ -285,6 +286,9 @@
           this.update()
         })
       },
+    },
+    created: function () {
+      emitter.emit('show-loading', true)
     },
     beforeUnmount: function () {
       if (this.pruneClusterScript) {

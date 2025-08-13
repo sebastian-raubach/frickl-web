@@ -12,6 +12,15 @@
 
         <v-app-bar-title style="cursor: pointer" @click="$router.push('/')">Frickl</v-app-bar-title>
 
+        <v-progress-linear
+          :active="loading"
+          indeterminate
+          striped
+          color="secondary"
+          location="bottom"
+          absolute
+        />
+
         <v-spacer />
 
         <template #extension v-if="searchVisible">
@@ -226,6 +235,7 @@
           favorites: null,
           tags: null,
         },
+        loading: false,
         importStatus: null,
         importStatusTimer: null,
         exportJobTimer: null,
@@ -387,6 +397,9 @@
           apiDeleteDownloadJobs(toCheck.map(j => j.token), () => this.checkExportStatus(false))
         }
       },
+      showLoading: function (active) {
+        this.loading = active
+      },
     },
     mounted: function () {
       this.checkImportStatus()
@@ -395,10 +408,12 @@
 
       emitter.on('overview-counts-changed', this.updateCounts)
       emitter.on('show-download-menu', this.showDownloadMenu)
+      emitter.on('show-loading', this.showLoading)
     },
     beforeUnmount: function () {
       emitter.off('overview-counts-changed', this.updateCounts)
       emitter.off('show-download-menu', this.showDownloadMenu)
+      emitter.off('show-loading', this.showLoading)
     },
     created: async function () {
       this.fricklStore.setBaseUrl(baseUrl)
