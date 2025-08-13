@@ -60,7 +60,6 @@
     },
     watch: {
       images: function () {
-        emitter.emit('show-loading', false)
         this.init()
       },
       storeTheme: function () {
@@ -163,6 +162,8 @@
             marker.icon = icon
             marker.popup = ''
 
+            latLngBounds.extend([l.latitude, l.longitude])
+
             this.clusterer.RegisterMarker(marker)
 
             // marker.imageIndex = i
@@ -189,6 +190,7 @@
         }
 
         if (this.images) {
+          console.log(latLngBounds)
           if (this.images.length === 1) {
             this.map.panTo([this.images[0].latitude, this.images[0].longitude])
           } else if (latLngBounds.isValid()) {
@@ -199,6 +201,10 @@
         this.clusterer.ProcessView()
 
         this.isInitializing = false
+
+        if (this.images) {
+          emitter.emit('show-loading', false)
+        }
       },
       updateThemeLayer: function () {
         if (this.themeLayer) {
@@ -286,9 +292,6 @@
           this.update()
         })
       },
-    },
-    created: function () {
-      emitter.emit('show-loading', true)
     },
     beforeUnmount: function () {
       if (this.pruneClusterScript) {

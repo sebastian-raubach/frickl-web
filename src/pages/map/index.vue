@@ -23,6 +23,7 @@
 <script>
   import MultiLocationMap from '@/components/MultiLocationMap.vue'
   import { apiGetLocations } from '@/plugins/api'
+  import emitter from 'tiny-emitter/instance'
 
   export default {
     components: {
@@ -52,6 +53,7 @@
       // }
     },
     mounted: function () {
+      emitter.emit('show-loading', true)
       apiGetLocations(locations => {
         // const dates = []
         // locations.forEach(l => {
