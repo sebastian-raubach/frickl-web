@@ -1,235 +1,477 @@
 <template>
-  <div id="app">
-    <b-navbar toggleable="lg" type="dark" variant="dark" id="navbar">
-      <b-navbar-brand>
-        <router-link to="/">
-          <img src="./assets/frickl.svg" height="40px" alt="Frickl">
-        </router-link>
-      </b-navbar-brand>
-      <!-- <b-navbar-brand to="/">Frickl</b-navbar-brand> -->
+  <v-app>
+    <v-main>
+      <v-app-bar color="grey-darken-4" :extension-height="60">
+        <v-img
+          class="ms-4"
+          src="/img/frickl.svg"
+          max-height="40"
+          max-width="40"
+          contain
+        />
 
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <v-app-bar-title style="cursor: pointer" @click="$router.push('/')">Frickl</v-app-bar-title>
 
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item to="/images">Image stream</b-nav-item>
-          <b-nav-item to="/favorites">Favorites</b-nav-item>
-          <b-nav-item to="/albums">Albums</b-nav-item>
-          <b-nav-item to="/tags">Tags</b-nav-item>
-          <b-nav-item to="/maps">Maps</b-nav-item>
-          <b-nav-item to="/calendar" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Calendar</b-nav-item>
-          <b-nav-item to="/stats" v-if="(serverSettings && serverSettings.authEnabled === false) || token">Statistics</b-nav-item>
-        </b-navbar-nav>
+        <v-progress-linear
+          :active="loading"
+          indeterminate
+          striped
+          color="secondary"
+          location="bottom"
+          absolute
+        />
 
-        <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
-          <template v-if="(serverSettings && serverSettings.authEnabled === true)">
-            <b-nav-item v-if="token" to="/accessTokens">Access tokens</b-nav-item>
-            <b-nav-item v-if="(serverSettings && serverSettings.authEnabled === false) || token" @click="logout">Logout</b-nav-item>
-            <b-nav-item v-else @click="login">Login</b-nav-item>
+        <v-spacer />
+
+        <template #extension v-if="searchVisible">
+          <v-container>
+            <v-row justify="end">
+              <v-col cols="12">
+                <v-text-field
+                  autofocus
+                  name="name"
+                  v-model="searchTerm"
+                  :label="$t('formPlaceholderSearch')"
+                  density="compact"
+                  type="search"
+                  hide-details
+                  single-line
+                  append-inner-icon="mdi-magnify"
+                  @keyup.exact.enter="runSearch"
+                  @click:append-inner="runSearch"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </template>
+
+        <v-tooltip location="top" v-if="importStatus">
+          <template #activator="{ props }">
+            <v-progress-circular v-bind="props" color="primary" class="mx-3" indeterminate />
           </template>
-          <b-nav-item to="/about">About</b-nav-item>
-          <b-nav-form @submit.prevent="onSearch()">
-            <b-input-group>
-              <b-form-input size="sm" placeholder="Search" v-model="searchTerm"></b-form-input>
-              <b-input-group-append>
-                <b-button size="sm" type="submit"><MagnifyIcon /></b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </b-nav-form>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-    <vue-ins-progress-bar id="importStatus" />
-    <template v-if="importStatus">
-      <b-tooltip v-if="importStatus.status === 'SCANNING'" placement="bottom" target="importStatus" title="Scanning image source for changes." />
-      <b-tooltip v-else-if="importStatus.status === 'IMPORTING'" placement="bottom" target="importStatus" :title="`Checking ${importStatus.totalImages} photos for updates. Photos on processing queue: ${importStatus.queueSize}`" />
-    </template>
-    <b-alert dismissible :variant="variant" :show="showAlert" @dismissed="showAlert=false" class="text-center global-alert">{{ message }}</b-alert>
-    <router-view :key="$route.path" id="content"/>
+          <span v-if="importStatus.status === 'SCANNING'">{{ $t('tooltipScanScanning') }}</span>
+          <span v-if="importStatus.status === 'IMPORTING'">{{ $t('tooltipScanImporting', { total: importStatus.totalImages, queue: importStatus.queueSize }) }}</span>
+        </v-tooltip>
+        <v-menu v-if="downloadJobs.length > 0" :close-on-content-click="false" v-model="downloadMenuShown">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" icon="mdi-progress-download" />
+          </template>
+          <v-card min-width="300">
+            <v-list>
+              <v-list-item
+                :title="job.albumName ? $t('widgetDownloadAlbumJob', { album: job.albumName }) : $t('widgetDownloadImageJob', job.imageCount)"
+                :subtitle="new Date(job.createdOn).toLocaleString()"
+                v-for="job in downloadJobs" :key="`download-job-${job.token}`"
+              >
+                <template #prepend>
+                  <v-icon color="secondary" icon="mdi-folder-image" v-if="job.albumName" />
+                  <v-icon color="secondary" icon="mdi-image" v-else-if="job.imageCount === 1" />
+                  <v-icon color="secondary" icon="mdi-image-multiple" v-else />
+                </template>
+                <template #append>
+                  <v-icon color="info" icon="mdi-timer-sand" v-if="job.status === 'RUNNING'" />
+                  <v-icon color="success" tag="a" class="text-decoration-none" :href="`${storeBaseUrl}download/${job.token}`" @click="checkExportStatus(true)" icon="mdi-download" v-else-if="job.status === 'FINISHED'" />
+                  <v-icon color="error" icon="mdi-alert" v-else-if="job.status === 'EXPIRED'" />
+                  <v-icon color="warning" icon="mdi-help-circle-outline" v-else />
+                </template>
+              </v-list-item>
+              <v-list-item>
+                <v-btn
+                  @click="clearJobs"
+                  variant="tonal"
+                  color="error"
+                >
+                  <v-icon>mdi-delete</v-icon> {{ $t('buttonDelete') }}
+                </v-btn>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
+        <v-btn icon="mdi-magnify" @click="searchVisible = !searchVisible" />
+        <v-btn icon="mdi-theme-light-dark" @click.stop="toggleTheme" />
+        <v-menu>
+          <template #activator="{ props }">
+            <v-btn v-bind="props" icon="mdi-translate" />
+          </template>
+          <v-list>
+            <v-list-item
+              @click="changeLocale(language.locale)"
+              v-for="language in languages"
+              :key="`locale-${language.flag}`"
+              :value="language.locale"
+            >
+              <v-list-item-title>{{ language.name }}</v-list-item-title>
+              <template #prepend>
+                <span class="me-3">{{ language.icon }}</span>
+              </template>
+              <template #append>
+                <v-icon v-if="language.locale === storeLocale">mdi-check</v-icon>
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-btn icon="mdi-account-multiple" to="/user" v-if="storeToken && userCanEditUsers" />
+        <v-btn icon="mdi-login" @click.stop="showLogin" v-if="!storeToken" />
+        <v-btn icon="mdi-logout" @click.stop="logout" v-else />
+      </v-app-bar>
 
-    <LoginModal ref="loginModal" v-on:login="onLogin" />
+      <v-navigation-drawer
+        permanent
+        :rail="$vuetify.display.mdAndDown"
+        :expand-on-hover="$vuetify.display.mdAndDown"
+      >
+        <v-list>
+          <v-list-item
+            :title="$t(storeToken ? 'menuUserInfoType' : 'menuUserNotLoggedIn')"
+            :subtitle="storeToken ? storeToken.username : $t('menuUserNotLoggedInExplanation')"
+          >
+            <template #prepend>
+              <v-avatar color="secondary">
+                <v-icon color="black" v-if="storeToken">mdi-account</v-icon>
+                <v-icon color="black" v-else>mdi-account-off</v-icon>
+              </v-avatar>
+            </template>
+          </v-list-item>
+        </v-list>
 
-    <b-popover target="navbar" show placement="bottom" variant="info" v-if="cookiesAccepted === null">
-      <template v-slot:title>GDPR Cookie Consent</template>
-      <p>Frickl uses cookies to facilitate user login and to remember user preferences.</p>
-      <div class="d-flex flex-row">
-        <b-button variant="success" class="flex-fill mr-2" @click="acceptCookies(true)">Accept</b-button>
-        <b-button variant="outline-secondary" class="flex-fill" v-b-tooltip:hover title="Please be aware that rejecting cookies will disable certain features of Frickl." @click="acceptCookies(false)">Reject</b-button>
+        <v-divider />
+
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-image-move" :title="$t('menuImageStream')" to="/image-stream">
+            <template #append v-if="counts.images">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.images, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-folder-multiple-image" :title="$t('menuAlbums')" to="/album">
+            <template #append v-if="counts.albums">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.albums, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-image-album" :title="$t('menuFavorites')" to="/favorites">
+            <template #append v-if="counts.favorites">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.favorites, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-tag-text" :title="$t('menuTags')" to="/tag">
+            <template #append v-if="counts.tags">
+              <v-badge color="dark" :content="getNumberWithSuffix(counts.tags, 0)" inline />
+            </template>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-map-legend" :title="$t('menuMap')" to="/map" />
+          <v-list-item prepend-icon="mdi-chart-bar-stacked" :title="$t('menuStatistics')" to="/statistics" />
+          <v-list-item prepend-icon="mdi-information" :title="$t('menuAbout')" to="/about" />
+        </v-list>
+      </v-navigation-drawer>
+
+      <div>
+        <v-banner :text="$t('widgetCookieBannerText')" stacked v-if="storeCookiesAccepted === null">
+          <template #actions>
+            <v-tooltip :text="$t('widgetCookieBannerRejectTooltip')" location="bottom">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" @click="setCookies(false)" color="grey-darken-1">{{ $t('buttonReject') }}</v-btn>
+              </template>
+            </v-tooltip>
+            <v-btn @click="setCookies(true)" color="primary">{{ $t('buttonAccept') }}</v-btn>
+          </template>
+        </v-banner>
+        <v-container v-if="alertShown">
+          <v-alert
+            v-model="alertShown"
+            closable
+            :icon="alert.icon"
+            :title="alert.title"
+            :text="alert.text"
+            :type="alert.type"
+          />
+        </v-container>
+        <router-view :key="$route.path" />
       </div>
-    </b-popover>
 
-    <b-modal ref="loadingModal" title="Loading" hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
-      <div class="text-center">
-        <b-spinner style="width: 3rem; height: 3rem;" variant="primary" type="grow" />
-        <p class="text-muted mt-3">Loading...</p>
-      </div>
-    </b-modal>
-  </div>
+      <LoginDialog ref="loginDialog" v-if="!storeToken" />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import LoginModal from '@/components/modals/LoginModal'
-import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
-import Vue from 'vue'
-import { VuePlausible } from 'vue-plausible'
-import { mapGetters } from 'vuex'
-import VueAnalytics from 'vue-analytics'
+  import LoginDialog from '@/components/dialogs/LoginDialog.vue'
+  import { mapState, mapStores } from 'pinia'
+  import { coreStore } from '@/stores/app'
+  import { apiCheckDownloadStatus, apiDeleteDownloadJobs, apiGetImportStatus, apiGetSettings, apiGetStatsCounts } from '@/plugins/api'
+  import { getNumberWithSuffix } from '@/plugins/misc'
 
-export default {
-  data: function () {
-    return {
-      timer: null,
-      searchTerm: '',
-      showAlert: false,
-      variant: 'warning',
-      message: '',
-      importStatus: null
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'cookiesAccepted',
-      'serverSettings',
-      'token'
-    ])
-  },
-  components: {
-    LoginModal,
-    MagnifyIcon
-  },
-  methods: {
-    acceptCookies: function (decision) {
-      this.$store.dispatch('ON_COOKIES_ACCEPTED', decision)
-    },
-    login: function () {
-      this.$refs.loginModal.show()
-    },
-    onLogin: function () {
-      this.$router.go({ name: 'home' })
-    },
-    logout: function () {
-      this.$store.dispatch('ON_TOKEN_CHANGED', null)
-      this.$router.go({ name: 'home' })
-    },
-    onSearch: function () {
-      this.$router.push({ name: 'search', params: { searchTerm: this.searchTerm } })
-      this.searchTerm = ''
-    },
-    checkImportStatus: function () {
-      this.apiGetImportStatus(result => {
-        this.importStatus = result
+  import emitter from 'tiny-emitter/instance'
 
-        if (result.status !== 'IDLE') {
-          this.$insProgress.start()
-          this.timer = setTimeout(this.checkImportStatus, 10000)
+  import { getCurrentInstance } from 'vue'
+  import { createPlausible } from 'v-plausible/vue'
+  import VueGtag from 'vue-gtag'
+
+  // Set base URL based on environment
+  let baseUrl = './api/'
+  if (import.meta.env.VITE_BASE_URL) {
+    baseUrl = import.meta.env.VITE_BASE_URL
+  }
+
+  export default {
+    name: 'App',
+    components: {
+      LoginDialog,
+    },
+    data: function () {
+      return {
+        languages: [{
+          locale: 'en',
+          flag: 'gb',
+          icon: '🇬🇧',
+          name: 'British English',
+        }, {
+          locale: 'de',
+          flag: 'de',
+          icon: '🇩🇪',
+          name: 'Deutsch - Deutschland',
+        }],
+        counts: {
+          images: null,
+          albums: null,
+          favorites: null,
+          tags: null,
+        },
+        loading: false,
+        importStatus: null,
+        importStatusTimer: null,
+        exportJobTimer: null,
+        alertShown: false,
+        alert: null,
+        downloadMenuShown: false,
+        searchVisible: false,
+        searchTerm: '',
+      }
+    },
+    computed: {
+      ...mapStores(coreStore),
+      ...mapState(coreStore, [
+        'storeBaseUrl',
+        'storeTheme',
+        'storeLocale',
+        'storeToken',
+        'storeDownloadJobs',
+        'storeCookiesAccepted',
+        'storeUserPermissions',
+      ]),
+      downloadJobs: function () {
+        if (this.storeDownloadJobs) {
+          return this.storeDownloadJobs.concat().sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
         } else {
-          this.$insProgress.finish()
+          return []
+        }
+      },
+      userCanEditUsers: function () {
+        return this.storeToken && this.storeUserPermissions && this.storeUserPermissions.IS_ADMIN
+      },
+    },
+    watch: {
+      storeTheme: {
+        immediate: true,
+        handler: function (newValue) {
+          this.$vuetify.theme.change(newValue)
+        },
+      },
+      storeToken: function () {
+        this.updateCounts()
+      },
+      storeLocale: {
+        immediate: true,
+        handler: function (newValue) {
+          this.$vuetify.locale.current = newValue
+        },
+      },
+      downloadMenuShown: function (newValue) {
+        if (newValue) {
+          this.checkExportStatus()
+        } else {
+          this.clearExportJobTimer()
+        }
+      },
+    },
+    methods: {
+      getNumberWithSuffix,
+      runSearch: function () {
+        this.$router.push(`/search/${this.searchTerm}`)
+        this.searchTerm = ''
+        this.searchVisible = false
+      },
+      setCookies: function (value) {
+        this.fricklStore.setCookiesAccepted(value)
+      },
+      checkExportStatus: function (firstRun = false) {
+        this.clearExportJobTimer()
 
-          if (this.timer) {
-            clearInterval(this.timer)
-            if (result.totalImages > 0) {
-              this.$eventHub.$emit('alert', 'success', `Photo update of ${result.totalImages} successfully completed.`)
-            } else {
-              this.$eventHub.$emit('alert', 'success', 'Photos scanned for updates. No changes found.')
+        if (this.storeDownloadJobs) {
+          const toCheck = this.storeDownloadJobs
+          // const keepChecking = toCheck.some(j => j.status === 'RUNNING')
+
+          if (firstRun || toCheck.length > 0) {
+            apiCheckDownloadStatus(toCheck.map(j => j.token), result => {
+              this.fricklStore.setDownloadJobs(result.filter(j => j.status !== 'EXPIRED'))
+
+              if (!this.exportJobTimer) {
+                this.exportJobTimer = setTimeout(this.checkExportStatus, 10_000)
+              }
+            })
+          } else {
+            this.clearExportJobTimer()
+          }
+        } else {
+          this.clearExportJobTimer()
+        }
+        apiCheckDownloadStatus()
+      },
+      clearExportJobTimer: function () {
+        if (this.exportJobTimer) {
+          clearInterval(this.exportJobTimer)
+          this.exportJobTimer = null
+        }
+      },
+      checkImportStatus: function () {
+        apiGetImportStatus(result => {
+          if (result.status === 'IDLE') {
+            this.importStatus = null
+
+            if (this.importStatusTimer) {
+              clearInterval(this.importStatusTimer)
+              if (result.totalImages > 0) {
+                this.alert = {
+                  title: this.$t('alertTitleImportSuccessful'),
+                  text: this.$tc('alertTextImportSuccessful', result.totalImages),
+                  type: 'success',
+                  icon: 'mdi-check-all',
+                }
+                this.alertShown = true
+              } else {
+                this.alert = {
+                  title: this.$t('alertTitleImportNoUpdate'),
+                  text: this.$t('alertTextImportNoUpdate'),
+                  type: 'info',
+                  icon: 'mdi-sync',
+                }
+                this.alertShown = true
+              }
+              clearInterval(this.importStatusTimer)
+              this.importStatusTimer = null
             }
-            clearInterval(this.timer)
-            this.timer = null
+          } else {
+            this.importStatus = result
+            this.importStatusTimer = setTimeout(this.checkImportStatus, 10_000)
+          }
+        })
+      },
+      logout: function () {
+        this.fricklStore.setToken(undefined)
+        emitter.emit('token-changed')
+        this.$router.push('/')
+      },
+      showLogin: function () {
+        this.$refs.loginDialog.show()
+      },
+      changeLocale (locale) {
+        this.fricklStore.setLocale(locale)
+      },
+      toggleTheme: function () {
+        if (this.storeTheme === 'fricklDark') {
+          this.fricklStore.setTheme('fricklLight')
+        } else {
+          this.fricklStore.setTheme('fricklDark')
+        }
+      },
+      updateCounts: function () {
+        apiGetStatsCounts(result => {
+          this.counts = result
+        })
+      },
+      showDownloadMenu: function (value) {
+        this.downloadMenuShown = value
+      },
+      clearJobs: function () {
+        const toCheck = this.storeDownloadJobs
+
+        if (toCheck.length > 0) {
+          apiDeleteDownloadJobs(toCheck.map(j => j.token), () => this.checkExportStatus(false))
+        }
+      },
+      showLoading: function (active) {
+        this.loading = active
+      },
+    },
+    mounted: function () {
+      this.checkImportStatus()
+      this.checkExportStatus(true)
+      this.updateCounts()
+
+      emitter.on('overview-counts-changed', this.updateCounts)
+      emitter.on('show-download-menu', this.showDownloadMenu)
+      emitter.on('show-loading', this.showLoading)
+    },
+    beforeUnmount: function () {
+      emitter.off('overview-counts-changed', this.updateCounts)
+      emitter.off('show-download-menu', this.showDownloadMenu)
+      emitter.off('show-loading', this.showLoading)
+    },
+    created: async function () {
+      this.fricklStore.setBaseUrl(baseUrl)
+
+      const instance = getCurrentInstance()
+
+      await apiGetSettings(result => {
+        if (result) {
+          if (result.plausibleDomain) {
+            instance.use(createPlausible({
+              init: {
+                domain: result.plausibleDomain,
+                hashMode: result.plausibleHashMode || true,
+                apiHost: result.plausibleApiHost || 'https://plausible.io',
+                trackLocalhost: false,
+              },
+              settings: {
+                enableAutoPageviews: true,
+              },
+            }))
+          }
+
+          if (result.googleAnalyticsKey) {
+            instance.use(VueGtag, {
+              config: {
+                id: result.googleAnalyticsKey,
+              },
+              // Disable initially, users have to opt-in
+              bootstrap: false,
+            }, this.$router)
           }
         }
+
+        this.fricklStore.setServerSettings(result)
       })
     },
-    handleAlert: function (variant, message) {
-      this.variant = variant
-      this.message = message
-      this.showAlert = true
-    },
-    showLoading: function (show) {
-      if (show) {
-        this.$refs.loadingModal.show()
-      } else {
-        this.$refs.loadingModal.hide()
-      }
-    }
-  },
-  created: async function () {
-    await this.apiGetSettings(result => {
-      if (result) {
-        if (result.googleAnalyticsKey) {
-          Vue.use(VueAnalytics, {
-            id: result.googleAnalyticsKey,
-            router: this.$router,
-            autoTracking: {
-              exception: true,
-              exceptionLogs: false
-            }
-          })
-          // Disable initially, users have to opt-in
-          Vue.$ga.disable()
-        }
-
-        if (result.plausibleDomain) {
-          Vue.use(VuePlausible, {
-            domain: result.plausibleDomain,
-            hashMode: result.plausibleHashMode || true,
-            apiHost: result.plausibleApiHost || 'https://plausible.io',
-            trackLocalhost: false
-          })
-
-          this.$nextTick(() => {
-            this.$plausible.enableAutoPageviews()
-          })
-        }
-      }
-
-      this.$store.dispatch('ON_SERVER_SETTINGS_CHANGED', result)
-    })
-  },
-  beforeDestroy: function () {
-    if (this.timer) {
-      clearInterval(this.timer)
-      this.timer = null
-    }
-
-    this.$eventHub.$off('alert')
-    this.$eventHub.$off('show-loading')
-  },
-  mounted: function () {
-    this.checkImportStatus()
-
-    this.$eventHub.$on('alert', this.handleAlert)
-    this.$eventHub.$on('show-loading', this.showLoading)
   }
-}
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import "~leaflet.markercluster/dist/MarkerCluster.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
-
-#app {
-  font-family: 'Roboto', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  min-height: 100vh;
-}
-#nav {
-  padding: 30px;
+.v-toolbar__content {
+  flex-wrap: wrap;
+  height: auto !important;
+  padding: 5px 0;
+  row-gap: 5px;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.v-card-actions {
+  flex-wrap: wrap;
+  justify-content: end;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.v-application p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
 }
 
-#app .global-alert {
-  border-radius: 0;
-  margin-bottom: 0;
+.position-relative {
+  position: relative;
 }
 </style>

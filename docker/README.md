@@ -1,4 +1,4 @@
-# frickl-docker
+# Frickl Docker Container
 
 ## Using Docker Compose
 Modify `docker-compose.yml` and bind your image folder into the container:
@@ -7,7 +7,7 @@ Modify `docker-compose.yml` and bind your image folder into the container:
 version: '3.3'
 services:
     mysql:
-        image: mysql:5.7 (or yobasystems/alpine-mariadb:arm32v7)
+        image: mysql:5.7
         volumes:
           - type: volume
             source: mysql
@@ -21,16 +21,20 @@ services:
         container_name: mysql
 
     frickl:
-        image: sebastianraubach/frickl:x86-release-1.0.0 (or :arm-release-1.0.0)
+        image: sebastianraubach/frickl:release-2.1.0
         environment:
           JAVA_OPTS: -Xmx512m
-          FRICKL_USERNAME: <OPTIONAL USERNAME FOR AUTHENTICATION>
-          FRICKL_PASSWORD: <OPTIONAL PASSWORD FOR AUTHENTICATION>
-          GOOGLE_ANALYTICS_KEY: <OPTIONAL GOOGLE ANALYTICS KEY>
+          # Optionally, limit how many CPU cores the image scanner thread can use up.
+          FRICKL_MAX_CPU: 4
         ports:
           - 80:8080
         restart: always
         volumes:
+          # Bind the config.properties file into the correct location
+          - type: bind
+            source: ./config.properties
+            target: /data/frickl/config.properties
+          # Bind your images folder into the Docker container
           - type: bind
             source: /path/to/your/images
             target: /data/images
@@ -47,67 +51,46 @@ volumes:
 
 ```
 
+Then run
+
 ```
 docker-compose up -d
 ```
 
-## Using plain Docker
-```
-docker volume create frickl
-docker volume create mysql
 
-docker network create frickl
+## Configuring Frickl
 
-docker run -d \
-    --name mysql \
-    --network frickl \
-    -e MYSQL_ROOT_PASSWORD=FricklIsAwesome \
-    -e MYSQL_DATABASE=frickl \
-    -e MYSQL_USER=frickl \
-    -e MYSQL_PASSWORD=frickl \
-    -v mysql:/var/lib/mysql \
-    --restart always \
-    mysql:5.7 (or yobasystems/alpine-mariadb:arm32v7)
-
-docker run -d \
-    --name frickl \
-    --network frickl \
-    --e JAVA_OPTS=-Xmx512m \
-    --e FRICKL_USERNAME=<OPTIONAL USERNAME FOR AUTHENTICATION> \
-    --e FRICKL_PASSWORD=<OPTIONAL PASSWORD FOR AUTHENTICATION> \
-    --e GOOGLE_ANALYTICS_KEY=<OPTIONAL GOOGLE ANALYTICS KEY> \
-    -v frickl:/usr/local/tomcat/temp \
-    -v /path/to/your/images:/data/images \
-    -p 80:8080 \
-    --restart always \
-    sebastianraubach/frickl:x86-release-1.0.0 (or :arm-release-1.0.0)
-```
-
-## Using an existing database
-
-If you are using an existing database rather than using the MySQL Docker database, you need to do some additional configuration.
-
-Add this to your `docker-compose.yml` file:
-
-```yml
-        volumes:
-          - type: bind
-            source: ./config.properties
-            target: /data/frickl/config.properties
-```
-
-This will bind a local `config.properties` file into the Docker container overwriting Frickl's default configuration.
+Download the `config.template.properties` file from [GitHub](https://github.com/sebastian-raubach/frickl-web-server/blob/master/config.template.properties) and rename it to `config.properties`. Place the file in the same location as the `docker-compose.yml` file.
 
 The content of the `config.properties` file should then look something like this:
 
 ```ini
+authentication.enabled=<should authentication be enabled? Set to 'true'  or 'false'>
+
+public.url=<the URL under which you access the client in your browser>
+
+database.server=<'host.docker.internal' if the database runs on the Docker host or the IP of the database server, 'mysql' if you are using the accompanying MySQL Docker container>
+database.name=<name of the database within the server>
 database.username=<your database username>
 database.password=<your database password>
-database.server=<'host.docker.internal' if the database runs on the Docker host or the IP of the database server>
-database.name=<name of the database within the server>
 database.port=<optional port of the database server>
 
+admin.username=<username of an initial admin account that gets automatically created>
+admin.password=<password for the initial admin account>
+
+# Plausible Analytics information (https://plausible-tracker.netlify.app/globals#plausibleinitoptions)
+plausible.domain=
+plausible.hash.mode=
+plausible.api.host=
+
+google.analytics.key=
+
+# Do not change this!
 base.path=/data/images
 ```
+
+## Using an existing database
+
+Set the `database.server` property to `host.docker.internal` if the database is running on the Docker host (same machine as the Frickl Docker image runs on). Set it to `mysql` if you are using the Docker MySQL image specified in the `docker-compose.yml` file. If the MySQL server is running on a different host, set this to the IP of this host.
 
 You can then remove the `mysql` Docker container from the `docker-compose.yml` file.

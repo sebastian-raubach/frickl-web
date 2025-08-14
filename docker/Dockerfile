@@ -1,11 +1,11 @@
-FROM node:16-alpine AS builder
+FROM node:22.11-alpine3.20 AS builder
 
-LABEL maintainer="sebastian@raubach.co.uk"
+LABEL maintainer="bazraubach@gmail.com"
 
 ARG BRANCH=master
 
 # Force docker to not cache the next line
-ADD https://api.github.com/repos/sebastian-raubach/frickl-web/git/refs/heads/master version.json
+ADD https://api.github.com/repos/sebastian-raubach/frickl-web/git/refs/heads/"$BRANCH" version.json
 # Clone the Germinate server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
@@ -15,7 +15,7 @@ RUN apk add --no-cache git && \
 # Build the client code
 WORKDIR /opt/frickl
 RUN rm -f .env && \
-    echo "VUE_APP_BASE_URL=./api/" > .env && \
+    echo "VITE_BASE_URL=./api/" > .env && \
     apk add --no-cache python3 build-base gcc wget && \
     npm i --legacy-peer-deps && \
     npm run build && \
@@ -23,19 +23,16 @@ RUN rm -f .env && \
     cp -a /opt/frickl/dist/. /opt/frickl-server/client/ && \
     echo "config.file=/data/frickl/config.properties" > /opt/frickl-server/config.properties
 
-# Copy a configuration for the server
-COPY build.properties /opt/frickl-server/build.properties
-
 # Download Gradle and build the server code
-RUN apk add --no-cache openjdk11 && \
-    wget https://services.gradle.org/distributions/gradle-6.0.1-bin.zip -P /tmp/ && \
-    unzip /tmp/gradle-6.0.1-bin.zip -d /opt/ && \
-    /opt/gradle-6.0.1/bin/gradle -p /opt/frickl-server war
+RUN apk add --no-cache openjdk21 && \
+    wget https://services.gradle.org/distributions/gradle-8.8-bin.zip -P /tmp/ && \
+    unzip /tmp/gradle-8.8-bin.zip -d /opt/ && \
+    /opt/gradle-8.8/bin/gradle -p /opt/frickl-server war
 
 
-FROM tomcat:10.1-jdk11
+FROM tomcat:10.1-jdk21
 
-LABEL maintainer="sebastian@raubach.co.uk"
+LABEL maintainer="bazraubach@gmail.com"
 
 RUN apt-get update && \
     apt-get --yes --force-yes install ffmpeg imagemagick exiftool
