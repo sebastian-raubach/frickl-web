@@ -61,7 +61,6 @@
             <v-btn
               block
               type="submit"
-              @click="login"
               :disabled="!valid || loading"
               class="mb-8"
               color="primary"

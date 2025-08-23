@@ -9,7 +9,7 @@
       <v-chip label v-for="tag in tags" :key="`tag-${tag.id}`" filter>{{ tag.tag.name }} <v-badge :content="tag.count" inline /></v-chip>
     </v-chip-group>
 
-    <ImageGallery :get-data="getImages" v-if="selectedTag !== null" ref="imageGallery" />
+    <ImageGallery :get-data="getImages" v-if="selectedTag !== undefined" ref="imageGallery" />
   </v-container>
 </template>
 

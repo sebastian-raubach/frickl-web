@@ -49,7 +49,7 @@ export const coreStore = defineStore('frickl', {
       }
 
       return result
-    }
+    },
   },
   actions: {
     setTheme (newTheme: string) {
