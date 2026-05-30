@@ -247,6 +247,13 @@
           maxNativeZoom: 19,
         })
 
+        const topo = L.tileLayer('//{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          id: 'OpenTopoMap',
+          attribution: 'Kartendaten: &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: &copy; <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)</code>',
+          maxZoom: 19,
+          maxNativeZoom: 17,
+        })
+
         switch (this.storeMapLayer) {
           case 'theme': {
             this.map.addLayer(this.themeLayer)
@@ -254,6 +261,10 @@
           }
           case 'satellite': {
             this.map.addLayer(satellite)
+            break
+          }
+          case 'topo': {
+            this.map.addLayer(topo)
             break
           }
           default: {
@@ -266,6 +277,7 @@
           'Theme-based': this.themeLayer,
           OpenStreetMap: openstreetmap,
           'Esri WorldImagery': satellite,
+          OpenTopoMap: topo,
         }
 
         // Listen for layer changes and store the user selection in the store
@@ -281,6 +293,10 @@
             }
             case 'Esri WorldImagery': {
               this.fricklStore.setMapLayer('satellite')
+              break
+            }
+            case 'OpenTopoMap': {
+              this.fricklStore.setMapLayer('topo')
               break
             }
           }
